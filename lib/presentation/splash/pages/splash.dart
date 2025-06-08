@@ -4,10 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/assets/app_vectors.dart';
 
-import '../../auth/pages/signin.dart';
-import '../../home/pages/home.dart';
+import '../../main/pages/main.dart';
 import '../bloc/splash_cubit.dart';
 import '../bloc/splash_state.dart';
+import 'introduce.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -18,10 +18,10 @@ class SplashPage extends StatelessWidget {
       body: BlocListener<SplashCubit, SplashState>(
         listener: (context, state) {
           if (state is UnAuthenticated) {
-            AppNavigator.pushReplacement(context, const SigninPage());
+            AppNavigator.pushReplacement(context, const IntroducePage());
           }
           if (state is Authenticated) {
-            AppNavigator.pushReplacement(context, const HomePage());
+            AppNavigator.pushReplacement(context, MainPage());
           }
         },
         child: Container(

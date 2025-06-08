@@ -13,19 +13,23 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: const Color(0xff2C2B2B) ,
+          fillColor: AppColors.background,
           hintStyle: const TextStyle(
-            color: Color(0xffA7A7A7),
+            color: AppColors.textGray,
             fontWeight: FontWeight.w400,
           ),
           contentPadding: const EdgeInsets.all(16),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none
+              borderSide: const BorderSide(color: AppColors.textGray, width: 1)
           ),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none
+              borderSide: const BorderSide(color: AppColors.textGray, width: 1)
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: const BorderSide(color: AppColors.textGray, width: 1.5)
           )
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

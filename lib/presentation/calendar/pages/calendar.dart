@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class CalendarPage extends StatelessWidget {
+  const CalendarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hồ sơ thú cưng'),
+        title: const Text('Lịch khám'),
         centerTitle: true,
         titleTextStyle: const TextStyle(
           color: AppColors.textBlack,
@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
         minimum: EdgeInsets.all(16),
         child: Center(
           child: Text(
-            'Nội dung trang Hồ sơ thú cưng',
+            'Lịch khám',
             style: TextStyle(fontSize: 20, color: Colors.black),
           ),
         ),
