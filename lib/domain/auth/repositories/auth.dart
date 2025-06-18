@@ -10,5 +10,7 @@ abstract class AuthRepository {
   Future<Either> signin(SigninReqParams params);
   Future<Either> verifyEmail(VerifyEmailReqParams params);
   Future<Either> verifyOtp(VerifyOtpReqParams params);
+  Future<Either> getCustomerId(int accountId);
   Future<bool> isLoggedIn();
+  Future<bool> logout();
 }

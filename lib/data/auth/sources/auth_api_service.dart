@@ -14,7 +14,7 @@ abstract class AuthService {
   Future<Either> signin(SigninReqParams params);
   Future<Either> verifyEmail(VerifyEmailReqParams params);
   Future<Either> verifyOtp(VerifyOtpReqParams params);
-
+  Future<Either> getCustomerId(int accountId);
 }
 
 class AuthServiceImpl extends AuthService {
@@ -126,6 +126,34 @@ class AuthServiceImpl extends AuthService {
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
+  }
+
+  @override
+  Future<Either> getCustomerId(int accountId) async {
+    try {
+      var response = await sl<DioClient>().get(
+        '${ApiUrl.getCustomerId}/$accountId',
+      );
+
+      return Right(response.data);
+    } on DioException catch (e) {
+      // Xử lý lỗi một cách chi tiết hơn
+      if (e.response != null) {
+        // Nếu server trả về response với data
+        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
+          // Trả về thông báo lỗi từ API
+          return Left(e.response!.data['message']);
+        } else {
+          return Left('Lỗi lấy thông tin khách hàng: ${e.response!.statusCode}');
+        }
+      } else {
+        // Nếu không có resp
+        return Left('Lỗi kết nối: ${e.message}');
+      }
+    } catch (e) {
+      return Left('Lỗi không xác định: $e');
+    }
+
   }
 
 }

@@ -8,7 +8,7 @@ class CalendarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lịch khám'),
+        title: const Text('Lịch hẹn'),
         centerTitle: true,
         titleTextStyle: const TextStyle(
           color: AppColors.textBlack,
@@ -20,7 +20,7 @@ class CalendarPage extends StatelessWidget {
         minimum: EdgeInsets.all(16),
         child: Center(
           child: Text(
-            'Lịch khám',
+            'Lịch hẹn',
             style: TextStyle(fontSize: 20, color: Colors.black),
           ),
         ),

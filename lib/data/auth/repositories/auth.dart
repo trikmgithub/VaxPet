@@ -56,6 +56,7 @@ class AuthRepositoryImpl extends AuthRepository {
 
         // Lưu thông tin người dùng
         sharedPreferences.setString('email', data['data']['email']);
+        sharedPreferences.setInt('accountId', data['data']['accountId']);
 
         return Right(data);
       },
@@ -76,9 +77,34 @@ class AuthRepositoryImpl extends AuthRepository {
 
         // Lưu thông tin người dùng
         sharedPreferences.setString('email', data['data']['email']);
+        sharedPreferences.setInt('accountId', data['data']['accountId']);
 
         return Right(data);
       },
     );
   }
+
+  @override
+  Future<bool> logout() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return await sharedPreferences.clear();
+  }
+
+  @override
+  Future<Either> getCustomerId(int accountId) async {
+    var data = await sl<AuthService>().getCustomerId(accountId);
+    return data.fold(
+      (error) => Left(error),
+      (data) async {
+        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+        // Lưu thông tin người dùng
+        sharedPreferences.setInt('customerId', data['data']['customerId']);
+
+        return Right(data);
+      },
+    );
+  }
+
+
 }

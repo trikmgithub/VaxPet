@@ -38,7 +38,7 @@ class AuthorizationInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final token  = sharedPreferences.getString('token');
+    final token  = sharedPreferences.getString('accessToken');
     options.headers['Authorization'] = "Bearer $token";
     handler.next(options); // continue with the Request
   }

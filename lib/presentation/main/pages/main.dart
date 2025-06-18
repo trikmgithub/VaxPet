@@ -1,16 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
+import 'package:vaxpet/domain/auth/usecases/get_customer_id.dart';
 import 'package:vaxpet/presentation/calendar/pages/calendar.dart';
 import 'package:vaxpet/presentation/profile/pages/profile.dart';
+import 'package:vaxpet/service_locator.dart';
 
 import '../../../common/bloc/bottom_nav_bar/bottom_nav_bar_bloc.dart';
 import '../../../common/bloc/bottom_nav_bar/bottom_nav_bar_event.dart';
 import '../../../common/bloc/bottom_nav_bar/bottom_nav_bar_state.dart';
 import '../../home/pages/home.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeCustomerId();
+  }
+
+  Future<void> _initializeCustomerId() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final int? accountId = sharedPreferences.getInt('accountId');
+
+    if (accountId != null) {
+      try {
+        final result = await sl.get<GetCustomerIdUseCase>().call(params: accountId);
+
+        result.fold(
+          (error) => debugPrint('Error getting customerId: $error'),
+          (data) {
+            // Save customerId to SharedPreferences
+            sharedPreferences.setInt('customerId', data['data']['customerId']);
+          }
+        );
+      } catch (e) {
+        debugPrint('Error processing accountId: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

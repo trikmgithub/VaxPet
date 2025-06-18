@@ -1,14 +1,21 @@
 import 'package:get_it/get_it.dart';
+import 'package:vaxpet/data/pet/repositories/pet.dart';
+import 'package:vaxpet/data/pet/sources/pet.dart';
+import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 
 import 'core/network/dio_client.dart';
 import 'data/auth/repositories/auth.dart';
 import 'data/auth/sources/auth_api_service.dart';
 import 'domain/auth/repositories/auth.dart';
+import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
+import 'domain/auth/usecases/logout.dart';
 import 'domain/auth/usecases/verify_email.dart';
 import 'domain/auth/usecases/register.dart';
 import 'domain/auth/usecases/signin.dart';
 import 'domain/auth/usecases/verify_otp.dart';
+import 'domain/pet/repositories/pet.dart';
+import 'domain/pet/usecases/get_pets.dart';
 
 final sl = GetIt.instance;
 
@@ -18,9 +25,11 @@ void setupServiceLocator() {
 
   // Services
   sl.registerSingleton<AuthService>(AuthServiceImpl());
+  sl.registerSingleton<PetService>(PetServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
+  sl.registerSingleton<PetRepository>(PetRepositoryImpl());
 
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -28,4 +37,9 @@ void setupServiceLocator() {
   sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
   sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase());
   sl.registerSingleton<VerifyOtpUseCase>(VerifyOtpUseCase());
+  sl.registerSingleton<LogoutUseCase>(LogoutUseCase());
+  sl.registerSingleton<GetCustomerIdUseCase>(GetCustomerIdUseCase());
+
+  sl.registerSingleton<GetPetsUseCase>(GetPetsUseCase());
+  sl.registerSingleton<CreatePetUseCase>(CreatePetUseCase());
 }
