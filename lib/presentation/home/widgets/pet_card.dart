@@ -6,6 +6,21 @@ import 'package:vaxpet/domain/pet/entities/pet.dart';
 import '../../pet/pages/pet_details.dart';
 import '../bloc/pets_state.dart';
 
+String calculateAge(String? dob) {
+  if (dob == null || dob.isEmpty) return 'Không rõ';
+  try {
+    final birthDate = DateTime.parse(dob);
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return '$age tuổi';
+  } catch (e) {
+    return 'Không rõ';
+  }
+}
+
 class Pets extends StatelessWidget {
   final int accountId;
   const Pets({super.key, required this.accountId});
@@ -134,7 +149,7 @@ class PetCard extends StatelessWidget {
                       const Icon(Icons.cake, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
-                        'Tuổi: ${pet.age ?? 'Không rõ'}',
+                        calculateAge(pet.dateOfBirth),
                         style: const TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ],
@@ -160,7 +175,12 @@ class PetCard extends StatelessWidget {
                     child: TextButton(
                       onPressed: () {
                         AppNavigator.push(
-                          context, PetDetailsPage(),
+                          context,
+                          PetDetailsPage(
+                            petId: pet.petId!,
+                            petName: pet.name!,
+                            petImage: pet.image,
+                          ),
                         );
                       },
                       child: const Text('Xem chi tiết'),

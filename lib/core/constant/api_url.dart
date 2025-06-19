@@ -1,6 +1,6 @@
 class ApiUrl {
 
-  static const baseURL = 'https://pvms-e4d3fydqdaaadqa5.southeastasia-01.azurewebsites.net/';
+  static const baseURL = 'https://pvms-sqlserver-cpfmbpfnbfeya3bg.southeastasia-01.azurewebsites.net/';
   static const apiV = 'api/';
 
   // AUTH ENDPOINTS
@@ -20,5 +20,12 @@ class ApiUrl {
   static const createPet = '${apiV}pets/create-pet';
 
   static const updatePet = '${apiV}pets/update-pet';
+
+  // APPOINTMENT ENDPOINTS
+  //Get
+  //Post
+  static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
+  //Put
+  //Delete
 
 }

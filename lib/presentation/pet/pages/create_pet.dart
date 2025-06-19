@@ -1,15 +1,13 @@
 import 'dart:io';
-import 'package:dartz/dartz.dart' hide State; // Hide State from dartz to avoid conflicts
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-import 'package:vaxpet/common/widgets/appbar/app_bar.dart';
-import 'package:vaxpet/common/widgets/reactive_button/reactive_button.dart';
 import 'package:vaxpet/data/pet/models/create_pet_req_params.dart';
 import 'package:vaxpet/presentation/home/pages/home.dart';
 
 import '../../../common/helper/message/display_message.dart';
+import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../domain/pet/usecases/create_pet.dart';
 import '../../../service_locator.dart';
@@ -23,7 +21,6 @@ class CreatePetPage extends StatefulWidget {
 
 class _CreatePetPageState extends State<CreatePetPage> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _speciesController = TextEditingController();
   final TextEditingController _breedController = TextEditingController();
   final TextEditingController _dateOfBirthController = TextEditingController();
   final TextEditingController _placeToLiveController = TextEditingController();
@@ -35,6 +32,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
   int? _customerId;  // Sử dụng biến đơn giản
 
   String? _selectedGender;
+  String? _selectedSpecies;
   final ImagePicker _picker = ImagePicker();
   File? image;
 
@@ -80,7 +78,6 @@ class _CreatePetPageState extends State<CreatePetPage> {
   void dispose() {
     // Giải phóng các controller khi widget bị hủy
     _nameController.dispose();
-    _speciesController.dispose();
     _breedController.dispose();
     _dateOfBirthController.dispose();
     _placeToLiveController.dispose();
@@ -154,12 +151,30 @@ class _CreatePetPageState extends State<CreatePetPage> {
   }
 
   Widget _species() {
-    return TextFormField(
-      controller: _speciesController,
+    return DropdownButtonFormField<String>(
       decoration: const InputDecoration(
         labelText: 'Loài thú cưng *',
-        hintText: 'Nhập loài thú cưng của bạn',
+        border: OutlineInputBorder(),
       ),
+      value: _selectedSpecies,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Vui lòng chọn loài thú cưng của bạn';
+        }
+        return null;
+      },
+      items: ['Chó', 'Mèo'].map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        // Cập nhật giá trị đã chọn và rebuild UI
+        setState(() {
+          _selectedSpecies = value;
+        });
+      },
     );
   }
 
@@ -206,7 +221,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       controller: _dateOfBirthController,
       decoration: const InputDecoration(
         labelText: 'Ngày sinh *',
-        hintText: 'Nhập ngày sinh th�� cưng của bạn',
+        hintText: 'Nhập ngày sinh thú cưng của bạn',
       ),
       keyboardType: TextInputType.datetime,
       onTap: () async {
@@ -241,7 +256,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       controller: _placeOfBirthController,
       decoration: const InputDecoration(
         labelText: 'Nơi sinh *',
-        hintText: 'Nhập n��i sinh thú cưng của bạn',
+        hintText: 'Nhập nơi sinh thú cưng của bạn',
       ),
     );
   }
@@ -363,7 +378,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
 
             // Kiểm tra các trường bắt buộc
             if (_nameController.text.isEmpty ||
-                _speciesController.text.isEmpty ||
+                _selectedSpecies == null ||
                 _breedController.text.isEmpty ||
                 _selectedGender == null ||
                 _dateOfBirthController.text.isEmpty ||
@@ -380,7 +395,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
             final params = CreatePetReqParams(
               customerId: _customerId!,
               name: _nameController.text.trim(),
-              species: _speciesController.text.trim(),
+              species: _selectedSpecies!,
               breed: _breedController.text.trim(),
               gender: _selectedGender!,
               dateOfBirth: _dateOfBirthController.text.trim(),
@@ -424,7 +439,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         },
         child: _isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : const Text('Tạo hồ sơ thú cưng', style: TextStyle(fontSize: 16, color: Colors.white)),
+            : const Text('Hoàn thành', style: TextStyle(fontSize: 16, color: Colors.white)),
       ),
     );
   }

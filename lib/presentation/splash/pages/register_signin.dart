@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-import 'package:vaxpet/common/widgets/appbar/app_bar.dart';
 import 'package:vaxpet/core/configs/assets/app_images.dart';
-
+import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../auth/pages/register.dart';

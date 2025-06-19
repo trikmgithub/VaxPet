@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/common/helper/message/display_message.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-import 'package:vaxpet/common/widgets/appbar/app_bar.dart';
 import 'package:vaxpet/common/widgets/reactive_button/reactive_button.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/data/auth/models/verify_email_req_params.dart';
 import 'package:vaxpet/domain/auth/usecases/verify_email.dart';
 import 'package:vaxpet/service_locator.dart';
 
+import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../main/pages/main.dart';
 
 class VerifyEmailPage extends StatelessWidget {

@@ -4,7 +4,7 @@ import 'package:vaxpet/presentation/auth/pages/verify_otp.dart';
 
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/helper/navigation/app_navigation.dart';
-import '../../../common/widgets/appbar/app_bar.dart';
+import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../domain/auth/usecases/signin.dart';

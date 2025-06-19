@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
-import 'package:vaxpet/presentation/home/widgets/pets.dart';
+import 'package:vaxpet/presentation/home/widgets/pet_card.dart';
 
 import '../../pet/pages/create_pet.dart';
 

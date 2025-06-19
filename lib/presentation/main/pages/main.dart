@@ -88,7 +88,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_today),
-                  label: 'Lịch khám',
+                  label: 'Lịch hẹn',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),

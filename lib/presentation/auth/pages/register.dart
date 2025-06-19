@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-import 'package:vaxpet/common/widgets/appbar/app_bar.dart';
 import 'package:vaxpet/presentation/auth/pages/verify_email.dart';
-
 import '../../../common/helper/message/display_message.dart';
+import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../data/auth/models/register_req_params.dart';
