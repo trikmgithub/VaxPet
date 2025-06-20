@@ -6,9 +6,10 @@ import '../../../common/helper/navigation/app_navigation.dart';
 import '../widgets/box_text.dart';
 
 class ChoiceServicePage extends StatelessWidget {
-  final String? petName;
-  final int? petId;
-  const ChoiceServicePage({super.key, this.petName, this.petId});
+  final String petName;
+  final int petId;
+  final String petSpecies;
+  const ChoiceServicePage({super.key, required this.petName, required this.petId, required this.petSpecies});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class ChoiceServicePage extends StatelessWidget {
                     }
                     AppNavigator.push(
                       context,
-                      VaccinationScheduleHomePage(petName: petName!, petId: petId!),
+                      VaccinationScheduleHomePage(petName: petName, petId: petId, petSpecies: petSpecies,),
                     );
                   }
                 ),

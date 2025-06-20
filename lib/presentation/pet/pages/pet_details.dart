@@ -11,7 +11,8 @@ class PetDetailsPage extends StatelessWidget {
   final int petId;
   final String petName;
   final String? petImage;
-  const PetDetailsPage({super.key, required this.petId, required this.petName, this.petImage});
+  final String petSpecies;
+  const PetDetailsPage({super.key, required this.petId, required this.petName, this.petImage, required this.petSpecies});
 
   @override
   Widget build(BuildContext context) {
@@ -67,16 +68,14 @@ class PetDetailsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     BoxText(title: 'Vắc xin', icon: Icons.vaccines, onTap: () {
-                      AppNavigator.push(context, ChoiceServicePage(petName: petName, petId: petId));
+                      AppNavigator.push(context, ChoiceServicePage(petName: petName, petId: petId, petSpecies: petSpecies,));
                     }),
                     BoxText(title: 'Microchip', icon: Icons.qr_code, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                   ],
                 ),
                 const SizedBox(height: 16),
                 BoxText(title: 'Chứng nhận sức khỏe', icon: Icons.book, onTap: () {
-                  AppNavigator.push(context, const ChoiceServicePage());
                 }),
                 const SizedBox(height: 16),
                 CategoryText(title: 'Sổ ghi chép'),
@@ -85,10 +84,8 @@ class PetDetailsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     BoxText(title: 'Vắc xin', icon: Icons.vaccines, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                     BoxText(title: 'Microchip', icon: Icons.qr_code, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                   ],
                 ),
@@ -97,16 +94,13 @@ class PetDetailsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     BoxText(title: 'Chứng nhận sức khỏe', icon: Icons.book, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                     BoxText(title: 'Lịch gợi ý', icon: Icons.calendar_month, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                   ],
                 ),
                 const SizedBox(height: 16),
                 BoxText(title: 'Cẩm nang', icon: Icons.tips_and_updates, onTap: () {
-                  AppNavigator.push(context, const ChoiceServicePage());
                 }),
                 const SizedBox(height: 20),
                 CategoryText(title: 'Thông tin thú cưng'),
@@ -115,10 +109,8 @@ class PetDetailsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     BoxText(title: 'Thông tin', icon: Icons.medical_information, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                     BoxText(title: 'Hồ sơ tiêm chủng', icon: Icons.emergency_recording, onTap: () {
-                      AppNavigator.push(context, const ChoiceServicePage());
                     }),
                   ],
                 ),

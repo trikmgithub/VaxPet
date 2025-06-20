@@ -180,6 +180,7 @@ class PetCard extends StatelessWidget {
                             petId: pet.petId!,
                             petName: pet.name!,
                             petImage: pet.image,
+                            petSpecies: pet.species!,
                           ),
                         );
                       },

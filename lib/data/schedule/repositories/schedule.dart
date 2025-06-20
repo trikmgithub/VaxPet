@@ -7,7 +7,7 @@ import '../sources/schedule.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
   @override
-  Future<Either<Exception, dynamic>> createAppointmentVaccinationHome(CreateAppVacReqParams params) async {
+  Future<Either> createAppointmentVaccinationHome(CreateAppVacReqParams params) async {
     var returnedData = await sl<ScheduleService>().createAppointmentVaccinationHome(params);
     return returnedData.fold(
       (error) => Left(Exception(error.toString())),

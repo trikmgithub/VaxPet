@@ -6,6 +6,8 @@ import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 import 'core/network/dio_client.dart';
 import 'data/auth/repositories/auth.dart';
 import 'data/auth/sources/auth_api_service.dart';
+import 'data/disease/repositories/disease.dart';
+import 'data/disease/sources/disease.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
 import 'domain/auth/repositories/auth.dart';
@@ -16,6 +18,8 @@ import 'domain/auth/usecases/verify_email.dart';
 import 'domain/auth/usecases/register.dart';
 import 'domain/auth/usecases/signin.dart';
 import 'domain/auth/usecases/verify_otp.dart';
+import 'domain/disease/repositories/disease.dart';
+import 'domain/disease/usecases/get_disease_by_species.dart';
 import 'domain/pet/repositories/pet.dart';
 import 'domain/pet/usecases/get_pets.dart';
 import 'domain/schedule/repositories/schedule.dart';
@@ -31,11 +35,13 @@ void setupServiceLocator() {
   sl.registerSingleton<AuthService>(AuthServiceImpl());
   sl.registerSingleton<PetService>(PetServiceImpl());
   sl.registerSingleton<ScheduleService>(ScheduleServiceImpl());
+  sl.registerSingleton<DiseaseService>(DiseaseServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
   sl.registerSingleton<PetRepository>(PetRepositoryImpl());
   sl.registerSingleton<ScheduleRepository>(ScheduleRepositoryImpl());
+  sl.registerSingleton<DiseaseRepository>(DiseaseRepositoryImpl());
 
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -50,4 +56,6 @@ void setupServiceLocator() {
   sl.registerSingleton<CreatePetUseCase>(CreatePetUseCase());
 
   sl.registerSingleton<CreateAppVacUseCase>(CreateAppVacUseCase());
+
+  sl.registerSingleton<GetDiseaseBySpeciesUseCase>(GetDiseaseBySpeciesUseCase());
 }

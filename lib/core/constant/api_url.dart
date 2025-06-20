@@ -28,4 +28,11 @@ class ApiUrl {
   //Put
   //Delete
 
+  // DISEASE ENDPOINTS
+  static const getDiseaseByPetId = '${apiV}disease/get-disease-by-pet-id';
+  //Get
+  static const getDiseaseBySpecies = '${apiV}disease/get-disease-by-species';
+  //Post
+  //Put
+  //Delete
 }

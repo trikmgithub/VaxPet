@@ -35,10 +35,4 @@ class PetEntity {
     required this.isSterilized,
   });
 
-  String avatarPath() {
-    return image != null && image!.isNotEmpty
-        ? image!
-        : 'assets/images/default_paws.png';
-  }
-
 }

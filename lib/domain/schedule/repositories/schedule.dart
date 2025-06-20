@@ -3,5 +3,5 @@ import 'package:dartz/dartz.dart';
 import '../../../data/schedule/models/create_app_vac_req_params.dart';
 
 abstract class ScheduleRepository {
-  Future<Either<Exception, dynamic>> createAppointmentVaccinationHome(CreateAppVacReqParams params);
+  Future<Either> createAppointmentVaccinationHome(CreateAppVacReqParams params);
 }

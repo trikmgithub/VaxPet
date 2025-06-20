@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadAccountId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final storedId = prefs.getInt('accountId');
-    debugPrint('Stored accountId: $storedId');
     setState(() {
       accountId = storedId;
       isLoading = false;
