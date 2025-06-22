@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:vaxpet/core/constant/api_url.dart';
 
 import '../models/create_app_vac_req_params.dart';

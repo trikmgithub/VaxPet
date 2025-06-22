@@ -274,7 +274,8 @@ class _DiseaseSpeciesState extends State<DiseaseSpecies> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    // Sửa lại cách sử dụng withValues với tham số alpha thay vì opacity
+                    color: Theme.of(context).primaryColor.withAlpha((0.1 * 255).round()),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(

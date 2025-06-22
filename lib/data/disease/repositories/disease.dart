@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:vaxpet/common/helper/mapper/disease_mapper.dart';
 import 'package:vaxpet/data/disease/sources/disease.dart';
 import 'package:vaxpet/domain/disease/repositories/disease.dart';

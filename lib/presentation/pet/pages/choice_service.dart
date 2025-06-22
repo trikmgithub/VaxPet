@@ -3,6 +3,7 @@ import 'package:vaxpet/common/widgets/back_button/back_button.dart';
 import 'package:vaxpet/presentation/schedule/pages/vaccination_schedule_home.dart';
 import 'package:vaxpet/presentation/pet/widgets/category_text.dart';
 import '../../../common/helper/navigation/app_navigation.dart';
+import '../../schedule/pages/vaccination_schedule_clinic.dart';
 import '../widgets/box_text.dart';
 
 class ChoiceServicePage extends StatelessWidget {
@@ -27,7 +28,7 @@ class ChoiceServicePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: CategoryText(
                     title:
-                        'Tiếp tục đặt lịch tiêm vắc xin với ${petName ?? "thú cưng"}',
+                        'Tiếp tục đặt lịch tiêm vắc xin với $petName',
                     sizeTitle: 28,
                   ),
                 ),
@@ -38,12 +39,6 @@ class ChoiceServicePage extends StatelessWidget {
                   widthWords: 200,
                   sizeTitle: 16,
                   onTap: () {
-                    if (petName == null || petId == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Thông tin thú cưng không hợp lệ')),
-                      );
-                      return;
-                    }
                     AppNavigator.push(
                       context,
                       VaccinationScheduleHomePage(petName: petName, petId: petId, petSpecies: petSpecies,),
@@ -51,12 +46,18 @@ class ChoiceServicePage extends StatelessWidget {
                   }
                 ),
                 const SizedBox(height: 16),
-                const BoxText(
+                BoxText(
                   title: 'Tiêm tại trung tâm',
                   icon: Icons.local_hospital,
                   widthWords: 200,
                   sizeTitle: 16,
                   heightTitle: 80,
+                  onTap: () {
+                    AppNavigator.push(
+                      context,
+                      VaccinationScheduleClinicPage(petName: petName, petId: petId, petSpecies: petSpecies,),
+                    );
+                  }
                 ),
               ],
             ),

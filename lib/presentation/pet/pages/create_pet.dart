@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/data/pet/models/create_pet_req_params.dart';
-import 'package:vaxpet/presentation/home/pages/home.dart';
+import 'package:vaxpet/presentation/main/pages/main.dart';
 
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
@@ -89,6 +89,38 @@ class _CreatePetPageState extends State<CreatePetPage> {
     super.dispose();
   }
 
+  // Hàm riêng để xử lý việc viết hoa chữ cái đầu của mỗi từ
+  void _capitalizeText(TextEditingController controller, String value) {
+    if (value.isNotEmpty) {
+      // Tách chuỗi thành các từ và viết hoa chữ cái đầu của mỗi từ
+      final words = value.split(' ');
+      for (int i = 0; i < words.length; i++) {
+        if (words[i].isNotEmpty) {
+          words[i] = words[i][0].toUpperCase() +
+                     (words[i].length > 1 ? words[i].substring(1) : '');
+        }
+      }
+
+      final capitalizedValue = words.join(' ');
+
+      // Chỉ cập nhật nếu giá trị đã thay đổi để tránh vòng lặp vô hạn
+      if (capitalizedValue != value) {
+        // Lưu vị trí con trỏ hiện tại
+        final currentPosition = controller.selection.baseOffset;
+
+        // Cập nhật giá trị
+        controller.text = capitalizedValue;
+
+        // Đặt lại vị trí con trỏ, điều chỉnh nếu cần thiết
+        if (currentPosition <= capitalizedValue.length) {
+          controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: currentPosition),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +164,6 @@ class _CreatePetPageState extends State<CreatePetPage> {
               const SizedBox(height: 20),
               _buttonCreatePet(),
               const SizedBox(height: 20),
-          
             ],
           ),
         ),
@@ -147,6 +178,10 @@ class _CreatePetPageState extends State<CreatePetPage> {
         labelText: 'Tên thú cưng *',
         hintText: 'Nhập tên thú cưng của bạn',
       ),
+      // textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      onChanged: (value) {
+        _capitalizeText(_nameController, value);
+      },
     );
   }
 
@@ -185,6 +220,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
         labelText: 'Giống thú cưng *',
         hintText: 'Nhập giống thú cưng của bạn',
       ),
+      onChanged: (value) {
+        _capitalizeText(_breedController, value);
+      }
     );
   }
 
@@ -222,6 +260,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: const InputDecoration(
         labelText: 'Ngày sinh *',
         hintText: 'Nhập ngày sinh thú cưng của bạn',
+        suffixIcon: Icon(Icons.calendar_today),
       ),
       keyboardType: TextInputType.datetime,
       onTap: () async {
@@ -234,7 +273,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         );
         if (pickedDate != null) {
           // format date dd/mm/yyyy
-          String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+          String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
           _dateOfBirthController.text = formattedDate;
         }
       },
@@ -247,7 +286,11 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: const InputDecoration(
         labelText: 'Nơi ở *',
         hintText: 'Nhập nơi ở thú cưng của bạn',
+        suffixIcon: Icon(Icons.place),
       ),
+      onChanged: (value) {
+        _capitalizeText(_placeToLiveController, value);
+      },
     );
   }
 
@@ -258,6 +301,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
         labelText: 'Nơi sinh *',
         hintText: 'Nhập nơi sinh thú cưng của bạn',
       ),
+      onChanged: (value) {
+        _capitalizeText(_placeOfBirthController, value);
+      },
     );
   }
 
@@ -304,7 +350,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
     return TextFormField(
       controller: _weightController,
       decoration: const InputDecoration(
-        labelText: 'Cân nặng *',
+        labelText: 'Cân nặng (Kg) *',
         hintText: 'Nhập cân nặng thú cưng của bạn',
       ),
       keyboardType: TextInputType.number,
@@ -318,6 +364,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
         labelText: 'Màu sắc *',
         hintText: 'Nhập màu sắc thú cưng của bạn',
       ),
+      onChanged: (value) {
+        _capitalizeText(_colorController, value);
+      },
     );
   }
 
@@ -328,6 +377,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
         labelText: 'Quốc tịch *',
         hintText: 'Nhập quốc tịch thú cưng của bạn',
       ),
+      onChanged: (value) {
+        _capitalizeText(_nationalityController, value);
+      },
     );
   }
 
@@ -370,7 +422,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
           });
 
           try {
-            // Kiểm tra dữ li���u trước khi gửi request
+            // Kiểm tra dữ liệu trước khi gửi request
             if (_customerId == null) {
               DisplayMessage.errorMessage('Không thể xác định thông tin người dùng', context);
               return;
@@ -413,6 +465,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
             // Gọi API
             final result = await sl<CreatePetUseCase>().call(params: params);
 
+            // Kiểm tra xem widget còn mounted không trước khi sử dụng context
+            if (!mounted) return;
+
             // Xử lý kết quả
             result.fold(
               (failure) {
@@ -422,12 +477,15 @@ class _CreatePetPageState extends State<CreatePetPage> {
               (success) {
                 debugPrint('Pet created successfully');
                 DisplayMessage.successMessage('Đã tạo thú cưng thành công', context);
-                AppNavigator.pushAndRemove(context, HomePage());
+                AppNavigator.pushAndRemove(context, MainPage());
               }
             );
           } catch (e) {
             debugPrint('Exception during API call: $e');
-            DisplayMessage.errorMessage('Lỗi khi gửi yêu cầu: $e', context);
+            // Kiểm tra mounted trước khi sử dụng context
+            if (mounted) {
+              DisplayMessage.errorMessage('Lỗi khi gửi yêu cầu: $e', context);
+            }
           } finally {
             // Vô hiệu hóa trạng thái loading
             if (mounted) {

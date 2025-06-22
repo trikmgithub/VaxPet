@@ -16,16 +16,22 @@ class PetDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Lấy kích thước màn hình để tính toán tỷ lệ
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+
+    // Tính toán padding dựa trên chiều rộng màn hình
+    final double horizontalPadding = screenWidth * 0.04; // 4% của chiều rộng màn hình
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: SafeArea(
-        minimum: const EdgeInsets.only(
-          right: 12,
-          left: 12,
+        minimum: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -39,87 +45,174 @@ class PetDetailsPage extends StatelessWidget {
                     child: Column(
                       children: [
                         CircleAvatar(
-                          radius: 40,
+                          // Sử dụng tỷ lệ dựa trên chiều rộng màn hình
+                          radius: screenWidth * 0.10, // 10% của chiều rộng màn hình
                           backgroundColor: Colors.white,
                           backgroundImage: petImage != null && petImage!.isNotEmpty
                               ? NetworkImage(petImage!)
                               : null,
                           child: petImage == null || petImage!.isEmpty
-                              ? Icon(Icons.pets, size: 40, color: Colors.grey[600])
+                              ? Icon(Icons.pets, size: screenWidth * 0.10, color: Colors.grey[600])
                               : null,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: screenSize.height * 0.01), // 1% của chiều cao màn hình
                         Text(
                           petName,
-                          style: const TextStyle(
-                            fontSize: 24,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.06, // 6% của chiều rộng màn hình
                             fontWeight: FontWeight.bold,
                             color: AppColors.textBlack,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: screenSize.height * 0.01),
                 CategoryText(title: 'Đặt dịch vụ'),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BoxText(title: 'Vắc xin', icon: Icons.vaccines, onTap: () {
-                      AppNavigator.push(context, ChoiceServicePage(petName: petName, petId: petId, petSpecies: petSpecies,));
-                    }),
-                    BoxText(title: 'Microchip', icon: Icons.qr_code, onTap: () {
-                    }),
-                  ],
+                SizedBox(height: screenSize.height * 0.02),
+
+                // Sử dụng LayoutBuilder để xây dựng UI dựa trên không gian có sẵn
+                LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    // Tính toán chiều rộng cho mỗi BoxText dựa trên chiều rộng có sẵn
+                    // Đổi từ Row cứng thành bố cục linh hoạt với Wrap
+                    return Wrap(
+                      spacing: constraints.maxWidth * 0.05, // khoảng cách ngang
+                      runSpacing: screenSize.height * 0.02, // khoảng cách dọc
+                      alignment: WrapAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2, // 2 item mỗi hàng
+                          child: BoxText(
+                            title: 'Vắc xin',
+                            icon: Icons.vaccines,
+                            onTap: () {
+                              AppNavigator.push(context, ChoiceServicePage(petName: petName, petId: petId, petSpecies: petSpecies,));
+                            }
+                          ),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                          child: BoxText(
+                            title: 'Microchip',
+                            icon: Icons.qr_code,
+                            onTap: () {}
+                          ),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                          child: BoxText(
+                            title: 'Chứng nhận sức khỏe',
+                            icon: Icons.book,
+                            onTap: () {}
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 ),
-                const SizedBox(height: 16),
-                BoxText(title: 'Chứng nhận sức khỏe', icon: Icons.book, onTap: () {
-                }),
-                const SizedBox(height: 16),
+
+                SizedBox(height: screenSize.height * 0.02),
                 CategoryText(title: 'Sổ ghi chép'),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BoxText(title: 'Vắc xin', icon: Icons.vaccines, onTap: () {
-                    }),
-                    BoxText(title: 'Microchip', icon: Icons.qr_code, onTap: () {
-                    }),
-                  ],
+                SizedBox(height: screenSize.height * 0.02),
+
+                // Sử dụng LayoutBuilder cho phần Sổ ghi chép
+                LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    return Wrap(
+                      spacing: constraints.maxWidth * 0.05,
+                      runSpacing: screenSize.height * 0.02,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                          child: BoxText(
+                            title: 'Vắc xin',
+                            icon: Icons.vaccines,
+                            onTap: () {},
+                          ),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                          child: BoxText(
+                            title: 'Microchip',
+                            icon: Icons.qr_code,
+                            onTap: () {},
+                          ),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2, // 3 items mỗi hàng
+                          child: BoxText(
+                            title: 'Chứng nhận sức khỏe',
+                            icon: Icons.book,
+                            onTap: () {},
+                          ),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                          child: BoxText(
+                            title: 'Lịch gợi ý',
+                            icon: Icons.calendar_month,
+                            onTap: () {},
+                          ),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                          child: BoxText(
+                            title: 'Cẩm nang',
+                            icon: Icons.tips_and_updates,
+                            onTap: () {},
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BoxText(title: 'Chứng nhận sức khỏe', icon: Icons.book, onTap: () {
-                    }),
-                    BoxText(title: 'Lịch gợi ý', icon: Icons.calendar_month, onTap: () {
-                    }),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                BoxText(title: 'Cẩm nang', icon: Icons.tips_and_updates, onTap: () {
-                }),
-                const SizedBox(height: 20),
+
+                SizedBox(height: screenSize.height * 0.02),
+
                 CategoryText(title: 'Thông tin thú cưng'),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BoxText(title: 'Thông tin', icon: Icons.medical_information, onTap: () {
-                    }),
-                    BoxText(title: 'Hồ sơ tiêm chủng', icon: Icons.emergency_recording, onTap: () {
-                    }),
-                  ],
+
+                SizedBox(height: screenSize.height * 0.02),
+
+                LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      // Tính toán chiều rộng cho mỗi BoxText dựa trên chiều rộng có sẵn
+                      // Đổi từ Row cứng thành bố cục linh hoạt với Wrap
+                      return Wrap(
+                        spacing: constraints.maxWidth * 0.05, // khoảng cách ngang
+                        runSpacing: screenSize.height * 0.02, // khoảng cách dọc
+                        alignment: WrapAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                            child: BoxText(
+                              title: 'Thông tin',
+                              icon: Icons.medical_information,
+                              onTap: () {},
+                            ),
+                          ),
+                          SizedBox(
+                            width: (constraints.maxWidth - constraints.maxWidth * 0.05) / 2,
+                            child: BoxText(
+                              title: 'Hồ sơ tiêm chủng',
+                              icon: Icons.emergency_recording,
+                              onTap: () {},
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                 ),
-                const SizedBox(height: 40),
+
+                SizedBox(height: screenSize.height * 0.05),
               ],
             )
           ),
         )
       )
-     );
-   }
+    );
+  }
  }

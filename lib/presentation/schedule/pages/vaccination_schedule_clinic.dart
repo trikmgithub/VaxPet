@@ -14,13 +14,13 @@ import '../../disease/pages/choice_disease.dart';
 
 
 
-class VaccinationScheduleHomePage extends StatefulWidget {
+class VaccinationScheduleClinicPage extends StatefulWidget {
   final int serviceType = 1; // 1 cho dịch vụ tiêm vắc-xin
-  final int location = 2; // 1 cho dịch vụ tại nhà
+  final int location = 1; // 1 cho dịch vụ tại trung tâm
   final String petName;
   final int petId;
   final String petSpecies;
-  const VaccinationScheduleHomePage({
+  const VaccinationScheduleClinicPage({
     super.key,
     required this.petName,
     required this.petId,
@@ -28,10 +28,10 @@ class VaccinationScheduleHomePage extends StatefulWidget {
   });
 
   @override
-  State<VaccinationScheduleHomePage> createState() => _VaccinationScheduleHomePageState();
+  State<VaccinationScheduleClinicPage> createState() => _VaccinationScheduleClinicPageState();
 }
 
-class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePage> {
+class _VaccinationScheduleClinicPageState extends State<VaccinationScheduleClinicPage> {
   final TextEditingController _dateOfScheduleController = TextEditingController();
   final TextEditingController _timeOfScheduleController = TextEditingController();
   int? _customerId;
@@ -63,7 +63,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
             const BackButtonBasic(),
             Center(
               child: CategoryText(
-                title: 'Thông tin lịch hẹn tiêm vắc xin tại nhà',
+                title: 'Thông tin lịch hẹn tiêm vắc xin tại trung tâm',
                 sizeTitle: 28,
                 textAlign: TextAlign.center,
               ),

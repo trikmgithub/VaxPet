@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vaxpet/core/configs/theme/app_colors.dart';
 
 import '../../bloc/reactive_button/reactive_button_cubit.dart';
 import '../../bloc/reactive_button/reactive_button_state.dart';
@@ -66,7 +67,7 @@ class ReactiveButton extends StatelessWidget {
           context.read<ReactiveButtonCubit>().execute(onPressed);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: activeColor ?? const Color(0xff3461FD),
+          backgroundColor: activeColor ?? AppColors.primary,
           minimumSize: Size(
               width ?? MediaQuery.of(context).size.width,
               height ?? 60
