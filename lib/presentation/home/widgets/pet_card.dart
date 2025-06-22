@@ -4,6 +4,8 @@ import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/presentation/home/bloc/pets_cubit.dart';
 import 'package:vaxpet/domain/pet/entities/pet.dart';
+import 'package:vaxpet/presentation/home/bloc/delete_pet_cubit.dart';
+import 'package:vaxpet/presentation/home/bloc/delete_pet_state.dart';
 import '../../pet/pages/pet_details.dart';
 import '../bloc/pets_state.dart';
 
@@ -48,36 +50,121 @@ class Pets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PetsCubit()..getPets(accountId),
-      child: BlocBuilder<PetsCubit, PetsState>(
-        builder: (context, state) {
-          if (state is PetsLoading) {
-            return const Center(child: CircularProgressIndicator());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PetsCubit()..getPets(accountId),
+        ),
+        BlocProvider(
+          create: (context) => DeletePetCubit(),
+        ),
+      ],
+      child: BlocListener<DeletePetCubit, DeletePetState>(
+        listener: (context, state) {
+          if (state is DeletePetSuccess) {
+            // Sử dụng Overlay để hiển thị thông báo phía trên màn hình
+            _showTopNotification(
+              context: context,
+              message: state.message,
+              isSuccess: true,
+            );
+
+            // Làm mới danh sách thú cưng
+            context.read<PetsCubit>().refreshPets(accountId);
+          } else if (state is DeletePetError) {
+            // Hiển thị thông báo lỗi phía trên màn hình
+            _showTopNotification(
+              context: context,
+              message: state.message,
+              isSuccess: false,
+            );
           }
-          if (state is PetsLoaded) {
-            if (state.pets.isEmpty) {
+        },
+        child: BlocBuilder<PetsCubit, PetsState>(
+          builder: (context, state) {
+            if (state is PetsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is PetsLoaded) {
+              if (state.pets.isEmpty) {
+                return RefreshIndicator(
+                  onRefresh: () => _refreshPets(context),
+                  color: AppColors.primary,
+                  child: ListView(
+                    children: const [
+                      SizedBox(
+                        height: 200,
+                      ), // Cho phép kéo xuống để refresh ngay cả khi không có dữ liệu
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.pets, size: 64, color: Colors.grey),
+                            SizedBox(height: 16),
+                            Text(
+                              'Không có thú cưng nào',
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Kéo xuống để làm mới',
+                              style: TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Lấy danh sách thú cưng cho trang hiện tại
+              final petsToShow = state.petsForCurrentPage;
+
+              // Tạo column chứa danh sách thú cưng và điều khiển phân trang
+              return Column(
+                children: [
+                  // Danh sách thú cưng với RefreshIndicator
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () => _refreshPets(context),
+                      color: AppColors.primary,
+                      child:
+                          !isSmallScreen
+                              ? _buildGridView(petsToShow, isSmallScreen)
+                              : _buildListView(petsToShow, isSmallScreen),
+                    ),
+                  ),
+
+                  // Điều khiển phân trang
+                  _buildPaginationControls(context, state),
+                ],
+              );
+            }
+            if (state is PetsError) {
               return RefreshIndicator(
                 onRefresh: () => _refreshPets(context),
                 color: AppColors.primary,
                 child: ListView(
-                  children: const [
-                    SizedBox(
-                      height: 200,
-                    ), // Cho phép kéo xuống để refresh ngay cả khi không có dữ liệu
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height / 3),
                     Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.pets, size: 64, color: Colors.grey),
-                          SizedBox(height: 16),
-                          Text(
-                            'Không có thú cưng nào',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          const Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.red,
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 16),
                           Text(
-                            'Kéo xuống để làm mới',
+                            state.message,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Kéo xuống để thử lại',
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ],
@@ -87,65 +174,9 @@ class Pets extends StatelessWidget {
                 ),
               );
             }
-
-            // Lấy danh sách thú cưng cho trang hiện tại
-            final petsToShow = state.petsForCurrentPage;
-
-            // Tạo column chứa danh sách thú cưng và điều khiển phân trang
-            return Column(
-              children: [
-                // Danh sách thú cưng với RefreshIndicator
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () => _refreshPets(context),
-                    color: AppColors.primary,
-                    child:
-                        !isSmallScreen
-                            ? _buildGridView(petsToShow, isSmallScreen)
-                            : _buildListView(petsToShow, isSmallScreen),
-                  ),
-                ),
-
-                // Điều khiển phân trang
-                _buildPaginationControls(context, state),
-              ],
-            );
-          }
-          if (state is PetsError) {
-            return RefreshIndicator(
-              onRefresh: () => _refreshPets(context),
-              color: AppColors.primary,
-              child: ListView(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height / 3),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          state.message,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Kéo xuống để thử lại',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -174,7 +205,7 @@ class Pets extends StatelessWidget {
       itemCount: pets.length,
       itemBuilder: (context, index) {
         print('Debug - Building pet card at index $index: ${pets[index].name}');
-        return PetCard(pet: pets[index], isSmallScreen: isSmallScreen);
+        return PetCard(pet: pets[index], isSmallScreen: isSmallScreen, deletePetCubit: context.read<DeletePetCubit>());
       },
     );
   }
@@ -190,7 +221,7 @@ class Pets extends StatelessWidget {
       itemCount: pets.length,
       itemBuilder: (context, index) {
         print('Debug - Building pet card at index $index: ${pets[index].name}');
-        return PetCard(pet: pets[index], isSmallScreen: isSmallScreen);
+        return PetCard(pet: pets[index], isSmallScreen: isSmallScreen, deletePetCubit: context.read<DeletePetCubit>());
       },
     );
   }
@@ -348,13 +379,104 @@ class Pets extends StatelessWidget {
       ),
     );
   }
+
+  // Phương thức tạo và hiển thị thông báo ở phía trên màn hình
+  void _showTopNotification({
+    required BuildContext context,
+    required String message,
+    bool isSuccess = true,
+  }) {
+    // Xóa các thông báo cũ nếu có
+    _removeCurrentNotification(context);
+
+    // Tạo một OverlayEntry chứa thông báo
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).viewPadding.top + 10, // Hiển thị ngay dưới statusbar
+        left: 10,
+        right: 10,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSuccess ? Colors.green : Colors.red,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        isSuccess ? Icons.check_circle : Icons.error_outline,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          message,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () => _removeCurrentNotification(context),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Thêm thông báo vào Overlay và lưu lại để có thể xóa sau
+    _currentNotification = overlayEntry;
+    Overlay.of(context).insert(overlayEntry);
+
+    // Tự động ẩn thông báo sau 3 giây
+    Future.delayed(const Duration(seconds: 3), () {
+      _removeCurrentNotification(context);
+    });
+  }
+
+  // Biến static để theo dõi thông báo hiện tại
+  static OverlayEntry? _currentNotification;
+
+  // Xóa thông báo hiện tại nếu có
+  void _removeCurrentNotification(BuildContext context) {
+    if (_currentNotification != null) {
+      _currentNotification!.remove();
+      _currentNotification = null;
+    }
+  }
 }
 
 class PetCard extends StatelessWidget {
   final PetEntity pet;
   final bool isSmallScreen;
+  final DeletePetCubit deletePetCubit;
 
-  const PetCard({super.key, required this.pet, this.isSmallScreen = true});
+  const PetCard({
+    super.key,
+    required this.pet,
+    required this.deletePetCubit,
+    this.isSmallScreen = true
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -559,37 +681,67 @@ class PetCard extends StatelessWidget {
                               const SizedBox(height: 16.0),
 
                               // Button
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    AppNavigator.push(
-                                      context,
-                                      PetDetailsPage(
-                                        petId: pet.petId!,
-                                        petName: pet.name ?? "Chưa đặt tên",
-                                        petImage: pet.image,
-                                        petSpecies: pet.species ?? "Không rõ",
+                              Row(
+                                children: [
+                                  // Chi tiết button
+                                  Expanded(
+                                    flex: 3,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        AppNavigator.push(
+                                          context,
+                                          PetDetailsPage(
+                                            petId: pet.petId!,
+                                            petName: pet.name ?? "Chưa đặt tên",
+                                            petImage: pet.image,
+                                            petSpecies: pet.species ?? "Không rõ",
+                                          ),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: tagColor.withOpacity(0.9),
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
                                       ),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: tagColor.withOpacity(0.9),
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: const Text(
+                                        'Chi tiết',
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Chi tiết',
-                                    style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.bold,
+
+                                  const SizedBox(width: 8),
+
+                                  // Delete button
+                                  Expanded(
+                                    flex: 1,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        _showDeleteConfirmDialog(context, pet.petId!, pet.name);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red.shade400,
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.delete_outline,
+                                        size: 20.0,
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
@@ -653,6 +805,37 @@ class PetCard extends StatelessWidget {
       default:
         return Icons.favorite;
     }
+  }
+
+  // Hiển thị hộp thoại xác nhận xóa thú cưng
+  void _showDeleteConfirmDialog(BuildContext context, int petId, String? petName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Xác nhận xóa'),
+          content: Text('Bạn có chắc chắn muốn xóa thú cưng "${petName ?? ''}" không?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Hủy'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Xóa'),
+              onPressed: () {
+                // Sử dụng context gốc để truy cập DeletePetCubit
+                context.read<DeletePetCubit>().deletePet(petId);
+
+                // Đóng hộp thoại xác nhận
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

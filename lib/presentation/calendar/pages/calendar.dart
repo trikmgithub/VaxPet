@@ -18,13 +18,35 @@ class CalendarPage extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      body: const SafeArea(
+      body: SafeArea(
         minimum: EdgeInsets.all(16),
         child: TabBarBasic(
           tabTitle1: 'Hôm nay',
           tabTitle2: 'Sắp tới',
-          tabTitle3: 'Đã qua',),
+          tabTitle3: 'Đã qua',
+          tabContent1: _tabContent1(),
+          tabContent2: _tabContent2(),
+          tabContent3: _tabContent3(),
+        ),
       ),
+    );
+  }
+
+  Widget _tabContent1() {
+    return const Center(
+      child: Text('Nội dung cho tab Hôm nay'),
+    );
+  }
+
+  Widget _tabContent2() {
+    return const Center(
+      child: Text('Nội dung cho tab Hôm nay'),
+    );
+  }
+
+  Widget _tabContent3() {
+    return const Center(
+      child: Text('Nội dung cho tab Hôm nay'),
     );
   }
 }

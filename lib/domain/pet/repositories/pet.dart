@@ -10,4 +10,7 @@ abstract class PetRepository {
   //Post
   Future<Either> createPet(CreatePetReqParams pet);
 
+  //Delete
+  Future<Either> deletePet(int petId);
+
 }

@@ -42,7 +42,7 @@ class _DiseaseSpeciesState extends State<DiseaseSpecies> {
   }
 
   void _loadDiseases() {
-    _cubit.getDiseaseBySpecies(widget.species);
+    _cubit.getDiseaseBySpecies(widget.species.toLowerCase() == 'chó' ? 'dog' : 'cat');
   }
 
   @override

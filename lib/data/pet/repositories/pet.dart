@@ -58,5 +58,14 @@ class PetRepositoryImpl extends PetRepository {
     );
   }
 
+  @override
+  Future<Either> deletePet(int petId) async {
+    var returnedData = await sl<PetService>().deletePet(petId);
+    return returnedData.fold(
+      (error) => Left(error.toString()),
+      (data) => Right(data),
+    );
+  }
+
 
 }

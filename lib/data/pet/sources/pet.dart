@@ -10,6 +10,7 @@ import '../models/create_pet_req_params.dart';
 abstract class PetService {
   Future<Either> getPets(int accountId);
   Future<Either> createPet(CreatePetReqParams params);
+  Future<Either> deletePet(int petId);
 }
 
 class PetServiceImpl extends PetService {
@@ -69,6 +70,27 @@ class PetServiceImpl extends PetService {
       }
       return Left(e);
     } catch (e) {
+      return Left(Exception('An unexpected error occurred'));
+    }
+  }
+
+  @override
+  Future<Either> deletePet(int petId) async {
+    try {
+      final url = '${ApiUrl.deletePetById}/$petId';
+
+      final response = await sl<DioClient>().delete(url);
+
+      return Right(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        debugPrint('CreatePet failed [${e.response?.statusCode}]: ${e.response?.data}');
+      } else {
+        debugPrint('CreatePet DioException: $e');
+      }
+      return Left(e);
+    } catch (e) {
+      debugPrint('An unexpected error occurred: $e');
       return Left(Exception('An unexpected error occurred'));
     }
   }

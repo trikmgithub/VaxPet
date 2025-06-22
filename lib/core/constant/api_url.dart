@@ -15,6 +15,8 @@ class ApiUrl {
   // PET ENDPOINTS
   //Get
   static const getPetByAccountId = '${apiV}pets/get-pets-by-account-id';
+  //Delete
+  static const deletePetById = '${apiV}pets/delete-pet';
 
   //Post
   static const createPet = '${apiV}pets/create-pet';
@@ -23,6 +25,7 @@ class ApiUrl {
 
   // APPOINTMENT ENDPOINTS
   //Get
+  static const getAppointmentByCustomerAndStatus = '${apiV}appointment/get-appointment-by-customer-and-status';
   //Post
   static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
   //Put

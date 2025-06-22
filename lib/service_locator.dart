@@ -4,12 +4,15 @@ import 'package:vaxpet/data/pet/sources/pet.dart';
 import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 
 import 'core/network/dio_client.dart';
+import 'data/appointment/repositories/appointment.dart';
+import 'data/appointment/sources/appointment.dart';
 import 'data/auth/repositories/auth.dart';
 import 'data/auth/sources/auth_api_service.dart';
 import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
+import 'domain/appointment/repositories/appointment.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
@@ -21,6 +24,7 @@ import 'domain/auth/usecases/verify_otp.dart';
 import 'domain/disease/repositories/disease.dart';
 import 'domain/disease/usecases/get_disease_by_species.dart';
 import 'domain/pet/repositories/pet.dart';
+import 'domain/pet/usecases/delete_pet.dart';
 import 'domain/pet/usecases/get_pets.dart';
 import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
@@ -36,12 +40,14 @@ void setupServiceLocator() {
   sl.registerSingleton<PetService>(PetServiceImpl());
   sl.registerSingleton<ScheduleService>(ScheduleServiceImpl());
   sl.registerSingleton<DiseaseService>(DiseaseServiceImpl());
+  sl.registerSingleton<AppointmentService>(AppointmentServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
   sl.registerSingleton<PetRepository>(PetRepositoryImpl());
   sl.registerSingleton<ScheduleRepository>(ScheduleRepositoryImpl());
   sl.registerSingleton<DiseaseRepository>(DiseaseRepositoryImpl());
+  sl.registerSingleton<AppointmentRepository>(AppointmentRepositoryImpl());
 
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -54,6 +60,7 @@ void setupServiceLocator() {
 
   sl.registerSingleton<GetPetsUseCase>(GetPetsUseCase());
   sl.registerSingleton<CreatePetUseCase>(CreatePetUseCase());
+  sl.registerSingleton<DeletePetUseCase>(DeletePetUseCase());
 
   sl.registerSingleton<CreateAppVacUseCase>(CreateAppVacUseCase());
 
