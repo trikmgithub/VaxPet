@@ -26,6 +26,8 @@ class ApiUrl {
   // APPOINTMENT ENDPOINTS
   //Get
   static const getAppointmentByCustomerAndStatus = '${apiV}appointment/get-appointment-by-customer-and-status';
+  static const getAppointmentByPetAndStatus = '${apiV}appointment/get-appointment-by-pet-and-status';
+  static const getAppointmentById = '${apiV}appointment/get-appointment-by-id';
   //Post
   static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
   //Put

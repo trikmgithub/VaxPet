@@ -12,7 +12,10 @@ import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
+import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
+import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'domain/appointment/repositories/appointment.dart';
+import 'domain/appointment/usecases/get_appointment_by_id.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
@@ -28,6 +31,8 @@ import 'domain/pet/usecases/delete_pet.dart';
 import 'domain/pet/usecases/get_pets.dart';
 import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
+import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
+import 'domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
 
 final sl = GetIt.instance;
 
@@ -41,6 +46,7 @@ void setupServiceLocator() {
   sl.registerSingleton<ScheduleService>(ScheduleServiceImpl());
   sl.registerSingleton<DiseaseService>(DiseaseServiceImpl());
   sl.registerSingleton<AppointmentService>(AppointmentServiceImpl());
+  sl.registerSingleton<VaccineAppointmentNoteService>(VaccineAppointmentNoteServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -48,6 +54,7 @@ void setupServiceLocator() {
   sl.registerSingleton<ScheduleRepository>(ScheduleRepositoryImpl());
   sl.registerSingleton<DiseaseRepository>(DiseaseRepositoryImpl());
   sl.registerSingleton<AppointmentRepository>(AppointmentRepositoryImpl());
+  sl.registerSingleton<VaccineAppointmentNoteRepository>(VaccineAppointmentNoteRepositoryImpl());
 
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -57,12 +64,12 @@ void setupServiceLocator() {
   sl.registerSingleton<VerifyOtpUseCase>(VerifyOtpUseCase());
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase());
   sl.registerSingleton<GetCustomerIdUseCase>(GetCustomerIdUseCase());
-
   sl.registerSingleton<GetPetsUseCase>(GetPetsUseCase());
   sl.registerSingleton<CreatePetUseCase>(CreatePetUseCase());
   sl.registerSingleton<DeletePetUseCase>(DeletePetUseCase());
-
   sl.registerSingleton<CreateAppVacUseCase>(CreateAppVacUseCase());
-
   sl.registerSingleton<GetDiseaseBySpeciesUseCase>(GetDiseaseBySpeciesUseCase());
+  sl.registerSingleton<GetVaccineAppointmentNoteUseCase>(GetVaccineAppointmentNoteUseCase());
+  sl.registerSingleton<GetAppointmentsByIdUseCase>(GetAppointmentsByIdUseCase());
+
 }

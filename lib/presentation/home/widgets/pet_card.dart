@@ -190,9 +190,7 @@ class Pets extends StatelessWidget {
 
   // Widget hiển thị danh sách thú cưng dạng lưới (cho màn hình lớn)
   Widget _buildGridView(List<PetEntity> pets, bool isSmallScreen) {
-    print('Debug - Pets count for GridView: ${pets.length}');
     if (pets.isEmpty) {
-      print('Debug - No pets available for GridView');
     }
     return GridView.builder(
       padding: const EdgeInsets.all(16),
@@ -204,7 +202,6 @@ class Pets extends StatelessWidget {
       ),
       itemCount: pets.length,
       itemBuilder: (context, index) {
-        print('Debug - Building pet card at index $index: ${pets[index].name}');
         return PetCard(pet: pets[index], isSmallScreen: isSmallScreen, deletePetCubit: context.read<DeletePetCubit>());
       },
     );
@@ -212,15 +209,12 @@ class Pets extends StatelessWidget {
 
   // Widget hiển thị danh sách thú cưng dạng danh sách (cho màn hình nhỏ)
   Widget _buildListView(List<PetEntity> pets, bool isSmallScreen) {
-    print('Debug - Pets count for ListView: ${pets.length}');
     if (pets.isEmpty) {
-      print('Debug - No pets available for ListView');
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: pets.length,
       itemBuilder: (context, index) {
-        print('Debug - Building pet card at index $index: ${pets[index].name}');
         return PetCard(pet: pets[index], isSmallScreen: isSmallScreen, deletePetCubit: context.read<DeletePetCubit>());
       },
     );
@@ -483,7 +477,6 @@ class PetCard extends StatelessWidget {
     // Xác định các màu sắc dễ thương
     final Color tagColor = _getPastelColor(pet.species ?? 'Không rõ');
 
-    print('Building PetCard for pet: ${pet.name}, ID: ${pet.petId}');
 
     // Sử dụng LayoutBuilder để responsive với kích thước có sẵn
     return Card(

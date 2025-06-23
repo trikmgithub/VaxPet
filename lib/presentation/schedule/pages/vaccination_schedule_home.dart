@@ -9,7 +9,6 @@ import 'package:vaxpet/service_locator.dart';
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../main/pages/main.dart';
-import '../../pet/widgets/category_text.dart';
 import '../../disease/pages/choice_disease.dart';
 
 
@@ -50,323 +49,435 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
     _loadCustomerId();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        minimum: const EdgeInsets.only(top: 0, right: 24, left: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const BackButtonBasic(),
-            Center(
-              child: CategoryText(
-                title: 'Thông tin lịch hẹn tiêm vắc xin tại nhà',
-                sizeTitle: 28,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            CategoryText(title: 'Tên thú cưng: ${widget.petName}'),
-            const SizedBox(height: 16),
-            Text(
-              'Chọn ngày hẹn tiêm vắc xin:',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700
-              ),
-            ),
-            const SizedBox(height: 16),
-            _dateOfSchedule(context),
-            const SizedBox(height: 16),
-            Text(
-              'Chọn giờ hẹn tiêm vắc xin (9:00-12:00 hoặc 14:00-17:00)',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
-            ),
-            const SizedBox(height: 8),
-            _timeOfSchedule(context),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () async {
-                final result = await Navigator.push<Map<String, dynamic>>(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChoiceDiseasePage(species: petSpecies)),
-                );
+    // Lấy kích thước màn hình để tính toán responsive
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
+    final bool isTablet = screenWidth > 600;
 
-                if (result != null && mounted) {
-                  setState(() {
-                    _selectedDiseaseId = result['diseaseId'];
-                    _selectedDiseaseName = result['diseaseName'];
-                  });
-                }
-              },
-              child: const Text('Chọn bệnh cần tiêm vắc xin', style: TextStyle(color: Colors.white)),
-            ),
-            const SizedBox(height: 16),
-            if (_selectedDiseaseName != null) ...[
+    // Tính toán padding dựa trên kích thước màn hình
+    final double horizontalPadding = screenWidth * 0.05;
+
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Back button ở góc trái trên cùng
               Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green.withAlpha((0.1 * 255).round()),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.green.shade300),
+                alignment: Alignment.topLeft,
+                padding: EdgeInsets.only(
+                  top: screenHeight * 0.01,
+                  left: horizontalPadding,
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.check_circle, color: Colors.green),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Bệnh đã chọn: $_selectedDiseaseName',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: BackButtonBasic(),
               ),
-              const SizedBox(height: 24),
-            ] else ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withAlpha((0.1 * 255).round()),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.shade300),
+
+              // Header section with title and pet info
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: screenHeight * 0.02,
                 ),
-                child: const Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info_outline, color: Colors.orange),
-                    SizedBox(width: 8),
-                    Expanded(
+                    // Tiêu đề trang
+                    Center(
                       child: Text(
-                        'Vui lòng chọn bệnh cần tiêm vắc xin',
+                        'Đặt lịch tiêm vắc xin tại Nhà',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.orange,
+                          fontSize: isTablet ? 28 : 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
+
+                    SizedBox(height: screenHeight * 0.02),
+
+                    // Pet info card
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.blue[100],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.pets,
+                              color: Theme.of(context).primaryColor,
+                              size: 28,
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.petName,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  widget.petSpecies,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: screenHeight * 0.03),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+
+              // Form Section
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      spreadRadius: 0,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Form title
+                      Text(
+                        'Thông tin lịch hẹn',
+                        style: TextStyle(
+                          fontSize: isTablet ? 22 : 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Divider(height: 30, thickness: 1),
+
+                      // Date selection
+                      _buildFormLabel('Ngày hẹn tiêm vắc xin:'),
+                      SizedBox(height: 8),
+                      _buildDateField(context),
+                      SizedBox(height: 20),
+
+                      // Time selection
+                      _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
+                      SizedBox(height: 8),
+                      _buildTimeField(context),
+                      SizedBox(height: 20),
+
+                      // Disease selection button
+                      _buildFormLabel('Bệnh cần tiêm vắc xin:'),
+                      SizedBox(height: 8),
+                      _buildDiseaseSelectionButton(context),
+                      SizedBox(height: 16),
+
+                      // Disease selection result
+                      _buildDiseaseSelectionResult(),
+                      SizedBox(height: 24),
+
+                      // Submit button
+                      _buildSubmitButton(context),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: screenHeight * 0.04),
+
+              // Note section
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue[200]!),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.blue[700], size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'Lưu ý',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Bạn sẽ được Bác sĩ tư vấn loại Vắc xin tương ứng với bệnh bạn chọn sau!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blue[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: screenHeight * 0.03),
             ],
-            SizedBox(height: 16),
-            _buttonSubmit(context),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _dateOfSchedule(BuildContext context) {
-    return TextFormField(
-      controller: _dateOfScheduleController,
-      decoration: const InputDecoration(
-        hintText: 'Chọn ngày mong muốn',
-        suffixIcon: Icon(Icons.calendar_today),
+  // Text label for form fields
+  Widget _buildFormLabel(String label) {
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: Colors.grey[800],
       ),
-      keyboardType: TextInputType.datetime,
-      onTap: () async {
-        FocusScope.of(context).requestFocus(FocusNode());
-
-        // Calculate tomorrow's date properly to avoid localization issues
-        final tomorrow = DateTime.now().add(const Duration(days: 1));
-
-        DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: tomorrow,
-          firstDate: tomorrow,
-          lastDate: DateTime.now().add(const Duration(days: 365)),
-          locale: const Locale('vi', 'VN'), // Set Vietnamese locale
-          builder: (BuildContext context, Widget? child) {
-            return Theme(
-              data: ThemeData.light().copyWith(
-                primaryColor: Theme.of(context).primaryColor,
-                colorScheme: ColorScheme.light(
-                  primary: Theme.of(context).primaryColor,
-                ),
-                buttonTheme: const ButtonThemeData(
-                  textTheme: ButtonTextTheme.primary,
-                ),
-              ),
-              child: child!,
-            );
-          },
-        );
-        if (pickedDate != null) {
-          // format date dd/mm/yyyy
-          String formattedDate =
-              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
-          _dateOfScheduleController.text = formattedDate;
-
-          // Save the selected date
-          selectedDate = pickedDate;
-        }
-      },
     );
   }
 
-  Widget _timeOfSchedule(BuildContext context) {
-    return TextFormField(
-      controller: _timeOfScheduleController,
-      decoration: const InputDecoration(
-        hintText: 'Chọn giờ mong muốn',
-        suffixIcon: Icon(Icons.access_time),
+  // Stylized date field
+  Widget _buildDateField(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
       ),
-      keyboardType: TextInputType.datetime,
-      onTap: () async {
-        FocusScope.of(context).requestFocus(FocusNode());
+      child: TextFormField(
+        controller: _dateOfScheduleController,
+        decoration: InputDecoration(
+          hintText: 'Chọn ngày mong muốn',
+          hintStyle: TextStyle(color: Colors.grey[500]),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          suffixIcon: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+          border: InputBorder.none,
+        ),
+        keyboardType: TextInputType.datetime,
+        onTap: () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          final tomorrow = DateTime.now().add(const Duration(days: 1));
 
-        // Get current selected time or use default
-        TimeOfDay initialTime = TimeOfDay.now();
-        if (_timeOfScheduleController.text.isNotEmpty) {
-          try {
-            final timeParts = _timeOfScheduleController.text.split(':');
-            initialTime = TimeOfDay(
-              hour: int.parse(timeParts[0]),
-              minute: int.parse(timeParts[1])
-            );
-          } catch (_) {}
-        }
-
-        // Ensure initial time is within allowed ranges, otherwise set to 9:00
-        if (!_isTimeInAllowedRanges(initialTime)) {
-          initialTime = const TimeOfDay(hour: 9, minute: 0);
-        }
-
-        TimeOfDay? pickedTime = await showTimePicker(
-          context: context,
-          initialTime: initialTime,
-          cancelText: 'Huỷ',
-          confirmText: 'Chọn',
-          helpText: 'Chọn giờ',
-          hourLabelText: 'Giờ',
-          minuteLabelText: 'Phút',
-          builder: (BuildContext context, Widget? child) {
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-              child: child!,
-            );
-          },
-        );
-
-        if (pickedTime != null) {
-          // Check if the selected time is within allowed ranges
-          if (_isTimeInAllowedRanges(pickedTime)) {
-            // Format time as HH:mm
-            final hour = pickedTime.hour.toString().padLeft(2, '0');
-            final minute = pickedTime.minute.toString().padLeft(2, '0');
-            _timeOfScheduleController.text = "$hour:$minute";
-          } else {
-            // Show error message if time is not in allowed range
-            _showSnackBar(
-              'Vui lòng chọn giờ trong khoảng 9:00-12:00 hoặc 14:00-17:00',
-              isError: true
-            );
-          }
-        }
-      },
-    );
-  }
-
-  Widget _buttonSubmit(BuildContext context) {
-    return ReactiveButton(
-      onPressed: () async {
-        if (_customerId == null) {
-          _showSnackBar('Không tìm thấy thông tin người dùng', isError: true);
-          throw 'Không tìm thấy thông tin người dùng';
-        }
-
-        // Kiểm tra trường ngày
-        if (_dateOfScheduleController.text.isEmpty) {
-          _showSnackBar('Vui lòng chọn ngày hẹn', isError: true);
-          throw 'Vui lòng chọn ngày hẹn';
-        }
-
-        // Kiểm tra trường giờ
-        if (_timeOfScheduleController.text.isEmpty) {
-          _showSnackBar('Vui lòng chọn giờ hẹn', isError: true);
-          throw 'Vui lòng chọn giờ hẹn';
-        }
-
-        // Kiểm tra bệnh đã chọn
-        if (_selectedDiseaseId == null) {
-          _showSnackBar('Vui lòng chọn bệnh cần tiêm vắc-xin', isError: true);
-          throw 'Vui lòng chọn bệnh cần tiêm vắc-xin';
-        }
-
-        try {
-
-
-          try {
-            selectedDate = DateFormat('dd/MM/yyyy').parse(_dateOfScheduleController.text);
-          } catch (e) {
-            _showSnackBar('Định dạng ngày không hợp lệ', isError: true);
-          }
-
-          try {
-            selectedTime = DateFormat('HH:mm').parse(_timeOfScheduleController.text);
-          } catch (e) {
-            _showSnackBar('Định dạng giờ không hợp lệ', isError: true);
-            throw 'Định dạng giờ không hợp lệ';
-          }
-
-          // Combine date and time
-          final combinedDateTime = DateTime(
-            selectedDate!.year,
-            selectedDate!.month,
-            selectedDate!.day,
-            selectedTime!.hour,
-            selectedTime!.minute,
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: tomorrow,
+            firstDate: tomorrow,
+            lastDate: DateTime.now().add(const Duration(days: 365)),
+            locale: const Locale('vi', 'VN'),
+            builder: (BuildContext context, Widget? child) {
+              return Theme(
+                data: ThemeData.light().copyWith(
+                  primaryColor: Theme.of(context).primaryColor,
+                  colorScheme: ColorScheme.light(
+                    primary: Theme.of(context).primaryColor,
+                  ),
+                  buttonTheme: const ButtonThemeData(
+                    textTheme: ButtonTextTheme.primary,
+                  ),
+                ),
+                child: child!,
+              );
+            },
           );
 
-          // Format as ISO 8601 with milliseconds and Z timezone
-          final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(combinedDateTime);
+          if (pickedDate != null) {
+            String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+            _dateOfScheduleController.text = formattedDate;
+            selectedDate = pickedDate;
 
-          final result = await sl<CreateAppVacUseCase>().call(params: CreateAppVacReqParams(
-              customerId: _customerId!,
-              petId: widget.petId,
-              appointmentDate: formattedDate,
-              serviceType: widget.serviceType,
-              location: widget.location,
-              address: "Địa chỉ mặc định", // Có thể thay đổi nếu cần
-              diseaseId: _selectedDiseaseId!
-          ));
-
-          return result;
-
-        } catch (e) {
-          debugPrint('Error creating vaccination schedule: $e');
-          _showSnackBar('Đã xảy ra lỗi: $e', isError: true);
-        }
-      },
-      title: 'Đặt lịch',
-      onSuccess: () {
-        // Thành công đã được xử lý trong _createVaccinationSchedule
-        _showSnackBar('Đặt lịch thành công');
-        AppNavigator.pushAndRemove(context, MainPage());
-      },
-      onFailure: (error) {
-        debugPrint('Error creating vaccination schedule: $error');
-        _showSnackBar(error, isError: true);
-      },
+            // Hiển thị thông báo khi chọn ngày thành công
+            _showSnackBar(
+              'Đã chọn ngày hẹn: $formattedDate',
+              isError: false,
+              icon: Icons.calendar_month,
+              color: Theme.of(context).primaryColor
+            );
+          }
+        },
+      ),
     );
+  }
 
+  // Stylized time field with beautiful time picker
+  Widget _buildTimeField(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: TextFormField(
+        controller: _timeOfScheduleController,
+        decoration: InputDecoration(
+          hintText: 'Chọn giờ mong muốn',
+          hintStyle: TextStyle(color: Colors.grey[500]),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          suffixIcon: Icon(Icons.access_time, color: Theme.of(context).primaryColor),
+          border: InputBorder.none,
+        ),
+        keyboardType: TextInputType.datetime,
+        onTap: () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+
+          TimeOfDay initialTime = TimeOfDay.now();
+          if (_timeOfScheduleController.text.isNotEmpty) {
+            try {
+              final timeParts = _timeOfScheduleController.text.split(':');
+              initialTime = TimeOfDay(
+                hour: int.parse(timeParts[0]),
+                minute: int.parse(timeParts[1])
+              );
+            } catch (_) {}
+          }
+
+          if (!_isTimeInAllowedRanges(initialTime)) {
+            initialTime = const TimeOfDay(hour: 8, minute: 0);
+          }
+
+          // Customize time picker appearance
+          final ThemeData theme = Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: Colors.white,
+              hourMinuteShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              dayPeriodShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              dayPeriodColor: Colors.blue.shade50,
+              dayPeriodTextColor: Colors.blue.shade700,
+              hourMinuteColor: MaterialStateColor.resolveWith((states) =>
+                states.contains(MaterialState.selected)
+                  ? Theme.of(context).primaryColor
+                  : Colors.blue.shade50),
+              hourMinuteTextColor: MaterialStateColor.resolveWith((states) =>
+                states.contains(MaterialState.selected)
+                  ? Colors.white
+                  : Colors.blue.shade700),
+              dialBackgroundColor: Colors.grey.shade100,
+              dialHandColor: Theme.of(context).primaryColor,
+              dialTextColor: MaterialStateColor.resolveWith((states) =>
+                states.contains(MaterialState.selected)
+                  ? Colors.white
+                  : Colors.black87),
+              entryModeIconColor: Theme.of(context).primaryColor,
+            ),
+            colorScheme: ColorScheme.light(
+              primary: Theme.of(context).primaryColor,
+              onPrimary: Colors.white,
+              onSurface: Colors.black87,
+              surface: Colors.white,
+            ),
+            dialogBackgroundColor: Colors.white,
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).primaryColor,
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
+
+          TimeOfDay? pickedTime = await showTimePicker(
+            context: context,
+            initialTime: initialTime,
+            cancelText: 'Huỷ',
+            confirmText: 'Chọn',
+            helpText: 'Chọn giờ hẹn',
+            hourLabelText: 'Giờ',
+            minuteLabelText: 'Phút',
+            builder: (BuildContext context, Widget? child) {
+              return Theme(
+                data: theme,
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                ),
+              );
+            },
+          );
+
+          if (pickedTime != null) {
+            if (_isTimeInAllowedRanges(pickedTime)) {
+              final hour = pickedTime.hour.toString().padLeft(2, '0');
+              final minute = pickedTime.minute.toString().padLeft(2, '0');
+              _timeOfScheduleController.text = "$hour:$minute";
+
+              // Show time confirmation with appropriate color
+              final bool isMorningTime = pickedTime.hour < 12;
+              _showSnackBar(
+                'Đã chọn giờ hẹn: $hour:$minute',
+                isError: false,
+                icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
+                color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
+              );
+            } else {
+              _showSnackBar(
+                'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
+                isError: true
+              );
+            }
+          }
+        },
+      ),
+    );
   }
 
   // Helper method to check if time is in allowed ranges
   bool _isTimeInAllowedRanges(TimeOfDay time) {
-    final morningStart = const TimeOfDay(hour: 9, minute: 0);
+    final morningStart = const TimeOfDay(hour: 8, minute: 0);
     final morningEnd = const TimeOfDay(hour: 12, minute: 0);
-    final afternoonStart = const TimeOfDay(hour: 14, minute: 0);
+    final afternoonStart = const TimeOfDay(hour: 13, minute: 0);
     final afternoonEnd = const TimeOfDay(hour: 17, minute: 0);
 
     // Convert to minutes for easier comparison
@@ -376,9 +487,183 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
     final afternoonStartMinutes = afternoonStart.hour * 60 + afternoonStart.minute;
     final afternoonEndMinutes = afternoonEnd.hour * 60 + afternoonEnd.minute;
 
-    // Check if time is in morning range (9:00-12:00) or afternoon range (14:00-17:00)
+    // Check if time is in morning range (8:00-12:00) or afternoon range (13:00-17:00)
     return (timeInMinutes >= morningStartMinutes && timeInMinutes <= morningEndMinutes) ||
            (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
+  }
+
+  // Disease selection button
+  Widget _buildDiseaseSelectionButton(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () async {
+          final result = await Navigator.push<Map<String, dynamic>>(
+            context,
+            MaterialPageRoute(builder: (context) => ChoiceDiseasePage(species: petSpecies)),
+          );
+
+          if (result != null && mounted) {
+            setState(() {
+              _selectedDiseaseId = result['diseaseId'];
+              _selectedDiseaseName = result['diseaseName'];
+            });
+          }
+        },
+        icon: Icon(Icons.vaccines),
+        label: Text('Chọn bệnh cần tiêm'),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          textStyle: TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Disease selection result display
+  Widget _buildDiseaseSelectionResult() {
+    if (_selectedDiseaseName != null) {
+      return Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.green.shade300),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Bệnh đã chọn: $_selectedDiseaseName',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.orange.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.orange.shade300),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline, color: Colors.orange),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Vui lòng chọn bệnh cần tiêm vắc xin',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  // Submit button with improved design
+  Widget _buildSubmitButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ReactiveButton(
+        onPressed: () async {
+          if (_customerId == null) {
+            _showSnackBar('Không tìm thấy thông tin người dùng', isError: true);
+            throw 'Không tìm thấy thông tin người dùng';
+          }
+
+          // Kiểm tra trường ngày
+          if (_dateOfScheduleController.text.isEmpty) {
+            _showSnackBar('Vui lòng chọn ngày hẹn', isError: true);
+            throw 'Vui lòng chọn ngày hẹn';
+          }
+
+          // Kiểm tra trường giờ
+          if (_timeOfScheduleController.text.isEmpty) {
+            _showSnackBar('Vui lòng chọn giờ hẹn', isError: true);
+            throw 'Vui lòng chọn giờ hẹn';
+          }
+
+          // Kiểm tra bệnh đã chọn
+          if (_selectedDiseaseId == null) {
+            _showSnackBar('Vui lòng chọn bệnh cần tiêm vắc-xin', isError: true);
+            throw 'Vui lòng chọn bệnh cần tiêm vắc-xin';
+          }
+
+          try {
+            try {
+              selectedDate = DateFormat('dd/MM/yyyy').parse(_dateOfScheduleController.text);
+            } catch (e) {
+              _showSnackBar('Định dạng ngày không hợp lệ', isError: true);
+              throw 'Định dạng ngày không hợp lệ';
+            }
+
+            try {
+              selectedTime = DateFormat('HH:mm').parse(_timeOfScheduleController.text);
+            } catch (e) {
+              _showSnackBar('Định dạng giờ không hợp lệ', isError: true);
+              throw 'Định dạng giờ không hợp lệ';
+            }
+
+            // Combine date and time
+            final combinedDateTime = DateTime(
+              selectedDate!.year,
+              selectedDate!.month,
+              selectedDate!.day,
+              selectedTime!.hour,
+              selectedTime!.minute,
+            );
+
+            // Format as ISO 8601 with milliseconds and Z timezone
+            final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(combinedDateTime);
+
+            final result = await sl<CreateAppVacUseCase>().call(params: CreateAppVacReqParams(
+                customerId: _customerId!,
+                petId: widget.petId,
+                appointmentDate: formattedDate,
+                serviceType: widget.serviceType,
+                location: widget.location,
+                address: "Địa chỉ mặc định", // Sử dụng địa chỉ mặc định thay vì nhập
+                diseaseId: _selectedDiseaseId!
+            ));
+
+            return result;
+
+          } catch (e) {
+            debugPrint('Error creating vaccination schedule: $e');
+            _showSnackBar('Đã xảy ra lỗi: $e', isError: true);
+            rethrow;
+          }
+        },
+        title: 'Đặt lịch ngay',
+        onSuccess: () {
+          _showSnackBar('Đặt lịch thành công');
+          AppNavigator.pushAndRemove(context, MainPage());
+        },
+        onFailure: (error) {
+          debugPrint('Error creating vaccination schedule: $error');
+          _showSnackBar(error, isError: true);
+        },
+      ),
+    );
+
   }
 
   // Phương thức lấy customerId từ SharedPreferences
@@ -400,7 +685,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
   }
 
   // Hàm hiển thị thông báo ở phía trên màn hình
-  void _showSnackBar(String message, {bool isError = false}) {
+  void _showSnackBar(String message, {bool isError = false, IconData? icon, Color? color}) {
     // Hủy bỏ thông báo hiện tại (nếu có)
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -416,11 +701,15 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
         child: Material(
           elevation: 4.0,
           borderRadius: BorderRadius.circular(8),
-          color: isError ? Colors.red : Colors.green,
+          color: isError ? Colors.red : color ?? Colors.green,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
+                if (icon != null) ...[
+                  Icon(icon, color: Colors.white, size: 20),
+                  SizedBox(width: 8),
+                ],
                 Expanded(
                   child: Text(
                     message,
@@ -454,4 +743,13 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
       overlayEntry?.remove();
     });
   }
+}
+
+class TimeOfDayRange {
+  final TimeOfDay start;
+  final TimeOfDay end;
+  final Color color;
+  final String label;
+
+  TimeOfDayRange(this.start, this.end, this.color, this.label);
 }

@@ -7,6 +7,7 @@ import '../../../service_locator.dart';
 
 abstract class AppointmentService {
   Future<Either> getAppointmentByCustomerAndStatus(int customerId, String status);
+  Future<Either> getAppointmentById(int appointmentId);
 }
 
 class AppointmentServiceImpl extends AppointmentService {
@@ -24,5 +25,22 @@ class AppointmentServiceImpl extends AppointmentService {
       return Left('Lỗi không xác định: $e');
     }
   }
+
+  @override
+  Future<Either> getAppointmentById(int appointmentId) async {
+    try {
+      var response = await sl<DioClient>().get(
+        '${ApiUrl.getAppointmentById}/$appointmentId',
+      );
+
+      return Right(response.data);
+    } on DioException catch (e) {
+      return Left('Lỗi mạng: ${e.message}');
+    } catch (e) {
+      return Left('Lỗi không xác định: $e');
+    }
+  }
+
+
 
 }
