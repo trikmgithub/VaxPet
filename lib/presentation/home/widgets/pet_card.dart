@@ -122,23 +122,12 @@ class Pets extends StatelessWidget {
               final petsToShow = state.petsForCurrentPage;
 
               // Tạo column chứa danh sách thú cưng và điều khiển phân trang
-              return Column(
-                children: [
-                  // Danh sách thú cưng với RefreshIndicator
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () => _refreshPets(context),
-                      color: AppColors.primary,
-                      child:
-                          !isSmallScreen
-                              ? _buildGridView(petsToShow, isSmallScreen)
-                              : _buildListView(petsToShow, isSmallScreen),
-                    ),
-                  ),
-
-                  // Điều khiển phân trang
-                  _buildPaginationControls(context, state),
-                ],
+              return RefreshIndicator(
+                onRefresh: () => _refreshPets(context),
+                color: AppColors.primary,
+                child: !isSmallScreen
+                  ? _buildGridViewWithPagination(petsToShow, state, isSmallScreen)
+                  : _buildListViewWithPagination(petsToShow, state, isSmallScreen),
               );
             }
             if (state is PetsError) {
@@ -220,6 +209,67 @@ class Pets extends StatelessWidget {
     );
   }
 
+  // Widget hiển thị danh sách thú cưng dạng danh sách kèm điều khiển phân trang ở cuối
+  Widget _buildListViewWithPagination(List<PetEntity> pets, PetsLoaded state, bool isSmallScreen) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      // +1 để thêm phần phân trang ở cuối
+      itemCount: pets.length + 1,
+      itemBuilder: (context, index) {
+        // Nếu đến cuối danh sách thì hiển thị điều khiển phân trang
+        if (index == pets.length) {
+          return _buildPaginationControls(context, state);
+        }
+        // Ngược lại hiển thị thẻ thú cưng
+        return PetCard(
+          pet: pets[index],
+          isSmallScreen: isSmallScreen,
+          deletePetCubit: context.read<DeletePetCubit>()
+        );
+      },
+    );
+  }
+
+  // Widget hiển thị danh sách thú cưng dạng lưới kèm điều khiển phân trang ở cuối
+  Widget _buildGridViewWithPagination(List<PetEntity> pets, PetsLoaded state, bool isSmallScreen) {
+    // Không thể thêm trực tiếp vào GridView.builder nên dùng CustomScrollView
+    return Builder(
+      builder: (BuildContext context) {
+        return CustomScrollView(
+          slivers: [
+            // Phần grid view hiển thị danh sách thẻ thú cưng
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Hiển thị 2 thẻ thú cưng mỗi hàng
+                  childAspectRatio: 1.75, // Tỷ lệ khung hình
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return PetCard(
+                      pet: pets[index],
+                      isSmallScreen: isSmallScreen,
+                      deletePetCubit: context.read<DeletePetCubit>()
+                    );
+                  },
+                  childCount: pets.length,
+                ),
+              ),
+            ),
+
+            // Phần điều khiển phân trang ở cuối
+            SliverToBoxAdapter(
+              child: _buildPaginationControls(context, state),
+            ),
+          ],
+        );
+      }
+    );
+  }
+
   // Widget hiển thị điều khiển phân trang
   Widget _buildPaginationControls(BuildContext context, PetsLoaded state) {
     // Lấy ra cubit để thao tác với các trang
@@ -229,17 +279,8 @@ class Pets extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            offset: const Offset(0, -2),
-            blurRadius: 6,
-          ),
-        ],
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
+        // Loại bỏ shadow để không có hiệu ứng nổi
+        // Loại bỏ borderRadius phía trên để không tạo ra hiệu ứng nổi
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

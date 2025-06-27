@@ -28,6 +28,9 @@ class ApiUrl {
   static const getAppointmentByCustomerAndStatus = '${apiV}appointment/get-appointment-by-customer-and-status';
   static const getAppointmentByPetAndStatus = '${apiV}appointment/get-appointment-by-pet-and-status';
   static const getAppointmentById = '${apiV}appointment/get-appointment-by-id';
+  static const getPastAppointmentByCusId = '${apiV}appointment/get-past-appointments-by-customer-id';
+  static const getTodayAppointmentByCusId = '${apiV}appointment/get-today-appointments-by-customer-id';
+  static const getFutureAppointmentByCusId = '${apiV}appointment/get-future-appointments-by-customer-id';
   //Post
   static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
   //Put

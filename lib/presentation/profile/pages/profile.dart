@@ -20,41 +20,103 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Lấy kích thước màn hình để thiết kế responsive
+    final Size screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tài khoản'),
-        centerTitle: true,
-        backgroundColor: AppColors.primary, // Thêm màu nền cho AppBar
-        titleTextStyle: const TextStyle(
-          color:
-              Colors
-                  .white, // Thay đổi màu chữ thành trắng để tương phản với nền
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        // Thêm các icon cũng có màu trắng
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: SafeArea(
+        // Tắt padding top của SafeArea để loại bỏ khoảng trắng trên cùng
+        top: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _editCustomerInfo(context),
-              const SizedBox(height: 4),
-              _membership(context),
-              const SizedBox(height: 4),
-              _historyBuy(context),
-              const SizedBox(height: 4),
-              _addressVaxPet(context),
-              const SizedBox(height: 4),
-              _help(context),
-              const SizedBox(height: 4),
-              _setPassword(context),
-              const SizedBox(height: 16),
-              _buttonLogout(context),
+              // Phần header với avatar và thông tin cơ bản
+              _buildProfileHeader(context),
+              // Phần menu tùy chọn
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8, bottom: 12),
+                      child: Text(
+                        'Tài khoản của bạn',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    _buildMenuCard(context, [
+                      _buildMenuItem(
+                        context,
+                        'Thông tin cá nhân',
+                        Icons.person_outline,
+                        () => AppNavigator.push(context, const CustomerProfilePage()),
+                      ),
+                      const Divider(height: 1),
+                      _buildMenuItem(
+                        context,
+                        'Hạng thành viên',
+                        Icons.card_membership,
+                        () => AppNavigator.push(context, const MembershipPage()),
+                      ),
+                      const Divider(height: 1),
+                      _buildMenuItem(
+                        context,
+                        'Lịch sử mua hàng',
+                        Icons.shopping_bag_outlined,
+                        () => AppNavigator.push(context, const BuyHistoryPage()),
+                      ),
+                    ]),
+
+                    const SizedBox(height: 24),
+
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8, bottom: 12),
+                      child: Text(
+                        'Cài đặt & Hỗ trợ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    _buildMenuCard(context, [
+                      _buildMenuItem(
+                        context,
+                        'Địa chỉ VaxPet',
+                        Icons.location_on_outlined,
+                        () => AppNavigator.push(context, const AddressVaxPetPage()),
+                      ),
+                      const Divider(height: 1),
+                      _buildMenuItem(
+                        context,
+                        'Đổi mật khẩu',
+                        Icons.lock_outline,
+                        () => AppNavigator.push(context, const ResetPasswordPage()),
+                      ),
+                      const Divider(height: 1),
+                      _buildMenuItem(
+                        context,
+                        'Hỗ trợ',
+                        Icons.help_outline,
+                        () => AppNavigator.push(context, const HelpPage()),
+                      ),
+                    ]),
+
+                    const SizedBox(height: 32),
+
+                    // Nút đăng xuất được thiết kế đẹp hơn
+                    _buildLogoutButton(context),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -62,245 +124,159 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _editCustomerInfo(BuildContext context) {
-    return SizedBox(
-      width:
-          double
-              .infinity, // Đảm bảo nút có chiều ngang bằng với chiều ngang của màn hình
-      child: TextButton(
-        onPressed: () {
-          AppNavigator.push(context, const CustomerProfilePage());
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 16,
-          ), // Thêm padding để nút có chiều cao đẹp hơn
+  // Widget hiển thị header profile với avatar và thông tin
+  Widget _buildProfileHeader(BuildContext context) {
+    // Lấy kích thước màn hình để điều chỉnh UI responsive
+    final Size screenSize = MediaQuery.of(context).size;
+    final bool isSmallScreen = screenSize.width < 360;
+
+    return Container(
+      width: double.infinity,
+      // Sử dụng layout linh hoạt thay vì chiều cao cố định
+      padding: EdgeInsets.symmetric(
+        vertical: isSmallScreen ? screenSize.height * 0.02 : screenSize.height * 0.03,
+        horizontal: 16,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.primary,
+            AppColors.primary.withOpacity(0.8),
+          ],
         ),
-        child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Để text ở trái và icon ở phải
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Thông tin cá nhân',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+            // Avatar - kích thước tùy thuộc vào màn hình
+            CircleAvatar(
+              radius: isSmallScreen ? 38 : 42, // Giảm kích thước avatar một chút
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: isSmallScreen ? 35 : 39,
+                backgroundColor: Colors.grey.shade200,
+                child: Icon(
+                  Icons.person,
+                  size: isSmallScreen ? 38 : 44,
+                  color: AppColors.primary,
+                ),
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.primary),
+            SizedBox(height: isSmallScreen ? 10 : 14), // Giảm khoảng cách
+
+            // Tên người dùng
+            const Text(
+              'Xin chào,',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Người dùng VaxPet',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            SizedBox(height: isSmallScreen ? 5 : 6), // Giảm khoảng cách nếu màn hình nhỏ
+            // Email container - sử dụng kích thước linh hoạt
+            Container(
+              margin: EdgeInsets.only(bottom: isSmallScreen ? 10 : 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: isSmallScreen ? 3 : 5,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'user@example.com',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: isSmallScreen ? 12 : 13,
+                  height: 1.1,
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _membership(BuildContext context) {
-    return SizedBox(
-      width:
-          double
-              .infinity, // Đảm bảo nút có chiều ngang bằng với chiều ngang của màn hình
-      child: TextButton(
-        onPressed: () {
-          AppNavigator.push(context, const MembershipPage());
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 16,
-          ), // Thêm padding để nút có chiều cao đẹp hơn
-        ),
+  // Widget tạo menu item
+  Widget _buildMenuItem(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Để text ở trái và icon ở phải
           children: [
-            const Text(
-              'Hạng thành viên',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: 24,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.primary),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[500],
+              size: 24,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _historyBuy(BuildContext context) {
-    return SizedBox(
-      width:
-          double
-              .infinity, // Đảm bảo nút có chiều ngang bằng với chiều ngang của màn hình
-      child: TextButton(
-        onPressed: () {
-          AppNavigator.push(context, const BuyHistoryPage());
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 16,
-          ), // Thêm padding để nút có chiều cao đẹp hơn
-        ),
-        child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Để text ở trái và icon ở phải
-          children: [
-            const Text(
-              'Lịch sử mua hàng',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.primary),
-          ],
-        ),
+  // Widget tạo card cho menu
+  Widget _buildMenuCard(BuildContext context, List<Widget> children) {
+    return Card(
+      elevation: 1,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        children: children,
       ),
     );
   }
 
-  Widget _addressVaxPet(BuildContext context) {
-    return SizedBox(
-      width:
-          double
-              .infinity, // Đảm bảo nút có chiều ngang bằng với chiều ngang của màn hình
-      child: TextButton(
-        onPressed: () {
-          AppNavigator.push(context, const AddressVaxPetPage());
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 16,
-          ), // Thêm padding để nút có chiều cao đẹp hơn
-        ),
-        child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Để text ở trái và icon ở phải
-          children: [
-            const Text(
-              'Địa chỉ VaxPet',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.primary),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _help(BuildContext context) {
-    return SizedBox(
-      width:
-          double
-              .infinity, // Đảm bảo nút có chiều ngang bằng với chiều ngang của màn hình
-      child: TextButton(
-        onPressed: () {
-          AppNavigator.push(context, const HelpPage());
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 16,
-          ), // Thêm padding để nút có chiều cao đẹp hơn
-        ),
-        child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Để text ở trái và icon ở phải
-          children: [
-            const Text(
-              'Hỗ trợ',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.primary),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _setPassword(BuildContext context) {
-    return SizedBox(
-      width:
-          double
-              .infinity, // Đảm bảo nút có chiều ngang bằng với chiều ngang của màn hình
-      child: TextButton(
-        onPressed: () {
-          AppNavigator.push(context, const ResetPasswordPage());
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 16,
-          ), // Thêm padding để nút có chiều cao đẹp hơn
-        ),
-        child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Để text ở trái và icon ở phải
-          children: [
-            const Text(
-              'Đổi mật khẩu',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.primary),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buttonLogout(BuildContext context) {
+  // Widget nút đăng xuất
+  Widget _buildLogoutButton(BuildContext context) {
     return ReactiveButton(
       title: 'Đăng xuất',
-      activeColor: AppColors.primary,
+      activeColor: Colors.red.shade600,
       onPressed: () async {
         try {
           await sl<LogoutUseCase>().call(params: null);
-          // Trả về Either.Right khi thành công
-          return Right('success');
+          return const Right('success');
         } catch (e) {
-          // Trả về Either.Left khi thất bại
           return Left(e.toString());
         }
       },

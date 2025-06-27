@@ -14,7 +14,7 @@ class DeletePetCubit extends Cubit<DeletePetState> {
 
       result.fold(
         (error) => emit(DeletePetError(error.toString())),
-        (_) => emit(DeletePetSuccess())
+        (data) => emit(DeletePetSuccess(message: data['message']))
       );
     } catch (e) {
       emit(DeletePetError('Có lỗi xảy ra khi xóa thú cưng: ${e.toString()}'));

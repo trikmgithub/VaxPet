@@ -16,6 +16,9 @@ import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart
 import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'domain/appointment/repositories/appointment.dart';
 import 'domain/appointment/usecases/get_appointment_by_id.dart';
+import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
+import 'domain/appointment/usecases/get_past_appointment_by_cusid.dart';
+import 'domain/appointment/usecases/get_today_appointment_by_cusid.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
@@ -71,5 +74,8 @@ void setupServiceLocator() {
   sl.registerSingleton<GetDiseaseBySpeciesUseCase>(GetDiseaseBySpeciesUseCase());
   sl.registerSingleton<GetVaccineAppointmentNoteUseCase>(GetVaccineAppointmentNoteUseCase());
   sl.registerSingleton<GetAppointmentsByIdUseCase>(GetAppointmentsByIdUseCase());
+  sl.registerSingleton<GetFutureAppointmentByCusId>(GetFutureAppointmentByCusId());
+  sl.registerSingleton<GetPastAppointmentByCusId>(GetPastAppointmentByCusId());
+  sl.registerSingleton<GetTodayAppointmentByCusId>(GetTodayAppointmentByCusId());
 
 }

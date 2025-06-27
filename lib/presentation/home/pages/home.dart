@@ -222,13 +222,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           margin: const EdgeInsets.only(bottom: 60), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary,
-                blurRadius: 8,
-                spreadRadius: 1,
-              ),
-            ],
           ),
           child: FloatingActionButton(
             onPressed: () {

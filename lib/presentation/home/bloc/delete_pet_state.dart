@@ -7,7 +7,7 @@ class DeletePetLoading extends DeletePetState {}
 class DeletePetSuccess extends DeletePetState {
   final String message;
 
-  DeletePetSuccess({this.message = 'Xóa thú cưng thành công'});
+  DeletePetSuccess({required this.message});
 }
 
 class DeletePetError extends DeletePetState {
