@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vaxpet/common/extensions/string_extension.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/data/pet/models/create_pet_req_params.dart';
 import 'package:vaxpet/presentation/main/pages/main.dart';
@@ -89,108 +90,272 @@ class _CreatePetPageState extends State<CreatePetPage> {
     super.dispose();
   }
 
-  // Hàm riêng để xử lý việc viết hoa chữ cái đầu của mỗi từ
-  void _capitalizeText(TextEditingController controller, String value) {
-    if (value.isNotEmpty) {
-      // Tách chuỗi thành các từ và viết hoa chữ cái đầu của mỗi từ
-      final words = value.split(' ');
-      for (int i = 0; i < words.length; i++) {
-        if (words[i].isNotEmpty) {
-          words[i] = words[i][0].toUpperCase() +
-                     (words[i].length > 1 ? words[i].substring(1) : '');
-        }
-      }
+  @override
+  Widget build(BuildContext context) {
+    // Lấy kích thước màn hình để điều chỉnh giao diện responsive
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
 
-      final capitalizedValue = words.join(' ');
+    return Scaffold(
+      appBar: BasicAppbar(
+        title: const Text(
+          'Tạo hồ sơ thú cưng',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header với phần chọn ảnh - đã đổi sang màu nền trắng
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Tiêu đề section với icon
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.photo_camera,
+                            size: 20,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Thêm ảnh thú cưng',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+                      _buildImagePicker(),
+                    ],
+                  ),
+                ),
 
-      // Chỉ cập nhật nếu giá trị đã thay đổi để tránh vòng lặp vô hạn
-      if (capitalizedValue != value) {
-        // Lưu vị trí con trỏ hiện tại
-        final currentPosition = controller.selection.baseOffset;
+                // Form thông tin
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isTablet ? screenSize.width * 0.1 : 20,
+                    vertical: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Section: Thông tin cơ bản
+                      _buildSectionTitle('Thông tin cơ bản', Icons.pets),
+                      _buildCard([
+                        _buildNameField(),
+                        const SizedBox(height: 16),
+                        _buildRowFields(
+                          first: _buildSpeciesField(),
+                          second: _buildGenderField(),
+                          isTablet: isTablet,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildBreedField(),
+                      ]),
 
-        // Cập nhật giá trị
-        controller.text = capitalizedValue;
+                      const SizedBox(height: 24),
 
-        // Đặt lại vị trí con trỏ, điều chỉnh nếu cần thiết
-        if (currentPosition <= capitalizedValue.length) {
-          controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: currentPosition),
-          );
-        }
-      }
+                      // Section: Chi tiết thêm
+                      _buildSectionTitle('Chi tiết thú cưng', Icons.description),
+                      _buildCard([
+                        _buildDateOfBirthField(),
+                        const SizedBox(height: 16),
+                        _buildRowFields(
+                          first: _buildWeightField(),
+                          second: _buildColorField(),
+                          isTablet: isTablet,
+                        ),
+                        const SizedBox(height: 8),
+                        _buildSterilizedField(),
+                      ]),
+
+                      const SizedBox(height: 24),
+
+                      // Section: Thông tin nơi ở
+                      _buildSectionTitle('Thông tin nơi ở', Icons.home),
+                      _buildCard([
+                        _buildPlaceToLiveField(),
+                        const SizedBox(height: 16),
+                        _buildRowFields(
+                          first: _buildPlaceOfBirthField(),
+                          second: _buildNationalityField(),
+                          isTablet: isTablet,
+                        ),
+                      ]),
+
+                      const SizedBox(height: 30),
+
+                      // Button submit
+                      _buildSubmitButton(),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget để tạo tiêu đề section
+  Widget _buildSectionTitle(String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10, left: 5),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: AppColors.primary,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget để tạo card chứa các trường
+  Widget _buildCard(List<Widget> children) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
+  }
+
+  // Widget để tạo layout 2 trường trên 1 hàng (responsive)
+  Widget _buildRowFields({
+    required Widget first,
+    required Widget second,
+    required bool isTablet,
+  }) {
+    if (isTablet) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: first),
+          const SizedBox(width: 16),
+          Expanded(child: second),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          first,
+          const SizedBox(height: 16),
+          second,
+        ],
+      );
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: BasicAppbar(
-        title: const Text('Tạo hồ sơ thú cưng'),
-      ),
-      body: SafeArea (
-        minimum: const EdgeInsets.only(
-          top: 0,
-          right: 24,
-          left: 24,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _image(),
-              const SizedBox(height: 10),
-              _name(),
-              const SizedBox(height: 20),
-              _species(),
-              const SizedBox(height: 20),
-              _breed(),
-              const SizedBox(height: 20),
-              _gender(),
-              const SizedBox(height: 20),
-              _dateOfBirth(),
-              const SizedBox(height: 20),
-              _placeToLive(),
-              const SizedBox(height: 20),
-              _placeOfBirth(),
-              const SizedBox(height: 20),
-              _weight(),
-              const SizedBox(height: 20),
-              _color(),
-              const SizedBox(height: 20),
-              _nationality(),
-              const SizedBox(height: 20),
-              _isSterilized(),
-              const SizedBox(height: 20),
-              _buttonCreatePet(),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      )
-    );
-  }
-
-  Widget _name() {
+  Widget _buildNameField() {
     return TextFormField(
       controller: _nameController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Tên thú cưng *',
         hintText: 'Nhập tên thú cưng của bạn',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.pets_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
-      // textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
-      onChanged: (value) {
-        _capitalizeText(_nameController, value);
-      },
+      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
-  Widget _species() {
+  Widget _buildSpeciesField() {
     return DropdownButtonFormField<String>(
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Loài thú cưng *',
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.filter_list, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
+      icon: Icon(Icons.arrow_drop_down, color: AppColors.primary),
+      dropdownColor: Colors.white,
+      menuMaxHeight: 300,
+      alignment: AlignmentDirectional.center,
+      elevation: 2,
+      isExpanded: true,
       value: _selectedSpecies,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -198,14 +363,17 @@ class _CreatePetPageState extends State<CreatePetPage> {
         }
         return null;
       },
-      items: ['Chó', 'Mèo'].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items: [
+        DropdownMenuItem<String>(
+          value: 'Chó',
+          child: _buildDropdownItem(Icons.pets, const Color(0xFF6FB3D6), 'Chó'),
+        ),
+        DropdownMenuItem<String>(
+          value: 'Mèo',
+          child: _buildDropdownItem(Icons.pets, const Color(0xFF90C290), 'Mèo'),
+        ),
+      ],
       onChanged: (String? value) {
-        // Cập nhật giá trị đã chọn và rebuild UI
         setState(() {
           _selectedSpecies = value;
         });
@@ -213,25 +381,68 @@ class _CreatePetPageState extends State<CreatePetPage> {
     );
   }
 
-  Widget _breed() {
-    return TextFormField(
-      controller: _breedController,
-      decoration: const InputDecoration(
-        labelText: 'Giống thú cưng *',
-        hintText: 'Nhập giống thú cưng của bạn',
-      ),
-      onChanged: (value) {
-        _capitalizeText(_breedController, value);
-      }
+  Widget _buildDropdownItem(IconData icon, Color color, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min, // Make the row take minimum width
+      children: [
+        Icon(icon, color: color, size: 16), // Reduced icon size from 20 to 16
+        const SizedBox(width: 6), // Reduced spacing from 10 to 6
+        Text(
+          text,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 
-  Widget _gender() {
-    return DropdownButtonFormField<String>(
-      decoration: const InputDecoration(
-        labelText: 'Giới tính *',
-        border: OutlineInputBorder(),
+  Widget _buildBreedField() {
+    return TextFormField(
+      controller: _breedController,
+      decoration: InputDecoration(
+        labelText: 'Giống thú cưng *',
+        hintText: 'Nhập giống thú cưng của bạn',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.category_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
+      textCapitalization: TextCapitalization.words,
+    );
+  }
+
+  Widget _buildGenderField() {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: 'Giới tính *',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.filter_list, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+      ),
+      icon: Icon(Icons.arrow_drop_down, color: AppColors.primary),
+      dropdownColor: Colors.white,
+      elevation: 2,
+      isExpanded: true,
       value: _selectedGender,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -239,14 +450,17 @@ class _CreatePetPageState extends State<CreatePetPage> {
         }
         return null;
       },
-      items: ['Đực', 'Cái'].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items: [
+        DropdownMenuItem<String>(
+          value: 'Đực',
+          child: _buildDropdownItem(Icons.male, Colors.blue, 'Đực'),
+        ),
+        DropdownMenuItem<String>(
+          value: 'Cái',
+          child: _buildDropdownItem(Icons.female, Colors.pink, 'Cái'),
+        ),
+      ],
       onChanged: (String? value) {
-        // Cập nhật giá trị đã chọn và rebuild UI
         setState(() {
           _selectedGender = value;
         });
@@ -254,13 +468,27 @@ class _CreatePetPageState extends State<CreatePetPage> {
     );
   }
 
-  Widget _dateOfBirth() {
+  Widget _buildDateOfBirthField() {
     return TextFormField(
       controller: _dateOfBirthController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Ngày sinh *',
         hintText: 'Nhập ngày sinh thú cưng của bạn',
-        suffixIcon: Icon(Icons.calendar_today),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.cake_outlined, color: AppColors.primary),
+        suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
       keyboardType: TextInputType.datetime,
       onTap: () async {
@@ -270,6 +498,17 @@ class _CreatePetPageState extends State<CreatePetPage> {
           initialDate: DateTime.now(),
           firstDate: DateTime(2000),
           lastDate: DateTime.now(),
+          builder: (context, child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: AppColors.primary,
+                ),
+                dialogTheme: DialogThemeData(backgroundColor: Colors.white),
+              ),
+              child: child!,
+            );
+          },
         );
         if (pickedDate != null) {
           // format date dd/mm/yyyy
@@ -277,43 +516,67 @@ class _CreatePetPageState extends State<CreatePetPage> {
           _dateOfBirthController.text = formattedDate;
         }
       },
+      readOnly: true,
     );
   }
 
-  Widget _placeToLive() {
+  Widget _buildPlaceToLiveField() {
     return TextFormField(
       controller: _placeToLiveController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Nơi ở *',
         hintText: 'Nhập nơi ở thú cưng của bạn',
-        suffixIcon: Icon(Icons.place),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.home_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
-      onChanged: (value) {
-        _capitalizeText(_placeToLiveController, value);
-      },
+      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
-  Widget _placeOfBirth() {
+  Widget _buildPlaceOfBirthField() {
     return TextFormField(
       controller: _placeOfBirthController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Nơi sinh *',
         hintText: 'Nhập nơi sinh thú cưng của bạn',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.place_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
-      onChanged: (value) {
-        _capitalizeText(_placeOfBirthController, value);
-      },
+      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
-  Widget _image() {
+  Widget _buildImagePicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,  // Thay đổi từ start sang center
       children: [
         const Text(
           'Hình ảnh thú cưng',
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16, color: Colors.black87),
         ),
         const SizedBox(height: 10),  // Thêm khoảng cách giữa text và vòng tròn
         Center(  // Bọc InkWell trong Center để đảm bảo căn giữa
@@ -346,74 +609,129 @@ class _CreatePetPageState extends State<CreatePetPage> {
     );
   }
 
-  Widget _weight() {
+  Widget _buildWeightField() {
     return TextFormField(
       controller: _weightController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Cân nặng (Kg) *',
         hintText: 'Nhập cân nặng thú cưng của bạn',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.monitor_weight_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.numberWithOptions(decimal: true),
     );
   }
 
-  Widget _color() {
+  Widget _buildColorField() {
     return TextFormField(
       controller: _colorController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Màu sắc *',
         hintText: 'Nhập màu sắc thú cưng của bạn',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.color_lens_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
-      onChanged: (value) {
-        _capitalizeText(_colorController, value);
-      },
+      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
-  Widget _nationality() {
+  Widget _buildNationalityField() {
     return TextFormField(
       controller: _nationalityController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Quốc tịch *',
         hintText: 'Nhập quốc tịch thú cưng của bạn',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        prefixIcon: Icon(Icons.public_outlined, color: AppColors.primary),
+        filled: true,
+        fillColor: Colors.grey.shade50,
       ),
-      onChanged: (value) {
-        _capitalizeText(_nationalityController, value);
-      },
+      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
-  Widget _isSterilized() {
-    return Row(
-      children: [
-        Expanded(
-          child: SwitchListTile(
-            title: const Text(
+  Widget _buildSterilizedField() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.grey.shade50,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.medical_services_outlined, color: AppColors.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
               'Đã thiến/triệt sản',
               style: TextStyle(
                 fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
             ),
+          ),
+          Switch(
             value: _isSterilizedValue,
             onChanged: (bool value) {
               setState(() {
                 _isSterilizedValue = value;
               });
             },
-            contentPadding: EdgeInsets.zero,
+            activeColor: AppColors.primary,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buttonCreatePet() {
+  Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 2,
         ),
         onPressed: _isLoading ? null : () async {
           // Thiết lập trạng thái loading
@@ -446,17 +764,17 @@ class _CreatePetPageState extends State<CreatePetPage> {
             // Tạo tham số cho API call
             final params = CreatePetReqParams(
               customerId: _customerId!,
-              name: _nameController.text.trim(),
+              name: _nameController.text.trim().capitalizeFirstLetter(),
               species: _selectedSpecies!,
-              breed: _breedController.text.trim(),
+              breed: _breedController.text.trim().capitalizeFirstLetter(),
               gender: _selectedGender!,
               dateOfBirth: _dateOfBirthController.text.trim(),
-              placeToLive: _placeToLiveController.text.trim(),
-              placeOfBirth: _placeOfBirthController.text.trim(),
+              placeToLive: _placeToLiveController.text.trim().capitalizeFirstLetter(),
+              placeOfBirth: _placeOfBirthController.text.trim().capitalizeFirstLetter(),
               image: image?.path,
               weight: _weightController.text.trim(),
-              color: _colorController.text.trim(),
-              nationality: _nationalityController.text.trim(),
+              color: _colorController.text.trim().capitalizeFirstLetter(),
+              nationality: _nationalityController.text.trim().capitalizeFirstLetter(),
               isSterilized: _isSterilizedValue,
             );
 

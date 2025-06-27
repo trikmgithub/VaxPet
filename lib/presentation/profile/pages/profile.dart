@@ -146,6 +146,17 @@ class ProfilePage extends StatelessWidget {
             AppColors.primary.withOpacity(0.8),
           ],
         ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: SafeArea(
         child: Column(
@@ -271,7 +282,7 @@ class ProfilePage extends StatelessWidget {
   Widget _buildLogoutButton(BuildContext context) {
     return ReactiveButton(
       title: 'Đăng xuất',
-      activeColor: Colors.red.shade600,
+      activeColor: Colors.red.shade400,
       onPressed: () async {
         try {
           await sl<LogoutUseCase>().call(params: null);

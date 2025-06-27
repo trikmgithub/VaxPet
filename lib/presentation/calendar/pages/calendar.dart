@@ -41,6 +41,14 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
             width: double.infinity,
             decoration: BoxDecoration(
               color: primaryColor,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primary,
+                  AppColors.primary.withOpacity(0.8),
+                ],
+              ),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),

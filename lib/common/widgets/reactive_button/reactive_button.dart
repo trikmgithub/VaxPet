@@ -76,7 +76,7 @@ class ReactiveButton extends StatelessWidget {
         child: Text(
           title ?? 'Submit',
           style: const TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontWeight: FontWeight.w400
           ),
         )

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vaxpet/common/bloc/bottom_nav_bar/bottom_nav_bar_bloc.dart';
+import 'package:vaxpet/common/bloc/bottom_nav_bar/bottom_nav_bar_event.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/presentation/home/widgets/pet_card.dart';
@@ -74,16 +77,23 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary.withAlpha((0.9 * 255).toInt()),
-                    AppColors.primary.withAlpha((0.8 * 255).toInt()),
+                    AppColors.primary,
+                    AppColors.primary.withOpacity(0.8),
                   ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
             ),
           ),
@@ -109,7 +119,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: Colors.white),
             onPressed: () {
-              // Notification action
+              // Chuyển tab đến Calendar Page (index 1) thay vì push trang mới
+              context.read<BottomNavBarBloc>().add(NavigateTo(index: 1));
             },
             tooltip: 'Thông báo',
           ),
@@ -219,7 +230,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       floatingActionButton: ScaleTransition(
         scale: _animation,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 60), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
+          margin: const EdgeInsets.only(bottom: 70), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
           ),
