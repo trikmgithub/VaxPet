@@ -3,6 +3,7 @@ import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
+import '../../appointment_microchip/pages/appointment_microchip_choice.dart';
 import '../../vaccine_appointment_note/pages/vaccine_appointment_note.dart';
 import 'choice_service.dart';
 
@@ -130,7 +131,13 @@ class PetDetailsPage extends StatelessWidget {
                     ServiceItem(
                       title: 'Microchip',
                       icon: Icons.qr_code,
-                      onTap: () {},
+                      onTap: () {
+                        AppNavigator.push(context, AppointmentMicrochipChoicePage(
+                          petName: petName,
+                          petId: petId,
+                          petSpecies: petSpecies,
+                        ));
+                      },
                     ),
                     ServiceItem(
                       title: 'Chứng nhận sức khỏe',
@@ -229,7 +236,7 @@ class PetDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 0,
             offset: Offset(0, 2),

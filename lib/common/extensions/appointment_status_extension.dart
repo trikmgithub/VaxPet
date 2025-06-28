@@ -4,27 +4,27 @@ extension AppointmentStatusExtension on int {
   AppointmentStatusEnum? get toAppointmentStatus {
     switch (this) {
       case 1:
-        return AppointmentStatusEnum.Processing;
+        return AppointmentStatusEnum.processing;
       case 2:
-        return AppointmentStatusEnum.Confirmed;
+        return AppointmentStatusEnum.confirmed;
       case 3:
-        return AppointmentStatusEnum.CheckedIn;
+        return AppointmentStatusEnum.checkedIn;
       case 4:
-        return AppointmentStatusEnum.Injected;
+        return AppointmentStatusEnum.injected;
       case 5:
-        return AppointmentStatusEnum.Implanted;
+        return AppointmentStatusEnum.implanted;
       case 6:
-        return AppointmentStatusEnum.Paid;
+        return AppointmentStatusEnum.paid;
       case 7:
-        return AppointmentStatusEnum.Applied;
+        return AppointmentStatusEnum.applied;
       case 8:
-        return AppointmentStatusEnum.Done;
+        return AppointmentStatusEnum.done;
       case 9:
-        return AppointmentStatusEnum.Completed;
+        return AppointmentStatusEnum.completed;
       case 10:
-        return AppointmentStatusEnum.Cancelled;
+        return AppointmentStatusEnum.cancelled;
       case 11:
-        return AppointmentStatusEnum.Rejected;
+        return AppointmentStatusEnum.rejected;
       default:
         return null;
     }
@@ -33,27 +33,27 @@ extension AppointmentStatusExtension on int {
   String? get toAppointmentStatusString {
     final appointmentStatus = toAppointmentStatus?.name;
     switch (appointmentStatus) {
-      case 'Processing':
+      case 'processing':
         return 'Đang xử lý';
-      case 'Confirmed':
+      case 'confirmed':
         return 'Đã xác nhận';
-      case 'CheckedIn':
+      case 'checkedIn':
         return 'Đã đến';
-      case 'Injected':
+      case 'injected':
         return 'Đã tiêm';
-      case 'Implanted':
+      case 'implanted':
         return 'Đã cấy ghép';
-      case 'Paid':
+      case 'paid':
         return 'Đã thanh toán';
-      case 'Applied':
+      case 'applied':
         return 'Đã áp dụng';
-      case 'Done':
+      case 'done':
         return 'Hoàn thành';
-      case 'Completed':
+      case 'completed':
         return 'Hoàn tất';
-      case 'Cancelled':
+      case 'cancelled':
         return 'Đã hủy';
-      case 'Rejected':
+      case 'rejected':
         return 'Đã từ chối';
       default:
         return null;

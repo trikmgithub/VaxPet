@@ -143,7 +143,7 @@ class ProfilePage extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: [
             AppColors.primary,
-            AppColors.primary.withOpacity(0.8),
+            AppColors.primary.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: const BorderRadius.only(
@@ -152,7 +152,7 @@ class ProfilePage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
@@ -206,7 +206,7 @@ class ProfilePage extends StatelessWidget {
                 vertical: isSmallScreen ? 3 : 5,
               ),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

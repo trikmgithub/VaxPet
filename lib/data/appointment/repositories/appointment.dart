@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:vaxpet/common/helper/mapper/past_appointment_mapper.dart';
 
 import '../../../common/helper/mapper/future_appointment_mapper.dart';

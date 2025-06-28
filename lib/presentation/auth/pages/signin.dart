@@ -66,7 +66,7 @@ class SigninPage extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primary.withOpacity(0.1), Colors.transparent],
+              colors: [AppColors.primary.withValues(alpha: 0.1), Colors.transparent],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -99,7 +99,7 @@ class SigninPage extends StatelessWidget {
   Widget _buildFormCard(Size screenSize, BuildContext context) {
     return Card(
       elevation: 8,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha: 0.4),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -132,7 +132,7 @@ class SigninPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -178,7 +178,7 @@ class SigninPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -263,7 +263,7 @@ class SigninPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -321,7 +321,7 @@ class SigninPage extends StatelessWidget {
       children: [
         Expanded(
           child: Divider(
-            color: AppColors.textGray.withOpacity(0.3),
+            color: AppColors.textGray.withValues(alpha: 0.3),
             thickness: 1,
           ),
         ),
@@ -338,7 +338,7 @@ class SigninPage extends StatelessWidget {
         ),
         Expanded(
           child: Divider(
-            color: AppColors.textGray.withOpacity(0.3),
+            color: AppColors.textGray.withValues(alpha: 0.3),
             thickness: 1,
           ),
         ),
@@ -354,7 +354,7 @@ class SigninPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -371,7 +371,7 @@ class SigninPage extends StatelessWidget {
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+            side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
           ),
         ),
         child: Row(

@@ -111,7 +111,7 @@ class _VaccinationScheduleClinicPageState extends State<VaccinationScheduleClini
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             spreadRadius: 0,
                             offset: Offset(0, 2),
@@ -173,7 +173,7 @@ class _VaccinationScheduleClinicPageState extends State<VaccinationScheduleClini
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       spreadRadius: 0,
                       offset: Offset(0, 2),
@@ -529,7 +529,7 @@ class _VaccinationScheduleClinicPageState extends State<VaccinationScheduleClini
       return Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
+          color: Colors.green.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.green.shade300),
         ),
@@ -554,7 +554,7 @@ class _VaccinationScheduleClinicPageState extends State<VaccinationScheduleClini
       return Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.orange.withOpacity(0.1),
+          color: Colors.orange.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.orange.shade300),
         ),

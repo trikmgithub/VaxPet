@@ -126,7 +126,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.grey.withValues(alpha: 0.1),
                         spreadRadius: 1,
                         blurRadius: 5,
                         offset: const Offset(0, 2),
@@ -266,7 +266,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -416,7 +416,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words,
+      textCapitalization: TextCapitalization.sentences,
     );
   }
 
@@ -541,7 +541,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -566,7 +566,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -765,7 +765,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
             final params = CreatePetReqParams(
               customerId: _customerId!,
               name: _nameController.text.trim().capitalizeFirstLetter(),
-              species: _selectedSpecies!,
+              species: _selectedSpecies! == "Chó" ? "Dog" : "Cat",
               breed: _breedController.text.trim().capitalizeFirstLetter(),
               gender: _selectedGender!,
               dateOfBirth: _dateOfBirthController.text.trim(),

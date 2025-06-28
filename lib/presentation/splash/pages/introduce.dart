@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:vaxpet/presentation/splash/pages/register_signin.dart';
 
 import '../../../common/helper/navigation/app_navigation.dart';
-import '../../../core/configs/assets/app_images.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_colors.dart';
 
@@ -180,7 +179,7 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
         'Theo dõi lịch tiêm chủng và chăm sóc sức khỏe cho thú cưng dễ dàng hơn bao giờ hết.',
         style: TextStyle(
           fontSize: isSmallScreen ? 14 : 16,
-          color: AppColors.textGray.withOpacity(0.8),
+          color: AppColors.textGray.withValues(alpha: 0.8),
           height: 1.5,
         ),
         textAlign: TextAlign.center,
@@ -203,7 +202,7 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 2,
-          shadowColor: AppColors.primary.withOpacity(0.4),
+          shadowColor: AppColors.primary.withValues(alpha: 0.4),
         ),
         child: Text(
           'Bắt đầu',

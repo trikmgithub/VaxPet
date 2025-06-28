@@ -46,7 +46,7 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
                 end: Alignment.bottomCenter,
                 colors: [
                   AppColors.primary,
-                  AppColors.primary.withOpacity(0.8),
+                  AppColors.primary.withValues(alpha: 0.8),
                 ],
               ),
               borderRadius: const BorderRadius.only(
@@ -55,7 +55,7 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   blurRadius: 5,
                   offset: const Offset(0, 3),
                 ),
@@ -109,7 +109,7 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
           ),
 
           // Đường kẻ mỏng ngăn cách TabBar và nội dung
-          Divider(height: 1, thickness: 1, color: Colors.grey.withOpacity(0.2)),
+          Divider(height: 1, thickness: 1, color: Colors.grey.withValues(alpha: 0.2)),
 
           // Phần nội dung
           Expanded(

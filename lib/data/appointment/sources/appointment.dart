@@ -1,7 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-
 import '../../../core/constant/api_url.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../service_locator.dart';

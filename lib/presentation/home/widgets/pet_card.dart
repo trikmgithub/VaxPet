@@ -12,22 +12,17 @@ import '../bloc/pets_state.dart';
 String calculateAge(String? dob) {
   if (dob == null || dob.isEmpty) return 'Không rõ';
   try {
-    // Thử phân tích với định dạng ISO nếu không phải dd/mm/yyyy
     final birthDate = DateTime.parse(dob);
     final today = DateTime.now();
 
-    // Tính số tuổi
     int age = today.year - birthDate.year;
     if (today.month < birthDate.month ||
         (today.month == birthDate.month && today.day < birthDate.day)) {
       age--;
     }
 
-    // Nếu dưới 1 tuổi, hiển thị theo số tuần
     if (age < 1) {
-      // Tính số ngày tuổi
       final difference = today.difference(birthDate).inDays;
-      // Chuyển đổi sang tuần (1 tuần = 7 ngày)
       final weeks = (difference / 7).floor();
       if (weeks == 0) {
         return '$age tuổi ($difference ngày)';
@@ -62,17 +57,13 @@ class Pets extends StatelessWidget {
       child: BlocListener<DeletePetCubit, DeletePetState>(
         listener: (context, state) {
           if (state is DeletePetSuccess) {
-            // Sử dụng Overlay để hiển thị thông báo phía trên màn hình
             _showTopNotification(
               context: context,
               message: state.message,
               isSuccess: true,
             );
-
-            // Làm mới danh sách thú cưng
             context.read<PetsCubit>().refreshPets(accountId);
           } else if (state is DeletePetError) {
-            // Hiển thị thông báo lỗi phía trên màn hình
             _showTopNotification(
               context: context,
               message: state.message,
@@ -83,91 +74,183 @@ class Pets extends StatelessWidget {
         child: BlocBuilder<PetsCubit, PetsState>(
           builder: (context, state) {
             if (state is PetsLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary)
+              );
             }
+            
             if (state is PetsLoaded) {
-              if (state.pets.isEmpty) {
-                return RefreshIndicator(
-                  onRefresh: () => _refreshPets(context),
-                  color: AppColors.primary,
-                  child: ListView(
-                    children: const [
-                      SizedBox(
-                        height: 200,
-                      ), // Cho phép kéo xuống để refresh ngay cả khi không có dữ liệu
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.pets, size: 64, color: Colors.grey),
-                            SizedBox(height: 16),
-                            Text(
-                              'Không có thú cưng nào',
-                              style: TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Kéo xuống để làm mới',
-                              style: TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              // Lấy danh sách thú cưng cho trang hiện tại
-              final petsToShow = state.petsForCurrentPage;
-
-              // Tạo column chứa danh sách thú cưng và điều khiển phân trang
               return RefreshIndicator(
                 onRefresh: () => _refreshPets(context),
                 color: AppColors.primary,
-                child: !isSmallScreen
-                  ? _buildGridViewWithPagination(petsToShow, state, isSmallScreen)
-                  : _buildListViewWithPagination(petsToShow, state, isSmallScreen),
+                backgroundColor: Colors.white,
+                strokeWidth: 2.5,
+                child: state.pets.isEmpty 
+                  ? _buildEmptyState()
+                  : _buildPetsList(state.pets),
               );
             }
+            
             if (state is PetsError) {
               return RefreshIndicator(
                 onRefresh: () => _refreshPets(context),
                 color: AppColors.primary,
-                child: ListView(
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height / 3),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 64,
-                            color: Colors.red,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            state.message,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Kéo xuống để thử lại',
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                child: _buildErrorState(state.message),
               );
             }
+            
             return const SizedBox.shrink();
           },
         ),
       ),
     );
+  }
+
+  // Widget hiển thị khi không có dữ liệu
+  Widget _buildEmptyState() {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        SizedBox(height: 100),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.pets,
+                  size: 64,
+                  color: AppColors.primary.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Chưa có thú cưng nào',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Nhấn nút "+" để thêm thú cưng đầu tiên',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[500],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Kéo xuống để làm mới',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.primary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widget hiển thị khi có lỗi
+  Widget _buildErrorState(String message) {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        SizedBox(height: 100),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Có lỗi xảy ra',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[500],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Kéo xuống để thử lại',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.primary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widget hiển thị danh sách thú cưng
+  Widget _buildPetsList(List<PetEntity> pets) {
+    if (isSmallScreen) {
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: pets.length,
+        itemBuilder: (context, index) {
+          return PetCard(
+            pet: pets[index],
+            isSmallScreen: isSmallScreen,
+            deletePetCubit: context.read<DeletePetCubit>(),
+          );
+        },
+      );
+    } else {
+      return GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.75,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+        ),
+        itemCount: pets.length,
+        itemBuilder: (context, index) {
+          return PetCard(
+            pet: pets[index],
+            isSmallScreen: isSmallScreen,
+            deletePetCubit: context.read<DeletePetCubit>(),
+          );
+        },
+      );
+    }
   }
 
   // Phương thức để làm mới dữ liệu
@@ -177,257 +260,17 @@ class Pets extends StatelessWidget {
     return Future.value();
   }
 
-  // Widget hiển thị danh sách thú cưng dạng lưới (cho màn hình lớn)
-  Widget _buildGridView(List<PetEntity> pets, bool isSmallScreen) {
-    if (pets.isEmpty) {
-    }
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Hiển thị 2 thẻ thú cưng mỗi hàng
-        childAspectRatio: 1.75, // Tỷ lệ khung hình
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: pets.length,
-      itemBuilder: (context, index) {
-        return PetCard(pet: pets[index], isSmallScreen: isSmallScreen, deletePetCubit: context.read<DeletePetCubit>());
-      },
-    );
-  }
-
-  // Widget hiển thị danh sách thú cưng dạng danh sách (cho màn hình nhỏ)
-  Widget _buildListView(List<PetEntity> pets, bool isSmallScreen) {
-    if (pets.isEmpty) {
-    }
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: pets.length,
-      itemBuilder: (context, index) {
-        return PetCard(pet: pets[index], isSmallScreen: isSmallScreen, deletePetCubit: context.read<DeletePetCubit>());
-      },
-    );
-  }
-
-  // Widget hiển thị danh sách thú cưng dạng danh sách kèm điều khiển phân trang ở cuối
-  Widget _buildListViewWithPagination(List<PetEntity> pets, PetsLoaded state, bool isSmallScreen) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      // +1 để thêm phần phân trang ở cuối
-      itemCount: pets.length + 1,
-      itemBuilder: (context, index) {
-        // Nếu đến cuối danh sách thì hiển thị điều khiển phân trang
-        if (index == pets.length) {
-          return _buildPaginationControls(context, state);
-        }
-        // Ngược lại hiển thị thẻ thú cưng
-        return PetCard(
-          pet: pets[index],
-          isSmallScreen: isSmallScreen,
-          deletePetCubit: context.read<DeletePetCubit>()
-        );
-      },
-    );
-  }
-
-  // Widget hiển thị danh sách thú cưng dạng lưới kèm điều khiển phân trang ở cuối
-  Widget _buildGridViewWithPagination(List<PetEntity> pets, PetsLoaded state, bool isSmallScreen) {
-    // Không thể thêm trực tiếp vào GridView.builder nên dùng CustomScrollView
-    return Builder(
-      builder: (BuildContext context) {
-        return CustomScrollView(
-          slivers: [
-            // Phần grid view hiển thị danh sách thẻ thú cưng
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Hiển thị 2 thẻ thú cưng mỗi hàng
-                  childAspectRatio: 1.75, // Tỷ lệ khung hình
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return PetCard(
-                      pet: pets[index],
-                      isSmallScreen: isSmallScreen,
-                      deletePetCubit: context.read<DeletePetCubit>()
-                    );
-                  },
-                  childCount: pets.length,
-                ),
-              ),
-            ),
-
-            // Phần điều khiển phân trang ở cuối
-            SliverToBoxAdapter(
-              child: _buildPaginationControls(context, state),
-            ),
-          ],
-        );
-      }
-    );
-  }
-
-  // Widget hiển thị điều khiển phân trang
-  Widget _buildPaginationControls(BuildContext context, PetsLoaded state) {
-    // Lấy ra cubit để thao tác với các trang
-    final petsCubit = context.read<PetsCubit>();
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        // Loại bỏ shadow để không có hiệu ứng nổi
-        // Loại bỏ borderRadius phía trên để không tạo ra hiệu ứng nổi
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Hiển thị thanh tiến trình
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value:
-                  state.totalPages > 0
-                      ? state.currentPage / state.totalPages
-                      : 0,
-              backgroundColor: Colors.grey[200],
-              color: AppColors.primary,
-              minHeight: 4,
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Điều khiển phân trang
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Nút quay lại trang đầu tiên
-              if (state.totalPages > 2)
-                _buildPaginationButton(
-                  icon: Icons.first_page,
-                  onPressed:
-                      state.currentPage > 1
-                          ? () => petsCubit.goToPage(1)
-                          : null,
-                  isActive: state.currentPage > 1,
-                  tooltip: 'Trang đầu',
-                ),
-
-              // Nút quay lại trang trước
-              _buildPaginationButton(
-                icon: Icons.chevron_left,
-                onPressed:
-                    state.currentPage > 1
-                        ? () => petsCubit.previousPage()
-                        : null,
-                isActive: state.currentPage > 1,
-                tooltip: 'Trang trước',
-              ),
-
-              // Hiển thị trang hiện tại và tổng số trang
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Trang ${state.currentPage}/${state.totalPages}',
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 14 : 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
-
-              // Nút chuyển đến trang tiếp theo
-              _buildPaginationButton(
-                icon: Icons.chevron_right,
-                onPressed:
-                    state.currentPage < state.totalPages
-                        ? () => petsCubit.nextPage()
-                        : null,
-                isActive: state.currentPage < state.totalPages,
-                tooltip: 'Trang kế',
-              ),
-
-              // Nút đến trang cuối cùng
-              if (state.totalPages > 2)
-                _buildPaginationButton(
-                  icon: Icons.last_page,
-                  onPressed:
-                      state.currentPage < state.totalPages
-                          ? () => petsCubit.goToPage(state.totalPages)
-                          : null,
-                  isActive: state.currentPage < state.totalPages,
-                  tooltip: 'Trang cuối',
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget cho nút điều hướng phân trang
-  Widget _buildPaginationButton({
-    required IconData icon,
-    required VoidCallback? onPressed,
-    required bool isActive,
-    String? tooltip,
-  }) {
-    return Tooltip(
-      message: tooltip ?? '',
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(50),
-          child: Ink(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color:
-                  isActive
-                      ? AppColors.primary.withOpacity(0.1)
-                      : Colors.grey[200],
-            ),
-            child: Container(
-              width: 36,
-              height: 36,
-              alignment: Alignment.center,
-              child: Icon(
-                icon,
-                color: isActive ? AppColors.primary : Colors.grey,
-                size: 20,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   // Phương thức tạo và hiển thị thông báo ở phía trên màn hình
   void _showTopNotification({
     required BuildContext context,
     required String message,
     bool isSuccess = true,
   }) {
-    // Xóa các thông báo cũ nếu có
     _removeCurrentNotification(context);
 
-    // Tạo một OverlayEntry chứa thông báo
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        top: MediaQuery.of(context).viewPadding.top + 10, // Hiển thị ngay dưới statusbar
+        top: MediaQuery.of(context).viewPadding.top + 10,
         left: 10,
         right: 10,
         child: Material(
@@ -436,12 +279,12 @@ class Pets extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: isSuccess ? Colors.green : Colors.red,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -454,12 +297,16 @@ class Pets extends StatelessWidget {
                       Icon(
                         isSuccess ? Icons.check_circle : Icons.error_outline,
                         color: Colors.white,
+                        size: 20,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 12),
                       Flexible(
                         child: Text(
                           message,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -470,6 +317,7 @@ class Pets extends StatelessWidget {
                   child: const Icon(
                     Icons.close,
                     color: Colors.white,
+                    size: 18,
                   ),
                 ),
               ],
@@ -479,11 +327,9 @@ class Pets extends StatelessWidget {
       ),
     );
 
-    // Thêm thông báo vào Overlay và lưu lại để có thể xóa sau
     _currentNotification = overlayEntry;
     Overlay.of(context).insert(overlayEntry);
 
-    // Tự động ẩn thông báo sau 3 giây
     Future.delayed(const Duration(seconds: 3), () {
       _removeCurrentNotification(context);
     });
@@ -515,284 +361,217 @@ class PetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Xác định các màu sắc dễ thương
     final Color tagColor = _getPastelColor(pet.species ?? 'Không rõ');
 
-
-    // Sử dụng LayoutBuilder để responsive với kích thước có sẵn
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-      elevation: 2.0,
+      elevation: 3.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Lấy kích thước màn hình và kiểm tra hướng màn hình
-          final mediaQuery = MediaQuery.of(context);
-          final screenWidth = mediaQuery.size.width;
-          final screenHeight = mediaQuery.size.height;
-          final isLandscape = screenWidth > screenHeight;
-
-          // Tính toán kích thước card responsive
-          double calculatedCardWidth;
-
-          if (screenWidth < 360) {
-            // Màn hình rất nhỏ: 2 card mỗi hàng
-            calculatedCardWidth = (screenWidth - 48) / 2;
-          } else if (screenWidth < 600) {
-            // Màn hình điện thoại thông thường: 3 card mỗi hàng
-            calculatedCardWidth = (screenWidth - 64) / 3;
-          } else {
-            // Màn hình lớn: 4 card mỗi hàng
-            calculatedCardWidth = (screenWidth - 96) / 4;
-          }
-
-          // Giới hạn kích thước tối đa và tối thiểu của card
-          // Điều chỉnh kích thước dựa trên hướng màn hình
-          final double maxCardWidth = isLandscape ? 200.0 : 250.0;
-          final double cardWidth = calculatedCardWidth.clamp(80.0, maxCardWidth);
-
-          return InkWell(
-            borderRadius: BorderRadius.circular(16),
-            splashColor: tagColor.withOpacity(0.1),
-            highlightColor: tagColor.withOpacity(0.05),
-            onTap: () {
-              AppNavigator.push(
-                context,
-                PetDetailsPage(
-                  petId: pet.petId!,
-                  petName: pet.name ?? "Chưa đặt tên",
-                  petImage: pet.image,
-                  petSpecies: pet.species ?? "Không rõ",
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        splashColor: tagColor.withOpacity(0.1),
+        highlightColor: tagColor.withOpacity(0.05),
+        onTap: () {
+          AppNavigator.push(
+            context,
+            PetDetailsPage(
+              petId: pet.petId!,
+              petName: pet.name ?? "Chưa đặt tên",
+              petImage: pet.image,
+              petSpecies: pet.species ?? "Không rõ",
+            ),
+          );
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Species tag and gender icon
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              decoration: BoxDecoration(
+                color: tagColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
-              );
-            },
-            child: SizedBox(
-              width: cardWidth, // Sử dụng cardWidth để đặt kích thước
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Species tag and gender icon
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 8.0
-                    ),
-                    decoration: BoxDecoration(
-                      color: tagColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _getCuteSpeciesIcon(pet.species ?? 'Không rõ'),
+                        size: 16.0,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        pet.species ?? 'Không rõ',
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (pet.gender != null)
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        pet.gender?.toLowerCase() == 'male'
+                            ? Icons.male_rounded
+                            : Icons.female_rounded,
+                        size: 12.0,
+                        color: Colors.white,
                       ),
                     ),
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ],
+              ),
+            ),
+
+            // Avatar and info
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  // Avatar
+                  Container(
+                    width: 80.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: tagColor.withOpacity(0.2),
+                          blurRadius: 8,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                      image: pet.image != null && pet.image!.isNotEmpty
+                          ? DecorationImage(
+                              image: NetworkImage(pet.image!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: pet.image == null || pet.image!.isEmpty
+                        ? ClipOval(child: _buildPlaceholderImage(tagColor))
+                        : null,
+                  ),
+
+                  const SizedBox(width: 16.0),
+
+                  // Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Species
+                        Text(
+                          pet.name ?? 'Chưa đặt tên',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[850],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8.0),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              _getCuteSpeciesIcon(pet.species ?? 'Không rõ'),
-                              size: 16.0,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 8.0),
+                            Icon(Icons.cake_rounded, size: 14.0, color: tagColor),
+                            const SizedBox(width: 4.0),
                             Text(
-                              pet.species ?? 'Không rõ',
-                              style: const TextStyle(
+                              calculateAge(pet.dateOfBirth),
+                              style: TextStyle(
+                                color: Colors.grey[700],
                                 fontSize: 14.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
                               ),
                             ),
                           ],
                         ),
-
-                        // Gender icon
-                        if (pet.gender != null)
-                          Container(
-                            padding: const EdgeInsets.all(4.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              pet.gender?.toLowerCase() == 'male'
-                                  ? Icons.male_rounded
-                                  : Icons.female_rounded,
-                              size: 12.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  // Avatar and info
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        // Avatar
-                        Container(
-                          width: 80.0,
-                          height: 80.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: tagColor.withOpacity(0.2),
-                                blurRadius: 8,
-                                spreadRadius: 0,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                            image:
-                                pet.image != null && pet.image!.isNotEmpty
-                                    ? DecorationImage(
-                                      image: NetworkImage(pet.image!),
-                                      fit: BoxFit.cover,
-                                    )
-                                    : null,
-                          ),
-                          child:
-                              pet.image == null || pet.image!.isEmpty
-                                  ? ClipOval(
-                                    child: _buildPlaceholderImage(tagColor),
-                                  )
-                                  : null,
-                        ),
-
-                        const SizedBox(width: 16.0),
-
-                        // Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Name
-                              Text(
-                                pet.name ?? 'Chưa đặt tên',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[850],
+                        const SizedBox(height: 16.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  AppNavigator.push(
+                                    context,
+                                    PetDetailsPage(
+                                      petId: pet.petId!,
+                                      petName: pet.name ?? "Chưa đặt tên",
+                                      petImage: pet.image,
+                                      petSpecies: pet.species == "Dog" ? "Chó" : "Mèo",
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: tagColor.withOpacity(0.9),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                child: const Text(
+                                  'Chi tiết',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-
-                              const SizedBox(height: 8.0),
-
-                              // Age
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.cake_rounded,
-                                    size: 14.0,
-                                    color: tagColor,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _showDeleteConfirmDialog(context, pet.petId!, pet.name);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red.shade400,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  const SizedBox(width: 4.0),
-                                  Text(
-                                    calculateAge(pet.dateOfBirth),
-                                    style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontSize: 14.0,
-                                    ),
-                                  ),
-                                ],
+                                ),
+                                child: const Icon(Icons.delete_outline, size: 20.0),
                               ),
-
-                              const SizedBox(height: 16.0),
-
-                              // Button
-                              Row(
-                                children: [
-                                  // Chi tiết button
-                                  Expanded(
-                                    flex: 3,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        AppNavigator.push(
-                                          context,
-                                          PetDetailsPage(
-                                            petId: pet.petId!,
-                                            petName: pet.name ?? "Chưa đặt tên",
-                                            petImage: pet.image,
-                                            petSpecies: pet.species ?? "Không rõ",
-                                          ),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: tagColor.withOpacity(0.9),
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Chi tiết',
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  const SizedBox(width: 8),
-
-                                  // Delete button
-                                  Expanded(
-                                    flex: 1,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _showDeleteConfirmDialog(context, pet.petId!, pet.name);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red.shade400,
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      child: const Icon(
-                                        Icons.delete_outline,
-                                        size: 20.0,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-            ),);
-          },
-
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Phương thức tạo placeholder cho avatar
   Widget _buildPlaceholderImage(Color themeColor) {
     return Container(
       decoration: BoxDecoration(
@@ -813,26 +592,24 @@ class PetCard extends StatelessWidget {
     );
   }
 
-  // Màu pastel dựa vào loài
   Color _getPastelColor(String species) {
     switch (species.toLowerCase()) {
       case 'dog':
       case 'chó':
-        return Color(0xFF6FB3D6); // Xanh dương nhạt dễ thương
+        return const Color(0xFF6FB3D6);
       case 'cat':
       case 'mèo':
-        return Color(0xFF90C290); // Cam nhạt pastel
+        return const Color(0xFF90C290);
       default:
-        return Color(0xFF8AABFF); // Xanh nhạt mặc định
+        return const Color(0xFF8AABFF);
     }
   }
 
-  // Icon dễ thương cho từng loài
   IconData _getCuteSpeciesIcon(String species) {
     switch (species.toLowerCase()) {
       case 'dog':
       case 'chó':
-        return Icons.pets; // Icon chó dễ thương
+        return Icons.pets;
       case 'cat':
       case 'mèo':
         return Icons.pets;
@@ -841,7 +618,6 @@ class PetCard extends StatelessWidget {
     }
   }
 
-  // Hiển thị hộp thoại xác nhận xóa thú cưng
   void _showDeleteConfirmDialog(BuildContext context, int petId, String? petName) {
     showDialog(
       context: context,
@@ -857,13 +633,13 @@ class PetCard extends StatelessWidget {
               },
             ),
             TextButton(
-              child: const Text('Xóa'),
+              child: const Text(
+                'Xóa',
+                style: TextStyle(color: Colors.red),
+              ),
               onPressed: () {
-                // Sử dụng context gốc để truy cập DeletePetCubit
-                context.read<DeletePetCubit>().deletePet(petId);
-
-                // Đóng hộp thoại xác nhận
                 Navigator.of(dialogContext).pop();
+                deletePetCubit.deletePet(petId);
               },
             ),
           ],
@@ -871,117 +647,4 @@ class PetCard extends StatelessWidget {
       },
     );
   }
-}
-
-// Custom clipper để tạo góc cong cho hình ảnh
-class PetImageClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-
-    // Vẽ path với các góc cong
-    path.moveTo(0, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height - 20);
-
-    // Góc cong bên phải
-    path.quadraticBezierTo(
-      size.width - 10,
-      size.height,
-      size.width - 30,
-      size.height,
-    );
-
-    // Đường cong ở giữa
-    path.quadraticBezierTo(
-      size.width / 2 + 20,
-      size.height + 15,
-      size.width / 2,
-      size.height,
-    );
-
-    path.quadraticBezierTo(
-      size.width / 2 - 20,
-      size.height - 15,
-      30,
-      size.height,
-    );
-
-    // Góc cong bên trái
-    path.quadraticBezierTo(10, size.height, 0, size.height - 20);
-
-    path.lineTo(0, 0);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-// Custom painter for creating subtle patterns
-class PatternPainter extends CustomPainter {
-  final Color color;
-
-  PatternPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-
-    // Draw some decorative patterns
-    const double spacing = 20.0;
-    final double maxX = size.width;
-    final double maxY = size.height;
-
-    // Draw small circles
-    for (double x = 0; x < maxX; x += spacing) {
-      for (double y = 0; y < maxY; y += spacing) {
-        if ((x + y) % 40 == 0) {
-          canvas.drawCircle(Offset(x, y), 2, paint);
-        }
-      }
-    }
-
-    // Draw some curved lines
-    final path = Path();
-    path.moveTo(0, size.height * 0.3);
-    path.quadraticBezierTo(
-      size.width * 0.2,
-      size.height * 0.5,
-      size.width * 0.5,
-      size.height * 0.3
-    );
-    path.quadraticBezierTo(
-      size.width * 0.8,
-      size.height * 0.1,
-      size.width,
-      size.height * 0.4
-    );
-
-    canvas.drawPath(path, paint);
-
-    // Draw another curved line
-    final path2 = Path();
-    path2.moveTo(0, size.height * 0.7);
-    path2.quadraticBezierTo(
-      size.width * 0.3,
-      size.height * 0.9,
-      size.width * 0.6,
-      size.height * 0.6
-    );
-    path2.quadraticBezierTo(
-      size.width * 0.8,
-      size.height * 0.4,
-      size.width,
-      size.height * 0.7
-    );
-
-    canvas.drawPath(path2, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

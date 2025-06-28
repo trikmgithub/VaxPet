@@ -1,6 +1,4 @@
-import '../../../data/appointment/models/past_appointment.dart';
 import '../../../data/appointment/models/today_appointment.dart';
-import '../../../domain/appointment/entities/past_appointment.dart';
 import '../../../domain/appointment/entities/today_appointment.dart';
 
 class TodayAppointmentMapper {

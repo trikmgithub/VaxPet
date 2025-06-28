@@ -3,10 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/common/extensions/appointment_status_extension.dart';
 import 'package:vaxpet/common/extensions/location_type_extension.dart';
 import 'package:vaxpet/common/extensions/service_type_location.dart';
-import 'package:vaxpet/domain/appointment/entities/past_appointment.dart';
-import 'package:vaxpet/presentation/calendar/bloc/past_appointment_cubit.dart';
-import 'package:vaxpet/presentation/calendar/bloc/past_appointment_state.dart';
-
 import '../../../domain/appointment/entities/future_appointment.dart';
 import '../bloc/future_appointment_cubit.dart';
 import '../bloc/future_appointment_state.dart';
@@ -88,7 +84,7 @@ class _FutureAppointmentTabState extends State<FutureAppointmentTab> {
         ),
         boxShadow: [
           BoxShadow(
-            color: themeColor.withOpacity(0.2),
+            color: themeColor.withValues(alpha: 0.2),
             blurRadius: 8,
             spreadRadius: 0,
             offset: const Offset(0, 2),
@@ -115,7 +111,7 @@ class _FutureAppointmentTabState extends State<FutureAppointmentTab> {
           child: Icon(
             _getCuteSpeciesIcon(petSpecies),
             size: 24,
-            color: themeColor.withOpacity(0.7),
+            color: themeColor.withValues(alpha: 0.7),
           ),
         ),
       )
@@ -297,7 +293,7 @@ class _FutureAppointmentTabState extends State<FutureAppointmentTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color),
       ),

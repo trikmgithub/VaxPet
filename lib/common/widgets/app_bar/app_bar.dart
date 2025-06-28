@@ -49,7 +49,7 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
         boxShadow: elevation > 0
           ? [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha: 0.3),
                 blurRadius: elevation * 2,
               ),
             ]
@@ -102,7 +102,7 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -128,7 +128,7 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
           end: Alignment.bottomCenter,
           colors: [
             backgroundColor ?? AppColors.primary,
-            (backgroundColor ?? AppColors.primary).withOpacity(0.8),
+            (backgroundColor ?? AppColors.primary).withValues(alpha: 0.8),
           ],
         ),
       ),

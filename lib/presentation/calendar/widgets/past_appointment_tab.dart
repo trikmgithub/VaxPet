@@ -84,7 +84,7 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
         ),
         boxShadow: [
           BoxShadow(
-            color: themeColor.withOpacity(0.2),
+            color: themeColor.withValues(alpha: 0.2),
             blurRadius: 8,
             spreadRadius: 0,
             offset: const Offset(0, 2),
@@ -111,7 +111,7 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
                 child: Icon(
                   _getCuteSpeciesIcon(petSpecies),
                   size: 24,
-                  color: themeColor.withOpacity(0.7),
+                  color: themeColor.withValues(alpha: 0.7),
                 ),
               ),
             )
@@ -293,7 +293,7 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color),
       ),

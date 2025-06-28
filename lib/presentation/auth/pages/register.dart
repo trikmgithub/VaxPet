@@ -3,7 +3,6 @@ import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/presentation/auth/pages/verify_email.dart';
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
-import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../data/auth/models/register_req_params.dart';
@@ -65,7 +64,7 @@ class RegisterPage extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primary.withOpacity(0.1), Colors.transparent],
+              colors: [AppColors.primary.withValues(alpha: 0.1), Colors.transparent],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -97,7 +96,7 @@ class RegisterPage extends StatelessWidget {
   Widget _buildFormCard(Size screenSize, BuildContext context) {
     return Card(
       elevation: 8,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -124,7 +123,7 @@ class RegisterPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -170,7 +169,7 @@ class RegisterPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -233,7 +232,7 @@ class RegisterPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),

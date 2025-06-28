@@ -13,13 +13,13 @@ import '../../disease/pages/choice_disease.dart';
 
 
 
-class VaccinationScheduleHomePage extends StatefulWidget {
+class AppointmentMicrochipHomePage extends StatefulWidget {
   final int serviceType = 1; // 1 cho dịch vụ tiêm vắc-xin
   final int location = 2; // 1 cho dịch vụ tại nhà
   final String petName;
   final int petId;
   final String petSpecies;
-  const VaccinationScheduleHomePage({
+  const AppointmentMicrochipHomePage({
     super.key,
     required this.petName,
     required this.petId,
@@ -27,10 +27,10 @@ class VaccinationScheduleHomePage extends StatefulWidget {
   });
 
   @override
-  State<VaccinationScheduleHomePage> createState() => _VaccinationScheduleHomePageState();
+  State<AppointmentMicrochipHomePage> createState() => _AppointmentMicrochipHomePageState();
 }
 
-class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePage> {
+class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomePage> {
   final TextEditingController _dateOfScheduleController = TextEditingController();
   final TextEditingController _timeOfScheduleController = TextEditingController();
   int? _customerId;
@@ -338,10 +338,10 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
 
             // Hiển thị thông báo khi chọn ngày thành công
             _showSnackBar(
-              'Đã chọn ngày hẹn: $formattedDate',
-              isError: false,
-              icon: Icons.calendar_month,
-              color: Theme.of(context).primaryColor
+                'Đã chọn ngày hẹn: $formattedDate',
+                isError: false,
+                icon: Icons.calendar_month,
+                color: Theme.of(context).primaryColor
             );
           }
         },
@@ -375,8 +375,8 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
             try {
               final timeParts = _timeOfScheduleController.text.split(':');
               initialTime = TimeOfDay(
-                hour: int.parse(timeParts[0]),
-                minute: int.parse(timeParts[1])
+                  hour: int.parse(timeParts[0]),
+                  minute: int.parse(timeParts[1])
               );
             } catch (_) {}
           }
@@ -398,17 +398,17 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
               dayPeriodColor: Colors.blue.shade50,
               dayPeriodTextColor: Colors.blue.shade700,
               hourMinuteColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.selected)
+              states.contains(MaterialState.selected)
                   ? Theme.of(context).primaryColor
                   : Colors.blue.shade50),
               hourMinuteTextColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.selected)
+              states.contains(MaterialState.selected)
                   ? Colors.white
                   : Colors.blue.shade700),
               dialBackgroundColor: Colors.grey.shade100,
               dialHandColor: Theme.of(context).primaryColor,
               dialTextColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.selected)
+              states.contains(MaterialState.selected)
                   ? Colors.white
                   : Colors.black87),
               entryModeIconColor: Theme.of(context).primaryColor,
@@ -456,15 +456,15 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
               // Show time confirmation with appropriate color
               final bool isMorningTime = pickedTime.hour < 12;
               _showSnackBar(
-                'Đã chọn giờ hẹn: $hour:$minute',
-                isError: false,
-                icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
-                color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
+                  'Đã chọn giờ hẹn: $hour:$minute',
+                  isError: false,
+                  icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
+                  color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
               );
             } else {
               _showSnackBar(
-                'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
-                isError: true
+                  'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
+                  isError: true
               );
             }
           }
@@ -489,7 +489,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
 
     // Check if time is in morning range (8:00-12:00) or afternoon range (13:00-17:00)
     return (timeInMinutes >= morningStartMinutes && timeInMinutes <= morningEndMinutes) ||
-           (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
+        (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
   }
 
   // Disease selection button

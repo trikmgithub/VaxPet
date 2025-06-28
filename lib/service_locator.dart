@@ -6,6 +6,8 @@ import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 import 'core/network/dio_client.dart';
 import 'data/appointment/repositories/appointment.dart';
 import 'data/appointment/sources/appointment.dart';
+import 'data/appointment_microchip/repositories/appointment_microchip.dart';
+import 'data/appointment_microchip/sources/appointment_microchip.dart';
 import 'data/auth/repositories/auth.dart';
 import 'data/auth/sources/auth_api_service.dart';
 import 'data/disease/repositories/disease.dart';
@@ -19,6 +21,8 @@ import 'domain/appointment/usecases/get_appointment_by_id.dart';
 import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_past_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_today_appointment_by_cusid.dart';
+import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
+import 'domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
@@ -50,7 +54,7 @@ void setupServiceLocator() {
   sl.registerSingleton<DiseaseService>(DiseaseServiceImpl());
   sl.registerSingleton<AppointmentService>(AppointmentServiceImpl());
   sl.registerSingleton<VaccineAppointmentNoteService>(VaccineAppointmentNoteServiceImpl());
-
+  sl.registerSingleton<AppointmentMicrochipService>(AppointmentMicrochipServiceImpl());
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
   sl.registerSingleton<PetRepository>(PetRepositoryImpl());
@@ -58,7 +62,7 @@ void setupServiceLocator() {
   sl.registerSingleton<DiseaseRepository>(DiseaseRepositoryImpl());
   sl.registerSingleton<AppointmentRepository>(AppointmentRepositoryImpl());
   sl.registerSingleton<VaccineAppointmentNoteRepository>(VaccineAppointmentNoteRepositoryImpl());
-
+  sl.registerSingleton<AppointmentMicrochipRepository>(AppointmentMicrochipRepositoryImpl());
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
   sl.registerSingleton<SigninUseCase>(SigninUseCase());
@@ -77,5 +81,6 @@ void setupServiceLocator() {
   sl.registerSingleton<GetFutureAppointmentByCusId>(GetFutureAppointmentByCusId());
   sl.registerSingleton<GetPastAppointmentByCusId>(GetPastAppointmentByCusId());
   sl.registerSingleton<GetTodayAppointmentByCusId>(GetTodayAppointmentByCusId());
+  sl.registerSingleton<PostAppointmentMicrochipUseCase>(PostAppointmentMicrochipUseCase());
 
 }

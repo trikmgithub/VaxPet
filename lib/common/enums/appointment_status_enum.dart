@@ -1,13 +1,13 @@
 enum AppointmentStatusEnum {
-  Processing,   // 1
-  Confirmed,    // 2
-  CheckedIn,    // 3
-  Injected,     // 4
-  Implanted,    // 5
-  Paid,         // 6
-  Applied,      // 7
-  Done,         // 8
-  Completed,    // 9
-  Cancelled,    // 10
-  Rejected,     // 11
+  processing,   // 1
+  confirmed,    // 2
+  checkedIn,    // 3
+  injected,     // 4
+  implanted,    // 5
+  paid,         // 6
+  applied,      // 7
+  done,         // 8
+  completed,    // 9
+  cancelled,    // 10
+  rejected,     // 11
 }

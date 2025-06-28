@@ -1,6 +1,6 @@
 class ApiUrl {
 
-  static const baseURL = 'https://pvms-sqlserver-cpfmbpfnbfeya3bg.southeastasia-01.azurewebsites.net/';
+  static const baseURL = 'https://petvax-dva5eufae0brhdgf.eastasia-01.azurewebsites.net/';
   static const apiV = 'api/';
 
   // AUTH ENDPOINTS
@@ -35,6 +35,10 @@ class ApiUrl {
   static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
   //Put
   //Delete
+
+  // APPOINTMENT FOR MICROCHIP ENDPOINTS
+  //Post
+  static const postAppointmentForMicrochip = '${apiV}AppointmentForMicrochip/create-appointment-microchip';
 
   // DISEASE ENDPOINTS
   static const getDiseaseByPetId = '${apiV}disease/get-disease-by-pet-id';

@@ -5,21 +5,22 @@ import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/data/schedule/models/create_app_vac_req_params.dart';
 import 'package:vaxpet/domain/schedule/usecases/create_app_vac.dart';
 import 'package:vaxpet/service_locator.dart';
-
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
+import '../../../data/appointment_microchip/models/post_appointment_micrcochip.dart';
+import '../../../domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import '../../main/pages/main.dart';
 import '../../disease/pages/choice_disease.dart';
 
 
 
-class VaccinationScheduleHomePage extends StatefulWidget {
-  final int serviceType = 1; // 1 cho dịch vụ tiêm vắc-xin
-  final int location = 2; // 1 cho dịch vụ tại nhà
+class AppointmentMicrochipClinicPage extends StatefulWidget {
+  final int serviceType = 2; // 2 cho cấy microchip
+  final int location = 1; // 1 cho dịch vụ trung tâm
   final String petName;
   final int petId;
   final String petSpecies;
-  const VaccinationScheduleHomePage({
+  const AppointmentMicrochipClinicPage({
     super.key,
     required this.petName,
     required this.petId,
@@ -27,15 +28,13 @@ class VaccinationScheduleHomePage extends StatefulWidget {
   });
 
   @override
-  State<VaccinationScheduleHomePage> createState() => _VaccinationScheduleHomePageState();
+  State<AppointmentMicrochipClinicPage> createState() => _AppointmentMicrochipClinicPageState();
 }
 
-class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePage> {
+class _AppointmentMicrochipClinicPageState extends State<AppointmentMicrochipClinicPage> {
   final TextEditingController _dateOfScheduleController = TextEditingController();
   final TextEditingController _timeOfScheduleController = TextEditingController();
   int? _customerId;
-  int? _selectedDiseaseId;
-  String? _selectedDiseaseName;
 
   // Parse the date and time separately with validation
   DateTime? selectedDate;
@@ -90,7 +89,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
                     // Tiêu đề trang
                     Center(
                       child: Text(
-                        'Đặt lịch tiêm vắc xin tại Nhà',
+                        'Đặt lịch cấy Microchip tại trung tâm',
                         style: TextStyle(
                           fontSize: isTablet ? 28 : 22,
                           fontWeight: FontWeight.bold,
@@ -197,7 +196,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
                       Divider(height: 30, thickness: 1),
 
                       // Date selection
-                      _buildFormLabel('Ngày hẹn tiêm vắc xin:'),
+                      _buildFormLabel('Ngày hẹn cấy microchip:'),
                       SizedBox(height: 8),
                       _buildDateField(context),
                       SizedBox(height: 20),
@@ -207,16 +206,6 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
                       SizedBox(height: 8),
                       _buildTimeField(context),
                       SizedBox(height: 20),
-
-                      // Disease selection button
-                      _buildFormLabel('Bệnh cần tiêm vắc xin:'),
-                      SizedBox(height: 8),
-                      _buildDiseaseSelectionButton(context),
-                      SizedBox(height: 16),
-
-                      // Disease selection result
-                      _buildDiseaseSelectionResult(),
-                      SizedBox(height: 24),
 
                       // Submit button
                       _buildSubmitButton(context),
@@ -256,7 +245,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Bạn sẽ được Bác sĩ tư vấn loại Vắc xin tương ứng với bệnh bạn chọn sau!',
+                        'Bạn sẽ được Bác sĩ tư vấn loại Microchip sau!',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.blue[800],
@@ -338,10 +327,10 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
 
             // Hiển thị thông báo khi chọn ngày thành công
             _showSnackBar(
-              'Đã chọn ngày hẹn: $formattedDate',
-              isError: false,
-              icon: Icons.calendar_month,
-              color: Theme.of(context).primaryColor
+                'Đã chọn ngày hẹn: $formattedDate',
+                isError: false,
+                icon: Icons.calendar_month,
+                color: Theme.of(context).primaryColor
             );
           }
         },
@@ -375,8 +364,8 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
             try {
               final timeParts = _timeOfScheduleController.text.split(':');
               initialTime = TimeOfDay(
-                hour: int.parse(timeParts[0]),
-                minute: int.parse(timeParts[1])
+                  hour: int.parse(timeParts[0]),
+                  minute: int.parse(timeParts[1])
               );
             } catch (_) {}
           }
@@ -398,17 +387,17 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
               dayPeriodColor: Colors.blue.shade50,
               dayPeriodTextColor: Colors.blue.shade700,
               hourMinuteColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.selected)
+              states.contains(MaterialState.selected)
                   ? Theme.of(context).primaryColor
                   : Colors.blue.shade50),
               hourMinuteTextColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.selected)
+              states.contains(MaterialState.selected)
                   ? Colors.white
                   : Colors.blue.shade700),
               dialBackgroundColor: Colors.grey.shade100,
               dialHandColor: Theme.of(context).primaryColor,
-              dialTextColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.selected)
+              dialTextColor: WidgetStateColor.resolveWith((states) =>
+              states.contains(WidgetState.selected)
                   ? Colors.white
                   : Colors.black87),
               entryModeIconColor: Theme.of(context).primaryColor,
@@ -419,13 +408,12 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
               onSurface: Colors.black87,
               surface: Colors.white,
             ),
-            dialogBackgroundColor: Colors.white,
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).primaryColor,
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
+            ), dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           );
 
           TimeOfDay? pickedTime = await showTimePicker(
@@ -456,15 +444,15 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
               // Show time confirmation with appropriate color
               final bool isMorningTime = pickedTime.hour < 12;
               _showSnackBar(
-                'Đã chọn giờ hẹn: $hour:$minute',
-                isError: false,
-                icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
-                color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
+                  'Đã chọn giờ hẹn: $hour:$minute',
+                  isError: false,
+                  icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
+                  color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
               );
             } else {
               _showSnackBar(
-                'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
-                isError: true
+                  'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
+                  isError: true
               );
             }
           }
@@ -489,92 +477,7 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
 
     // Check if time is in morning range (8:00-12:00) or afternoon range (13:00-17:00)
     return (timeInMinutes >= morningStartMinutes && timeInMinutes <= morningEndMinutes) ||
-           (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
-  }
-
-  // Disease selection button
-  Widget _buildDiseaseSelectionButton(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () async {
-          final result = await Navigator.push<Map<String, dynamic>>(
-            context,
-            MaterialPageRoute(builder: (context) => ChoiceDiseasePage(species: petSpecies)),
-          );
-
-          if (result != null && mounted) {
-            setState(() {
-              _selectedDiseaseId = result['diseaseId'];
-              _selectedDiseaseName = result['diseaseName'];
-            });
-          }
-        },
-        icon: Icon(Icons.vaccines),
-        label: Text('Chọn bệnh cần tiêm'),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          textStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Disease selection result display
-  Widget _buildDiseaseSelectionResult() {
-    if (_selectedDiseaseName != null) {
-      return Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.green.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.green.shade300),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Bệnh đã chọn: $_selectedDiseaseName',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.green,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.orange.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.orange.shade300),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline, color: Colors.orange),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Vui lòng chọn bệnh cần tiêm vắc xin',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.orange,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+        (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
   }
 
   // Submit button with improved design
@@ -599,12 +502,6 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
           if (_timeOfScheduleController.text.isEmpty) {
             _showSnackBar('Vui lòng chọn giờ hẹn', isError: true);
             throw 'Vui lòng chọn giờ hẹn';
-          }
-
-          // Kiểm tra bệnh đã chọn
-          if (_selectedDiseaseId == null) {
-            _showSnackBar('Vui lòng chọn bệnh cần tiêm vắc-xin', isError: true);
-            throw 'Vui lòng chọn bệnh cần tiêm vắc-xin';
           }
 
           try {
@@ -634,20 +531,18 @@ class _VaccinationScheduleHomePageState extends State<VaccinationScheduleHomePag
             // Format as ISO 8601 with milliseconds and Z timezone
             final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(combinedDateTime);
 
-            final result = await sl<CreateAppVacUseCase>().call(params: CreateAppVacReqParams(
+            final result = await sl<PostAppointmentMicrochipUseCase>().call(params: PostAppointmentMicrochipModel(
                 customerId: _customerId!,
                 petId: widget.petId,
                 appointmentDate: formattedDate,
                 serviceType: widget.serviceType,
                 location: widget.location,
-                address: "Địa chỉ mặc định", // Sử dụng địa chỉ mặc định thay vì nhập
-                diseaseId: _selectedDiseaseId!
+                address: "Địa chỉ mặc định" // Không cần địa chỉ cho dịch vụ tại trung tâm
             ));
 
             return result;
 
           } catch (e) {
-            debugPrint('Error creating vaccination schedule: $e');
             _showSnackBar('Đã xảy ra lỗi: $e', isError: true);
             rethrow;
           }

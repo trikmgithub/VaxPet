@@ -4,12 +4,14 @@ import 'package:vaxpet/presentation/schedule/pages/vaccination_schedule_home.dar
 import '../../../common/helper/navigation/app_navigation.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../schedule/pages/vaccination_schedule_clinic.dart';
+import 'appointment_microchip_clinic.dart';
+import 'appointment_microchip_home.dart';
 
-class ChoiceServicePage extends StatelessWidget {
+class AppointmentMicrochipChoicePage extends StatelessWidget {
   final String petName;
   final int petId;
   final String petSpecies;
-  const ChoiceServicePage({super.key, required this.petName, required this.petId, required this.petSpecies});
+  const AppointmentMicrochipChoicePage({super.key, required this.petName, required this.petId, required this.petSpecies});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class ChoiceServicePage extends StatelessWidget {
                 child: Container(
                   width: isTablet ? screenWidth * 0.7 : screenWidth * 0.85,
                   child: Text(
-                    'Tiếp tục đặt lịch tiêm vắc xin với $petName',
+                    'Tiếp tục đặt lịch cấy Microchip với $petName',
                     style: TextStyle(
                       fontSize: isTablet ? 28 : 24,
                       fontWeight: FontWeight.bold,
@@ -68,15 +70,15 @@ class ChoiceServicePage extends StatelessWidget {
                     // Tùy chọn tiêm tại nhà
                     _buildServiceOption(
                       context: context,
-                      title: 'Tiêm tại nhà',
-                      description: 'Đặt lịch tiêm vắc xin tại nhà với dịch vụ chăm sóc thú cưng tận nơi',
+                      title: 'Cấy Microchip tại nhà',
+                      description: 'Đặt lịch cấy Microchip tại nhà với dịch vụ chăm sóc thú cưng tận nơi',
                       icon: Icons.home_filled,
                       color: Colors.blue[700]!,
                       isTablet: isTablet,
                       onTap: () {
                         AppNavigator.push(
                           context,
-                          VaccinationScheduleHomePage(
+                          AppointmentMicrochipHomePage(
                             petName: petName,
                             petId: petId,
                             petSpecies: petSpecies,
@@ -90,15 +92,15 @@ class ChoiceServicePage extends StatelessWidget {
                     // Tùy chọn tiêm tại trung tâm
                     _buildServiceOption(
                       context: context,
-                      title: 'Tiêm tại trung tâm',
-                      description: 'Đặt lịch tiêm vắc xin tại tại trung tâm của chúng tôi',
+                      title: 'Cấy Microchip trung tâm',
+                      description: 'Đặt lịch cấy Microchip tại trung tâm của chúng tôi',
                       icon: Icons.local_hospital_rounded,
                       color: Colors.green[700]!,
                       isTablet: isTablet,
                       onTap: () {
                         AppNavigator.push(
                           context,
-                          VaccinationScheduleClinicPage(
+                          AppointmentMicrochipClinicPage(
                             petName: petName,
                             petId: petId,
                             petSpecies: petSpecies,
@@ -139,7 +141,7 @@ class ChoiceServicePage extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Lịch tiêm sẽ được xác nhận sau khi đặt thành công. Bạn có thể xem và quản lý lịch tiêm trong mục "Sổ ghi chép".',
+                      'Lịch cấy sẽ được xác nhận sau khi đặt thành công. Bạn có thể xem và quản lý lịch cấy trong mục "Sổ ghi chép".',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.blue[800],

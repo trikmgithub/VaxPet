@@ -203,7 +203,7 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
         'Bảo vệ người bạn nhỏ của bạn mỗi ngày',
         style: TextStyle(
           fontSize: isSmallScreen ? 14 : 16,
-          color: AppColors.textGray.withOpacity(0.8),
+          color: AppColors.textGray.withValues(alpha: 0.8),
           height: 1.4,
         ),
         textAlign: TextAlign.center,
@@ -223,7 +223,7 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           elevation: 2,
-          shadowColor: AppColors.primary.withOpacity(0.3),
+          shadowColor: AppColors.primary.withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -252,7 +252,7 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           elevation: 2,
-          shadowColor: AppColors.primary.withOpacity(0.3),
+          shadowColor: AppColors.primary.withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

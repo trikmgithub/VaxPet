@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:vaxpet/domain/appointment/entities/past_appointment.dart';
-
 import '../../../domain/appointment/entities/today_appointment.dart';
 
 abstract class TodayAppointmentState extends Equatable {

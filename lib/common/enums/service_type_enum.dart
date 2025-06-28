@@ -1,5 +1,5 @@
 enum ServiceTypeEnum {
-  Vaccination,
-  Microchip,
-  HealthCertificate
+  vaccination,
+  microchip,
+  healthCertificate
 }
