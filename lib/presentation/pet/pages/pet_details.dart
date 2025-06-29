@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
+import '../../appointment_health_certificate/pages/appointment_health_certificate_choice.dart';
 import '../../appointment_microchip/pages/appointment_microchip_choice.dart';
-import '../../vaccine_appointment_note/pages/vaccine_appointment_note.dart';
-import 'choice_service.dart';
+import '../../appointment_vaccination/pages/appointment_vaccination_choice.dart';
+import '../../appointment_vaccination_note/pages/appointment_vaccination_note.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final int petId;
@@ -121,7 +121,7 @@ class PetDetailsPage extends StatelessWidget {
                       title: 'Vắc xin',
                       icon: Icons.vaccines,
                       onTap: () {
-                        AppNavigator.push(context, ChoiceServicePage(
+                        AppNavigator.push(context, AppointmentVaccinationChoicePage(
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,
@@ -142,7 +142,13 @@ class PetDetailsPage extends StatelessWidget {
                     ServiceItem(
                       title: 'Chứng nhận sức khỏe',
                       icon: Icons.book,
-                      onTap: () {},
+                      onTap: () {
+                        AppNavigator.push(context, AppointmentHealthCertificateChoicePage(
+                          petName: petName,
+                          petId: petId,
+                          petSpecies: petSpecies,
+                        ));
+                      },
                     ),
                   ],
                 ),
@@ -161,7 +167,7 @@ class PetDetailsPage extends StatelessWidget {
                       title: 'Vắc xin',
                       icon: Icons.vaccines,
                       onTap: () {
-                        AppNavigator.push(context, VaccineAppointmentNotePage(
+                        AppNavigator.push(context, AppointmentVaccinationNotePage(
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,

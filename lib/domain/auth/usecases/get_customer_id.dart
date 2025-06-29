@@ -7,10 +7,7 @@ import '../repositories/auth.dart';
 class GetCustomerIdUseCase extends UseCase<Either, int> {
   @override
   Future<Either> call({int? params}) {
-    if (params == null) {
-      return Future.value(Left('Customer ID cannot be null'));
-    }
-    return sl<AuthRepository>().getCustomerId(params);
+    return sl<AuthRepository>().getCustomerId(params!);
   }
 
 }

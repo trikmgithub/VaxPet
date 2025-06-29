@@ -14,7 +14,7 @@ class VaccineAppointmentNoteServiceImpl extends VaccineAppointmentNoteService {
   Future<Either> getVaccineAppointmentNote(int petId, int status) async {
     try {
       var response = await sl<DioClient>().get(
-        '${ApiUrl.getAppointmentByPetAndStatus}/$petId/$status',
+        '${ApiUrl.getAppointmentForVaccinationByPetIdAndStatus}/$petId/$status',
       );
       return Right(response.data);
     } on DioException catch(e) {

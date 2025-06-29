@@ -17,7 +17,6 @@ class AppointmentMicrochipServiceImpl implements AppointmentMicrochipService {
   Future<Either> postAppointmentMicrochip(PostAppointmentMicrochipModel params) async {
     try {
       final url = ApiUrl.postAppointmentForMicrochip;
-      var data1 = params.toMap();
       final response = await sl<DioClient>().post(
         url,
         data: params.toMap(),

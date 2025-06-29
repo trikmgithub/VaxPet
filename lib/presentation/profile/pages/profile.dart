@@ -1,27 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/common/widgets/reactive_button/reactive_button.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
-import 'package:dartz/dartz.dart';
-
 import '../../../common/helper/message/display_message.dart';
 import '../../../domain/auth/usecases/logout.dart';
 import '../../../service_locator.dart';
 import '../../address_vax_pet/pages/address_vax_pet.dart';
 import '../../buy_history/pages/buy_history.dart';
+import '../../customer_profile/pages/customer_profile.dart';
 import '../../help/pages/help.dart';
 import '../../membership/pages/membership.dart';
 import '../../password/pages/reset_password.dart';
 import '../../splash/pages/introduce.dart';
-import 'customer_profile.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  int? accountId;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAccountId();
+  }
+
+  Future<void> _initializeAccountId() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final int? accountIdPref = sharedPreferences.getInt('accountId');
+    setState(() {
+      accountId = accountIdPref;
+    });
+
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Lấy kích thước màn hình để thiết kế responsive
-    final Size screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SafeArea(
@@ -54,7 +73,7 @@ class ProfilePage extends StatelessWidget {
                         context,
                         'Thông tin cá nhân',
                         Icons.person_outline,
-                        () => AppNavigator.push(context, const CustomerProfilePage()),
+                        () => AppNavigator.push(context, CustomerProfilePage(accountId: accountId)),
                       ),
                       const Divider(height: 1),
                       _buildMenuItem(
@@ -283,14 +302,7 @@ class ProfilePage extends StatelessWidget {
     return ReactiveButton(
       title: 'Đăng xuất',
       activeColor: Colors.red.shade400,
-      onPressed: () async {
-        try {
-          await sl<LogoutUseCase>().call(params: null);
-          return const Right('success');
-        } catch (e) {
-          return Left(e.toString());
-        }
-      },
+      onPressed: () async => sl<LogoutUseCase>().call(),
       onSuccess: () {
         AppNavigator.pushAndRemove(context, IntroducePage());
       },

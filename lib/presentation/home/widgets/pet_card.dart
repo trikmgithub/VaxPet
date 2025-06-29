@@ -119,13 +119,13 @@ class Pets extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.pets,
                   size: 64,
-                  color: AppColors.primary.withOpacity(0.7),
+                  color: AppColors.primary.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 20),
@@ -175,13 +175,13 @@ class Pets extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.error_outline,
                   size: 64,
-                  color: Colors.red.withOpacity(0.7),
+                  color: Colors.red.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 20),
@@ -282,7 +282,7 @@ class Pets extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -331,7 +331,9 @@ class Pets extends StatelessWidget {
     Overlay.of(context).insert(overlayEntry);
 
     Future.delayed(const Duration(seconds: 3), () {
-      _removeCurrentNotification(context);
+      if (context.mounted) {
+        _removeCurrentNotification(context);
+      }
     });
   }
 
@@ -371,8 +373,8 @@ class PetCard extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        splashColor: tagColor.withOpacity(0.1),
-        highlightColor: tagColor.withOpacity(0.05),
+        splashColor: tagColor.withValues(alpha: 0.1),
+        highlightColor: tagColor.withValues(alpha: 0.05),
         onTap: () {
           AppNavigator.push(
             context,
@@ -425,11 +427,11 @@ class PetCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        pet.gender?.toLowerCase() == 'male'
+                        pet.gender?.toLowerCase() == 'đực'
                             ? Icons.male_rounded
                             : Icons.female_rounded,
                         size: 12.0,
@@ -454,7 +456,7 @@ class PetCard extends StatelessWidget {
                       border: Border.all(color: Colors.white, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: tagColor.withOpacity(0.2),
+                          color: tagColor.withValues(alpha: 0.2),
                           blurRadius: 8,
                           spreadRadius: 0,
                           offset: const Offset(0, 2),
@@ -522,7 +524,7 @@ class PetCard extends StatelessWidget {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: tagColor.withOpacity(0.9),
+                                  backgroundColor: tagColor.withValues(alpha: 0.9),
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                   padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -586,7 +588,7 @@ class PetCard extends StatelessWidget {
         child: Icon(
           _getCuteSpeciesIcon(pet.species ?? 'Không rõ'),
           size: 24,
-          color: themeColor.withOpacity(0.5),
+          color: themeColor.withValues(alpha: 0.5),
         ),
       ),
     );
@@ -596,12 +598,12 @@ class PetCard extends StatelessWidget {
     switch (species.toLowerCase()) {
       case 'dog':
       case 'chó':
-        return const Color(0xFF6FB3D6);
+        return AppColors.primary.withValues(alpha: 0.7);
       case 'cat':
       case 'mèo':
-        return const Color(0xFF90C290);
+        return AppColors.primary.withValues(alpha: 0.7);
       default:
-        return const Color(0xFF8AABFF);
+        return AppColors.primary.withValues(alpha: 0.7);
     }
   }
 
@@ -614,7 +616,7 @@ class PetCard extends StatelessWidget {
       case 'mèo':
         return Icons.pets;
       default:
-        return Icons.favorite;
+        return Icons.pets;
     }
   }
 
@@ -648,3 +650,4 @@ class PetCard extends StatelessWidget {
     );
   }
 }
+

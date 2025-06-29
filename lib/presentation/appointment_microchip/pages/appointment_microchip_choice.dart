@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/common/widgets/back_button/back_button.dart';
-import 'package:vaxpet/presentation/schedule/pages/vaccination_schedule_home.dart';
 import '../../../common/helper/navigation/app_navigation.dart';
 import '../../../core/configs/theme/app_colors.dart';
-import '../../schedule/pages/vaccination_schedule_clinic.dart';
 import 'appointment_microchip_clinic.dart';
 import 'appointment_microchip_home.dart';
 
@@ -46,7 +44,7 @@ class AppointmentMicrochipChoicePage extends StatelessWidget {
 
               // Tiêu đề trang
               Center(
-                child: Container(
+                child: SizedBox(
                   width: isTablet ? screenWidth * 0.7 : screenWidth * 0.85,
                   child: Text(
                     'Tiếp tục đặt lịch cấy Microchip với $petName',
@@ -63,7 +61,7 @@ class AppointmentMicrochipChoicePage extends StatelessWidget {
               SizedBox(height: screenHeight * 0.06),
 
               // Container cho phần lựa chọn dịch vụ
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Column(
                   children: [
@@ -92,7 +90,7 @@ class AppointmentMicrochipChoicePage extends StatelessWidget {
                     // Tùy chọn tiêm tại trung tâm
                     _buildServiceOption(
                       context: context,
-                      title: 'Cấy Microchip trung tâm',
+                      title: 'Cấy Microchip tại trung tâm',
                       description: 'Đặt lịch cấy Microchip tại trung tâm của chúng tôi',
                       icon: Icons.local_hospital_rounded,
                       color: Colors.green[700]!,
@@ -168,7 +166,7 @@ class AppointmentMicrochipChoicePage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: isTablet ? 130 : 110,
       child: Material(

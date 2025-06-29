@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       floatingActionButton: ScaleTransition(
         scale: _animation,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 70), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
+          margin: const EdgeInsets.only(bottom: 20), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
           ),

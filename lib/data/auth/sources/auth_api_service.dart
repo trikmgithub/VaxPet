@@ -15,6 +15,7 @@ abstract class AuthService {
   Future<Either> verifyEmail(VerifyEmailReqParams params);
   Future<Either> verifyOtp(VerifyOtpReqParams params);
   Future<Either> getCustomerId(int accountId);
+  Future<Either> logout();
 }
 
 class AuthServiceImpl extends AuthService {
@@ -27,19 +28,7 @@ class AuthServiceImpl extends AuthService {
       );
       return Right(response.data);
     } on DioException catch (e) {
-      // Xử lý lỗi một cách chi tiết hơn
-      if (e.response != null) {
-        // Nếu server trả về response với data
-        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
-          // Trả về thông báo lỗi từ API
-          return Left(e.response!.data['message']);
-        } else {
-          return Left('Lỗi đăng ký: ${e.response!.statusCode}');
-        }
-      } else {
-        // Nếu không có resp
-        return Left('Lỗi kết nối: ${e.message}');
-      }
+      return Left('Lỗi kết nối: ${e.message}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
@@ -54,19 +43,7 @@ class AuthServiceImpl extends AuthService {
       );
       return Right(response.data);
     } on DioException catch (e) {
-      // Xử lý lỗi một cách chi tiết hơn
-      if (e.response != null) {
-        // Nếu server trả về response với data
-        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
-          // Trả về thông báo lỗi từ API
-          return Left(e.response!.data['message']);
-        } else {
-          return Left('Lỗi đăng ký: ${e.response!.statusCode}');
-        }
-      } else {
-        // Nếu không có resp
-        return Left('Lỗi kết nối: ${e.message}');
-      }
+      return Left('Lỗi kết nối: ${e.message}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
@@ -82,19 +59,7 @@ class AuthServiceImpl extends AuthService {
 
       return Right(response.data);
     } on DioException catch (e) {
-      // Xử lý lỗi một cách chi tiết hơn
-      if (e.response != null) {
-        // Nếu server trả về response với data
-        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
-          // Trả về thông báo lỗi từ API
-          return Left(e.response!.data['message']);
-        } else {
-          return Left('Lỗi đăng ký: ${e.response!.statusCode}');
-        }
-      } else {
-        // Nếu không có resp
-        return Left('Lỗi kết nối: ${e.message}');
-      }
+      return Left('Lỗi kết nối: ${e.message}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
@@ -110,19 +75,7 @@ class AuthServiceImpl extends AuthService {
 
       return Right(response.data);
     } on DioException catch (e) {
-      // Xử lý lỗi một cách chi tiết hơn
-      if (e.response != null) {
-        // Nếu server trả về response với data
-        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
-          // Trả về thông báo lỗi từ API
-          return Left(e.response!.data['message']);
-        } else {
-          return Left('Lỗi đăng ký: ${e.response!.statusCode}');
-        }
-      } else {
-        // Nếu không có resp
-        return Left('Lỗi kết nối: ${e.message}');
-      }
+      return Left('Lỗi kết nối: ${e.message}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
@@ -132,24 +85,26 @@ class AuthServiceImpl extends AuthService {
   Future<Either> getCustomerId(int accountId) async {
     try {
       var response = await sl<DioClient>().get(
-        '${ApiUrl.getCustomerId}/$accountId',
+        '${ApiUrl.getCustomerByAccountId}/$accountId',
       );
 
       return Right(response.data);
     } on DioException catch (e) {
-      // Xử lý lỗi một cách chi tiết hơn
-      if (e.response != null) {
-        // Nếu server trả về response với data
-        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
-          // Trả về thông báo lỗi từ API
-          return Left(e.response!.data['message']);
-        } else {
-          return Left('Lỗi lấy thông tin khách hàng: ${e.response!.statusCode}');
-        }
-      } else {
-        // Nếu không có resp
-        return Left('Lỗi kết nối: ${e.message}');
-      }
+      return Left('Lỗi kết nối: ${e.message}');
+    } catch (e) {
+      return Left('Lỗi không xác định: $e');
+    }
+
+  }
+
+  @override
+  Future<Either> logout() async {
+    try {
+      var response = 'Logout successful';
+
+      return Right(response);
+    } on DioException catch (e) {
+      return Left('Lỗi kết nối: ${e.message}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }

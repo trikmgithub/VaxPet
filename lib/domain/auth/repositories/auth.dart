@@ -12,5 +12,5 @@ abstract class AuthRepository {
   Future<Either> verifyOtp(VerifyOtpReqParams params);
   Future<Either> getCustomerId(int accountId);
   Future<bool> isLoggedIn();
-  Future<bool> logout();
+  Future<Either> logout();
 }

@@ -85,9 +85,16 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<bool> logout() async {
+  Future<Either> logout() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return await sharedPreferences.clear();
+    var logoutResult = await sl<AuthService>().logout();
+    return logoutResult.fold(
+      (error) => Left(error),
+      (data) async {
+        await sharedPreferences.clear();
+        return Right(data);
+      },
+    );
   }
 
   @override
@@ -99,7 +106,7 @@ class AuthRepositoryImpl extends AuthRepository {
         final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
         // Lưu thông tin người dùng
-        sharedPreferences.setInt('customerId', data['data']['customerId']);
+        await sharedPreferences.setInt('customerId', data['data']['customerId']);
 
         return Right(data);
       },

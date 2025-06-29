@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/common/extensions/appointment_status_extension.dart';
 import 'package:vaxpet/common/extensions/location_type_extension.dart';
-import 'package:vaxpet/common/extensions/service_type_location.dart';
+import 'package:vaxpet/common/extensions/service_type_extension.dart';
 import 'package:vaxpet/domain/appointment/entities/past_appointment.dart';
 import 'package:vaxpet/presentation/calendar/bloc/past_appointment_cubit.dart';
 import 'package:vaxpet/presentation/calendar/bloc/past_appointment_state.dart';
@@ -325,7 +325,7 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
   }
 
   String? _getServiceTypeText(int serviceType) {
-    return serviceType.toServiceTypeLocationString;
+    return serviceType.toServiceTypeExtensionString;
   }
 
   String? _getLocationText(int location, String address) {

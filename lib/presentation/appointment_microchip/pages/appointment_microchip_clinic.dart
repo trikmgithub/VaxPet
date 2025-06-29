@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-import 'package:vaxpet/data/schedule/models/create_app_vac_req_params.dart';
-import 'package:vaxpet/domain/schedule/usecases/create_app_vac.dart';
 import 'package:vaxpet/service_locator.dart';
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../data/appointment_microchip/models/post_appointment_micrcochip.dart';
 import '../../../domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import '../../main/pages/main.dart';
-import '../../disease/pages/choice_disease.dart';
-
-
 
 class AppointmentMicrochipClinicPage extends StatefulWidget {
   final int serviceType = 2; // 2 cho cấy microchip
@@ -330,7 +325,6 @@ class _AppointmentMicrochipClinicPageState extends State<AppointmentMicrochipCli
                 'Đã chọn ngày hẹn: $formattedDate',
                 isError: false,
                 icon: Icons.calendar_month,
-                color: Theme.of(context).primaryColor
             );
           }
         },
@@ -386,12 +380,12 @@ class _AppointmentMicrochipClinicPageState extends State<AppointmentMicrochipCli
               ),
               dayPeriodColor: Colors.blue.shade50,
               dayPeriodTextColor: Colors.blue.shade700,
-              hourMinuteColor: MaterialStateColor.resolveWith((states) =>
-              states.contains(MaterialState.selected)
+              hourMinuteColor: WidgetStateColor.resolveWith((states) =>
+              states.contains(WidgetState.selected)
                   ? Theme.of(context).primaryColor
                   : Colors.blue.shade50),
-              hourMinuteTextColor: MaterialStateColor.resolveWith((states) =>
-              states.contains(MaterialState.selected)
+              hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
+              states.contains(WidgetState.selected)
                   ? Colors.white
                   : Colors.blue.shade700),
               dialBackgroundColor: Colors.grey.shade100,

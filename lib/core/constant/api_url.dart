@@ -10,7 +10,10 @@ class ApiUrl {
   static const verifyOtp = '${apiV}auth/verify-otp';
 
   // CUSTOMER ENDPOINTS
-  static const getCustomerId = '${apiV}customer/get-customer-by-account-id';
+  //Get
+  static const getCustomerByAccountId = '${apiV}customer/get-customer-by-account-id';
+  //Put
+  static const putUpdateCustomerByCustomerId = '${apiV}customer/update-customer';
 
   // PET ENDPOINTS
   //Get
@@ -35,6 +38,12 @@ class ApiUrl {
   static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
   //Put
   //Delete
+
+  // APPOINTMENT FOR VACCINATION ENDPOINTS
+  //Get
+  static const getAppointmentForVaccinationByPetIdAndStatus = '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-pet-id-and-status';
+  //Post
+  static const postAppointmentForVaccination = '${apiV}AppointmentForVaccination/create-appointment-vaccination';
 
   // APPOINTMENT FOR MICROCHIP ENDPOINTS
   //Post

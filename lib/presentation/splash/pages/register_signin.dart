@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
-import 'package:vaxpet/core/configs/assets/app_images.dart';
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_colors.dart';
@@ -67,7 +66,6 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
     final buttonHeight = isSmallScreen ? 46.0 : 50.0;
     final topPadding = isSmallScreen ? 16.0 : (isMediumScreen ? 20.0 : 24.0);
     final horizontalPadding = isSmallScreen ? 16.0 : (isMediumScreen ? 24.0 : 32.0);
-    final imageSize = screenSize.width * (isLargeScreen ? 0.4 : (isMediumScreen ? 0.5 : 0.6));
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

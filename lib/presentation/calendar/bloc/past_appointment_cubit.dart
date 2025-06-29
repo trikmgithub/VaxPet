@@ -28,7 +28,7 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
 
       emit(PastAppointmentLoading());
 
-      // Get customer ID from SharedPreferences
+      // Get customer_profile ID from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final customerId = prefs.getInt('customerId');
 
@@ -84,7 +84,7 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
       // Tăng số trang lên 1
       _currentPage++;
 
-      // Get customer ID from SharedPreferences
+      // Get customer_profile ID from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final customerId = prefs.getInt('customerId');
 

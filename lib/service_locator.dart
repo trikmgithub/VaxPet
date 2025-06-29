@@ -8,14 +8,20 @@ import 'data/appointment/repositories/appointment.dart';
 import 'data/appointment/sources/appointment.dart';
 import 'data/appointment_microchip/repositories/appointment_microchip.dart';
 import 'data/appointment_microchip/sources/appointment_microchip.dart';
+import 'data/appointment_vaccination/repositories/appointment_vaccination.dart';
+import 'data/appointment_vaccination/sources/appointment_vaccination.dart';
 import 'data/auth/repositories/auth.dart';
 import 'data/auth/sources/auth_api_service.dart';
+import 'data/customer_profile/repositories/customer_profile.dart';
+import 'data/customer_profile/sources/customer_profile.dart';
 import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
 import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
+import 'data/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
+import 'data/vaccine_appointment_note_detail/sources/vaccine_appointment_note_detail.dart';
 import 'domain/appointment/repositories/appointment.dart';
 import 'domain/appointment/usecases/get_appointment_by_id.dart';
 import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
@@ -23,6 +29,8 @@ import 'domain/appointment/usecases/get_past_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_today_appointment_by_cusid.dart';
 import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
 import 'domain/appointment_microchip/usecases/post_appointment_microchip.dart';
+import 'domain/appointment_vaccination/repositories/appointment_vaccination.dart';
+import 'domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
@@ -31,6 +39,9 @@ import 'domain/auth/usecases/verify_email.dart';
 import 'domain/auth/usecases/register.dart';
 import 'domain/auth/usecases/signin.dart';
 import 'domain/auth/usecases/verify_otp.dart';
+import 'domain/customer_profile/repositories/customer_profile.dart';
+import 'domain/customer_profile/usecases/get_customer_profile.dart';
+import 'domain/customer_profile/usecases/put_customer_profile.dart';
 import 'domain/disease/repositories/disease.dart';
 import 'domain/disease/usecases/get_disease_by_species.dart';
 import 'domain/pet/repositories/pet.dart';
@@ -40,6 +51,8 @@ import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
 import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
+import 'domain/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
+import 'domain/vaccine_appointment_note_detail/usecases/get_vaccine_appointment_note_detail.dart';
 
 final sl = GetIt.instance;
 
@@ -55,6 +68,10 @@ void setupServiceLocator() {
   sl.registerSingleton<AppointmentService>(AppointmentServiceImpl());
   sl.registerSingleton<VaccineAppointmentNoteService>(VaccineAppointmentNoteServiceImpl());
   sl.registerSingleton<AppointmentMicrochipService>(AppointmentMicrochipServiceImpl());
+  sl.registerSingleton<AppointmentVaccinationService>(AppointmentVaccinationServiceImpl());
+  sl.registerSingleton<VaccineAppointmentNoteDetailService>(VaccineAppointmentNoteDetailServiceImpl());
+  sl.registerSingleton<CustomerProfileService>(CustomerProfileServiceImpl());
+
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
   sl.registerSingleton<PetRepository>(PetRepositoryImpl());
@@ -63,6 +80,10 @@ void setupServiceLocator() {
   sl.registerSingleton<AppointmentRepository>(AppointmentRepositoryImpl());
   sl.registerSingleton<VaccineAppointmentNoteRepository>(VaccineAppointmentNoteRepositoryImpl());
   sl.registerSingleton<AppointmentMicrochipRepository>(AppointmentMicrochipRepositoryImpl());
+  sl.registerSingleton<AppointmentVaccinationRepository>(AppointmentVaccinationRepositoryImpl());
+  sl.registerSingleton<VaccineAppointmentNoteDetailRepository>(VaccineAppointmentNoteDetailRepositoryImpl());
+  sl.registerSingleton<CustomerProfileRepository>(CustomerProfileRepositoryImpl());
+
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
   sl.registerSingleton<SigninUseCase>(SigninUseCase());
@@ -82,5 +103,9 @@ void setupServiceLocator() {
   sl.registerSingleton<GetPastAppointmentByCusId>(GetPastAppointmentByCusId());
   sl.registerSingleton<GetTodayAppointmentByCusId>(GetTodayAppointmentByCusId());
   sl.registerSingleton<PostAppointmentMicrochipUseCase>(PostAppointmentMicrochipUseCase());
+  sl.registerSingleton<PostAppointmentVaccinationUseCase>(PostAppointmentVaccinationUseCase());
+  sl.registerSingleton<GetVaccineAppointmentNoteDetailUseCase>(GetVaccineAppointmentNoteDetailUseCase());
+  sl.registerSingleton<GetCustomerProfileUseCase>(GetCustomerProfileUseCase());
+  sl.registerSingleton<PutCustomerProfileUseCase>(PutCustomerProfileUseCase());
 
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/domain/auth/usecases/get_customer_id.dart';
 import 'package:vaxpet/presentation/calendar/pages/calendar.dart';
+import 'package:vaxpet/presentation/customer_profile/pages/customer_profile_edit.dart';
 import 'package:vaxpet/presentation/profile/pages/profile.dart';
 import 'package:vaxpet/service_locator.dart';
 
@@ -36,9 +38,15 @@ class _MainPageState extends State<MainPage> {
 
         result.fold(
           (error) => debugPrint('Error getting customerId: $error'),
-          (data) {
-            // Save customerId to SharedPreferences
-            sharedPreferences.setInt('customerId', data['data']['customerId']);
+          (data) async {
+            if (data['data']['address'] == null && data['data']['address'] != '') {
+              await sharedPreferences.setString('address', data['data']['address'] ?? '');
+              if (mounted) {
+                AppNavigator.push(context, CustomerProfileEditPage(
+                  accountId: accountId,
+                ));
+              }
+            }
           }
         );
       } catch (e) {
