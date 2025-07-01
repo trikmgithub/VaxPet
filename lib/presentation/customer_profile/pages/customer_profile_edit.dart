@@ -1,22 +1,21 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/widgets/app_bar/app_bar.dart';
-import 'package:vaxpet/common/widgets/reactive_button/reactive_button.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/data/customer_profile/models/customer_profile.dart';
-
+import 'package:vaxpet/domain/customer_profile/entities/customer_profile.dart';
 import '../../../common/helper/message/display_message.dart';
-import '../../../data/auth/models/signin_req_params.dart';
-import '../../../domain/auth/usecases/signin.dart';
 import '../../../domain/customer_profile/usecases/put_customer_profile.dart';
 import '../../../service_locator.dart';
 
 class CustomerProfileEditPage extends StatefulWidget {
   final int? accountId;
-  const CustomerProfileEditPage({super.key, this.accountId});
+  final String? email;
+  final int? customerId;
+  final CustomerProfileEntity? customerProfile;
+  const CustomerProfileEditPage({super.key, this.accountId, this.customerProfile, this.email, this.customerId});
 
   @override
   State<CustomerProfileEditPage> createState() => _CustomerProfileEditPageState();
@@ -24,36 +23,63 @@ class CustomerProfileEditPage extends StatefulWidget {
 
 class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   bool? hideBackButton;
-  String? email;
   int? customerId;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _userNameController = TextEditingController();
-  final TextEditingController _dateOfBirthController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _districtController = TextEditingController();
-  final TextEditingController _wardController = TextEditingController();
-  final TextEditingController _houseNameController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _dateOfBirthController = TextEditingController();
+  TextEditingController _cityController = TextEditingController();
+  TextEditingController _districtController = TextEditingController();
+  TextEditingController _wardController = TextEditingController();
+  TextEditingController _houseNameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
 
   String? _selectedGender;
   final ImagePicker _picker = ImagePicker();
   File? image;
 
+  late FocusNode _nameFocusNode;
+  late FocusNode _userNameFocusNode;
+  late FocusNode _phoneNumberFocusNode;
+  late FocusNode _dateOfBirthFocusNode;
+  late FocusNode _cityFocusNode;
+  late FocusNode _districtFocusNode;
+  late FocusNode _wardFocusNode;
+  late FocusNode _houseNameFocusNode;
+
   @override
   void initState() {
     super.initState();
     _initializeHideBackButton();
+    _nameFocusNode = FocusNode();
+    _userNameFocusNode = FocusNode();
+    _phoneNumberFocusNode = FocusNode();
+    _dateOfBirthFocusNode = FocusNode();
+    _cityFocusNode = FocusNode();
+    _districtFocusNode = FocusNode();
+    _wardFocusNode = FocusNode();
+    _houseNameFocusNode = FocusNode();
+    _emailController = TextEditingController(text: widget.email);
+    _nameController = TextEditingController(text: widget.customerProfile?.fullName ?? '');
+    _userNameController = TextEditingController(text: widget.customerProfile?.userName ?? '');
+    if (widget.customerProfile?.gender != null) {
+     _selectedGender = widget.customerProfile?.gender;
+    }
+    if (widget.customerProfile?.image != null) {
+      image = File(widget.customerProfile!.image!);
+    }
+    _dateOfBirthController = TextEditingController(text: widget.customerProfile?.dateOfBirth ?? '');
+    _phoneNumberController = TextEditingController(text: widget.customerProfile?.phoneNumber ?? '');
+    _cityController = TextEditingController(text: widget.customerProfile?.address?.split(', ').last ?? '');
+    _districtController = TextEditingController(text: widget.customerProfile?.address?.split(', ').elementAt(1) ?? '');
+    _wardController = TextEditingController(text: widget.customerProfile?.address?.split(', ').elementAt(2) ?? '');
+    _houseNameController = TextEditingController(text: widget.customerProfile?.address?.split(', ').first ?? '');
   }
 
   Future<void> _initializeHideBackButton() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final String? emailPref = sharedPreferences.getString('email');
-    final int? customerIdPref = sharedPreferences.getInt('customerId');
-
     setState(() {
-      email = emailPref!;
-      customerId = customerIdPref!;
-      hideBackButton = sharedPreferences.getString('address') != '' ? false : false;
+      hideBackButton = sharedPreferences.getString('address') != '' ? false : true;
     });
 
   }
@@ -69,7 +95,16 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
 
   @override
   void dispose() {
+    _nameFocusNode.dispose();
+    _userNameFocusNode.dispose();
+    _phoneNumberFocusNode.dispose();
+    _dateOfBirthFocusNode.dispose();
+    _cityFocusNode.dispose();
+    _districtFocusNode.dispose();
+    _wardFocusNode.dispose();
+    _houseNameFocusNode.dispose();
     // Giải phóng các controller khi widget bị hủy
+    _emailController.dispose();
     _nameController.dispose();
     _userNameController.dispose();
     _dateOfBirthController.dispose();
@@ -90,12 +125,12 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
 
     return Scaffold(
       appBar: BasicAppbar(
-        hideBack: hideBackButton!,
+        hideBack: hideBackButton ?? false,
         title: const Text(
           'Thông tin cá nhân',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
@@ -268,6 +303,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildNameField() {
     return TextFormField(
       controller: _nameController,
+      focusNode: _nameFocusNode,
       decoration: InputDecoration(
         labelText: 'Họ và tên *',
         hintText: 'Nhập họ và tên',
@@ -293,6 +329,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildNickNameField() {
     return TextFormField(
       controller: _userNameController,
+      focusNode: _userNameFocusNode,
       decoration: InputDecoration(
         labelText: 'Tên hiển thị *',
         hintText: 'Nhập tên hiển thị',
@@ -344,7 +381,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: AppColors.primary),
         ),
-        prefixIcon: Icon(Icons.filter_list, color: AppColors.primary),
+        prefixIcon: Icon(Icons.wc, color: AppColors.primary),
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
@@ -421,7 +458,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         );
         if (pickedDate != null) {
           // format date dd/mm/yyyy
-          String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+          String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
           _dateOfBirthController.text = formattedDate;
         }
       },
@@ -432,6 +469,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildCityField() {
     return TextFormField(
       controller: _cityController,
+      focusNode: _cityFocusNode,
       decoration: InputDecoration(
         labelText: 'Tỉnh / Thành phố *',
         hintText: 'Nhập tỉnh hoặc thành phố',
@@ -457,6 +495,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildDistrictField() {
     return TextFormField(
       controller: _districtController,
+      focusNode: _districtFocusNode,
       decoration: InputDecoration(
         labelText: 'Quận / Huyện *',
         hintText: 'Nhập quận hoặc huyện',
@@ -482,6 +521,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildWardField() {
     return TextFormField(
       controller: _wardController,
+      focusNode: _wardFocusNode,
       decoration: InputDecoration(
         labelText: 'Phường / Xã *',
         hintText: 'Nhập phường hoặc xã',
@@ -507,6 +547,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildHouseNameField() {
     return TextFormField(
       controller: _houseNameController,
+      focusNode: _houseNameFocusNode,
       decoration: InputDecoration(
         labelText: 'Số nhà *',
         hintText: 'Nhập số nhà',
@@ -539,19 +580,35 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         ),
         const SizedBox(height: 10),  // Thêm khoảng cách giữa text và vòng tròn
         Center(  // Bọc InkWell trong Center để đảm bảo căn giữa
-          child: InkWell(
-            onTap: _pickImage,
-            child: Container(
-              height: 120,
-              width: 120,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                shape: BoxShape.circle,
-              ),
-              clipBehavior: Clip.antiAlias,  // Đảm bảo ảnh được cắt theo hình tròn
-              child: image != null
-                  ? Image.file(image!, fit: BoxFit.cover)
-                  : const Center(
+          child: _buildImage(),
+        ),
+      ],
+    );
+  }
+
+
+  Widget _buildImage() {
+    return InkWell(
+      onTap: _pickImage,
+      child: Container(
+        height: 120,
+        width: 120,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          shape: BoxShape.circle,
+        ),
+        clipBehavior: Clip.antiAlias,  // Đảm bảo ảnh được cắt theo hình tròn
+        child: image != null
+            ? (image!.path.startsWith('http')
+                ? Image.network(
+                    image!.path,
+                    fit: BoxFit.cover,
+                  )
+                : Image.file(
+                    image!,
+                    fit: BoxFit.cover,
+                  ))
+            : const Center(
                 child: Padding(
                   padding: EdgeInsets.all(8.0),  // Thêm padding cho text
                   child: Text(
@@ -561,16 +618,14 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
   Widget _buildPhoneNumberField() {
     return TextFormField(
       controller: _phoneNumberController,
+      focusNode: _phoneNumberFocusNode,
       decoration: InputDecoration(
         labelText: 'Số điện thoại *',
         hintText: 'Nhập số điện thoại',
@@ -596,7 +651,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   Widget _buildEmailField() {
     return TextFormField(
       readOnly: true,
-      initialValue: '$email',
+      controller: _emailController,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -617,32 +672,83 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   }
 
   Widget _buildSubmitButton() {
-    return ReactiveButton(
-        title: 'Cập nhật',
-        activeColor: AppColors.primary,
-        onPressed: () async => sl<PutCustomerProfileUseCase>().call(
-          params: CustomerProfileModel(
-            customerId: customerId,
-            fullName: _nameController.text,
-            userName: _userNameController.text,
-            image: image != null ? image!.path : null,
-            phoneNumber: _phoneNumberController.text,
-            dateOfBirth: _dateOfBirthController.text,
-            gender: _selectedGender,
-            address: _cityController.text +
-                     ', ' + _districtController.text +
-                     ', ' + _wardController.text +
-                     ', ' + _houseNameController.text,
+    return ElevatedButton(
+      onPressed: () async {
+        if (_nameController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền họ và tên', context);
+          FocusScope.of(context).requestFocus(_nameFocusNode);
+          return;
+        }
+        if (_userNameController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền tên hiển thị', context);
+          FocusScope.of(context).requestFocus(_userNameFocusNode);
+          return;
+        }
+        if (_phoneNumberController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền số điện thoại', context);
+          FocusScope.of(context).requestFocus(_phoneNumberFocusNode);
+          return;
+        }
+        if (_dateOfBirthController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền ngày sinh', context);
+          FocusScope.of(context).requestFocus(_dateOfBirthFocusNode);
+          return;
+        }
+        if (_selectedGender == null || _selectedGender!.isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng chọn giới tính', context);
+          return;
+        }
+        if (_cityController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền tỉnh/thành phố', context);
+          FocusScope.of(context).requestFocus(_cityFocusNode);
+          return;
+        }
+        if (_districtController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền quận/huyện', context);
+          FocusScope.of(context).requestFocus(_districtFocusNode);
+          return;
+        }
+        if (_wardController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền phường/xã', context);
+          FocusScope.of(context).requestFocus(_wardFocusNode);
+          return;
+        }
+        if (_houseNameController.text.trim().isEmpty) {
+          DisplayMessage.errorMessage('Vui lòng điền số nhà', context);
+          FocusScope.of(context).requestFocus(_houseNameFocusNode);
+          return;
+        }
 
-          )
-        ),
-        onSuccess: () {
+        try {
+          await sl<PutCustomerProfileUseCase>().call(
+            params: CustomerProfileModel(
+              customerId: widget.customerId,
+              fullName: _nameController.text.trim(),
+              userName: _userNameController.text.trim(),
+              image: (image != null && !image!.path.startsWith('http')) ? image!.path : null,
+              phoneNumber: _phoneNumberController.text.trim(),
+              dateOfBirth: _dateOfBirthController.text.trim(),
+              gender: _selectedGender,
+              address: '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}',
+            ),
+          );
           DisplayMessage.successMessage('Cập nhật thông tin thành công', context);
           Navigator.of(context).pop();
-        },
-        onFailure: (error) {
-          DisplayMessage.errorMessage(error, context);
+        } catch (error) {
+          DisplayMessage.errorMessage(error.toString(), context);
         }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        minimumSize: const Size(double.infinity, 60),
+      ),
+      child: const Text(
+        'Cập nhật',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
     );
   }
 }

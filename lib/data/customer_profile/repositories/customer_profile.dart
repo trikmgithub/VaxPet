@@ -16,7 +16,7 @@ class CustomerProfileRepositoryImpl extends CustomerProfileRepository {
     return returnedData.fold(
       (error) => Left(Exception(error.toString())),
       (data) {
-        var customerDetail = CustomerProfileMapper.toEntity(CustomerProfileModel.fromJson(data));
+        var customerDetail = CustomerProfileMapper.toEntity(CustomerProfileModel.fromJson(data['data']));
         return Right(customerDetail);
       }
     );

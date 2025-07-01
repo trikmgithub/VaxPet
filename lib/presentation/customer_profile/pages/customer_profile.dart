@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/presentation/customer_profile/bloc/customer_profile_cubit.dart';
 
 import '../bloc/customer_profile_state.dart';
+import '../widgets/customer_profile.dart';
 
 class CustomerProfilePage extends StatelessWidget {
   final int? accountId;
@@ -19,7 +20,9 @@ class CustomerProfilePage extends StatelessWidget {
           }
 
           if (state is CustomerProfileLoaded) {
-            return _buildCustomerProfile();
+            return CustomerProfile(
+              customerProfile: state.customerProfile,
+            );
           }
 
           if (state is CustomerProfileError) {
@@ -33,13 +36,3 @@ class CustomerProfilePage extends StatelessWidget {
   }
 }
 
-Widget _buildCustomerProfile() {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Thông tin cá nhân'),
-    ),
-    body: Center(
-      child: Text('Customer Profile Loaded'),
-    ),
-  );
-}

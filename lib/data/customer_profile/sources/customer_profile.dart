@@ -34,28 +34,29 @@ class CustomerProfileServiceImpl extends CustomerProfileService {
       final url = '${ApiUrl.putUpdateCustomerByCustomerId}/${customerProfile
           .customerId}';
 
-      final formData = FormData();
-
-      formData.fields.addAll([
-        MapEntry('customerId', customerProfile.customerId.toString()),
-        MapEntry('fullName', customerProfile.fullName!),
-        MapEntry('userName', customerProfile.userName!),
-        MapEntry('phoneNumber', customerProfile.phoneNumber!),
-        MapEntry('dateOfBirth', customerProfile.dateOfBirth!),
-        MapEntry('gender', customerProfile.gender!),
-        MapEntry('address', customerProfile.address!),
-      ]);
+      final Map<String, dynamic> formMap = {
+        'customerId': customerProfile.customerId.toString(),
+        'fullName': customerProfile.fullName,
+        'userName': customerProfile.userName,
+        'phoneNumber': customerProfile.phoneNumber,
+        'dateOfBirth': customerProfile.dateOfBirth,
+        'gender': customerProfile.gender,
+        'address': customerProfile.address,
+      };
 
       if (customerProfile.image != null && customerProfile.image!.isNotEmpty) {
-        formData.files.add(MapEntry(
-          'image',
-          await MultipartFile.fromFile(customerProfile.image!, filename: basename(customerProfile.image!)),
-        ));
+        formMap['image'] = await MultipartFile.fromFile(
+          customerProfile.image!,
+          filename: basename(customerProfile.image!),
+        );
       }
+
+      final formData = FormData.fromMap(formMap);
 
       final response = await sl<DioClient>().put(
         url,
         data: formData,
+        options: Options(contentType: 'multipart/form-data'),
       );
 
       return Right(response.data);

@@ -31,6 +31,8 @@ class _MainPageState extends State<MainPage> {
   Future<void> _initializeCustomerId() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final int? accountId = sharedPreferences.getInt('accountId');
+    final String? email = sharedPreferences.getString('email');
+    final int? customerId = sharedPreferences.getInt('customerId');
 
     if (accountId != null) {
       try {
@@ -39,13 +41,18 @@ class _MainPageState extends State<MainPage> {
         result.fold(
           (error) => debugPrint('Error getting customerId: $error'),
           (data) async {
-            if (data['data']['address'] == null && data['data']['address'] != '') {
+            if (data['data']['address'] == null && data['data']['address'] == '') {
               await sharedPreferences.setString('address', data['data']['address'] ?? '');
               if (mounted) {
                 AppNavigator.push(context, CustomerProfileEditPage(
                   accountId: accountId,
+                  email: email,
+                  customerId: customerId,
                 ));
               }
+            }
+            else {
+              await sharedPreferences.setString('address', data['data']['address']);
             }
           }
         );
