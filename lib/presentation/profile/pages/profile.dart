@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
@@ -23,18 +24,23 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int? accountId;
+  String? userNickname;
+  String? profileImagePath;
+  String? userEmail;
 
   @override
   void initState() {
     super.initState();
-    _initializeAccountId();
+    _initializeData();
   }
 
-  Future<void> _initializeAccountId() async {
+  Future<void> _initializeData() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final int? accountIdPref = sharedPreferences.getInt('accountId');
     setState(() {
-      accountId = accountIdPref;
+      accountId = sharedPreferences.getInt('accountId');
+      userNickname = sharedPreferences.getString('userName') ?? 'Người dùng VaxPet';
+      profileImagePath = sharedPreferences.getString('profileImage');
+      userEmail = sharedPreferences.getString('email') ?? 'user@example.com';
     });
 
   }
@@ -46,101 +52,111 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         // Tắt padding top của SafeArea để loại bỏ khoảng trắng trên cùng
         top: false,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Phần header với avatar và thông tin cơ bản
-              _buildProfileHeader(context),
-              // Phần menu tùy chọn
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8, bottom: 12),
-                      child: Text(
-                        'Tài khoản của bạn',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+        child: RefreshIndicator(
+          onRefresh: _refreshProfile,
+          color: AppColors.primary,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                // Phần header với avatar và thông tin cơ bản
+                _buildProfileHeader(context),
+                // Phần menu tùy chọn
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8, bottom: 12),
+                        child: Text(
+                          'Tài khoản của bạn',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
-                    ),
-                    _buildMenuCard(context, [
-                      _buildMenuItem(
-                        context,
-                        'Thông tin cá nhân',
-                        Icons.person_outline,
-                        () => AppNavigator.push(context, CustomerProfilePage(accountId: accountId)),
-                      ),
-                      const Divider(height: 1),
-                      _buildMenuItem(
-                        context,
-                        'Hạng thành viên',
-                        Icons.card_membership,
-                        () => AppNavigator.push(context, const MembershipPage()),
-                      ),
-                      const Divider(height: 1),
-                      _buildMenuItem(
-                        context,
-                        'Lịch sử mua hàng',
-                        Icons.shopping_bag_outlined,
-                        () => AppNavigator.push(context, const BuyHistoryPage()),
-                      ),
-                    ]),
+                      _buildMenuCard(context, [
+                        _buildMenuItem(
+                          context,
+                          'Thông tin cá nhân',
+                          Icons.person_outline,
+                          () => AppNavigator.push(context, CustomerProfilePage(accountId: accountId)),
+                        ),
+                        const Divider(height: 1),
+                        _buildMenuItem(
+                          context,
+                          'Hạng thành viên',
+                          Icons.card_membership,
+                          () => AppNavigator.push(context, const MembershipPage()),
+                        ),
+                        const Divider(height: 1),
+                        _buildMenuItem(
+                          context,
+                          'Lịch sử mua hàng',
+                          Icons.shopping_bag_outlined,
+                          () => AppNavigator.push(context, const BuyHistoryPage()),
+                        ),
+                      ]),
 
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8, bottom: 12),
-                      child: Text(
-                        'Cài đặt & Hỗ trợ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8, bottom: 12),
+                        child: Text(
+                          'Cài đặt & Hỗ trợ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
-                    ),
-                    _buildMenuCard(context, [
-                      _buildMenuItem(
-                        context,
-                        'Địa chỉ VaxPet',
-                        Icons.location_on_outlined,
-                        () => AppNavigator.push(context, const AddressVaxPetPage()),
-                      ),
-                      const Divider(height: 1),
-                      _buildMenuItem(
-                        context,
-                        'Đổi mật khẩu',
-                        Icons.lock_outline,
-                        () => AppNavigator.push(context, const ResetPasswordPage()),
-                      ),
-                      const Divider(height: 1),
-                      _buildMenuItem(
-                        context,
-                        'Hỗ trợ',
-                        Icons.help_outline,
-                        () => AppNavigator.push(context, const HelpPage()),
-                      ),
-                    ]),
+                      _buildMenuCard(context, [
+                        _buildMenuItem(
+                          context,
+                          'Địa chỉ VaxPet',
+                          Icons.location_on_outlined,
+                          () => AppNavigator.push(context, const AddressVaxPetPage()),
+                        ),
+                        const Divider(height: 1),
+                        _buildMenuItem(
+                          context,
+                          'Đổi mật khẩu',
+                          Icons.lock_outline,
+                          () => AppNavigator.push(context, const ResetPasswordPage()),
+                        ),
+                        const Divider(height: 1),
+                        _buildMenuItem(
+                          context,
+                          'Hỗ trợ',
+                          Icons.help_outline,
+                          () => AppNavigator.push(context, const HelpPage()),
+                        ),
+                      ]),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                    // Nút đăng xuất được thiết kế đẹp hơn
-                    _buildLogoutButton(context),
+                      // Nút đăng xuất được thiết kế đẹp hơn
+                      _buildLogoutButton(context),
 
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  // Function để refresh profile data
+  Future<void> _refreshProfile() async {
+    await _initializeData();
   }
 
   // Widget hiển thị header profile với avatar và thông tin
@@ -189,10 +205,19 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircleAvatar(
                 radius: isSmallScreen ? 35 : 39,
                 backgroundColor: Colors.grey.shade200,
-                child: Icon(
-                  Icons.person,
-                  size: isSmallScreen ? 38 : 44,
-                  color: AppColors.primary,
+                child: ClipOval(
+                  child: profileImagePath != null && profileImagePath!.isNotEmpty
+                      ? Image.file(
+                    File(profileImagePath!),
+                    width: isSmallScreen ? 70 : 78,
+                    height: isSmallScreen ? 70 : 78,
+                    fit: BoxFit.cover,
+                  )
+                      : Icon(
+                    Icons.person,
+                    size: isSmallScreen ? 38 : 44,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
             ),
@@ -207,9 +232,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'Người dùng VaxPet',
-              style: TextStyle(
+            Text(
+              userNickname ?? 'Người dùng VaxPet',
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -229,7 +254,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                'user@example.com',
+                userEmail ?? 'user@example.com',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: isSmallScreen ? 12 : 13,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/common/extensions/appointment_status_extension.dart';
 import 'package:vaxpet/common/extensions/location_type_extension.dart';
 import 'package:vaxpet/common/extensions/service_type_extension.dart';
+import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import '../../../domain/appointment/entities/future_appointment.dart';
 import '../bloc/future_appointment_cubit.dart';
 import '../bloc/future_appointment_state.dart';
@@ -165,6 +166,7 @@ class _FutureAppointmentTabState extends State<FutureAppointmentTab> {
     if (appointments.isEmpty) {
       return RefreshIndicator(
         onRefresh: onRefresh,
+        color: AppColors.primary,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
@@ -191,6 +193,7 @@ class _FutureAppointmentTabState extends State<FutureAppointmentTab> {
 
     return RefreshIndicator(
       onRefresh: onRefresh,
+      color: AppColors.primary,
       child: ListView.builder(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),

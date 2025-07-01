@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import 'package:vaxpet/common/widgets/app_bar/app_bar.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/data/customer_profile/models/customer_profile.dart';
@@ -37,6 +39,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   String? _selectedGender;
   final ImagePicker _picker = ImagePicker();
   File? image;
+  bool _isCommitmentChecked = false;
+  bool _isLoading = false; // Thêm biến loading state
 
   late FocusNode _nameFocusNode;
   late FocusNode _userNameFocusNode;
@@ -90,6 +94,32 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       setState(() {
         image = File(pickedFile.path);
       });
+    }
+  }
+
+  // Function để lưu image vào cache directory
+  Future<String?> _saveImageToCache(File imageFile) async {
+    try {
+      // Lấy cache directory
+      final Directory cacheDir = await getApplicationCacheDirectory();
+
+      // Tạo thư mục profile_images nếu chưa có
+      final Directory profileImagesDir = Directory('${cacheDir.path}/profile_images');
+      if (!await profileImagesDir.exists()) {
+        await profileImagesDir.create(recursive: true);
+      }
+
+      // Tạo tên file unique với timestamp
+      final String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageFile.path)}';
+      final String cachedImagePath = '${profileImagesDir.path}/$fileName';
+
+      // Copy file vào cache directory
+      final File cachedImage = await imageFile.copy(cachedImagePath);
+
+      return cachedImage.path;
+    } catch (e) {
+      print('Error saving image to cache: $e');
+      return null;
     }
   }
 
@@ -235,6 +265,10 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                       ]),
 
                       const SizedBox(height: 30),
+
+                      // Commitment checkbox
+                      _buildCommitmentCheckbox(),
+                      const SizedBox(height: 20),
 
                       // Button submit
                       _buildSubmitButton(),
@@ -671,9 +705,34 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     );
   }
 
+  Widget _buildCommitmentCheckbox() {
+    return Row(
+      children: [
+        Checkbox(
+          value: _isCommitmentChecked,
+          onChanged: (bool? value) {
+            setState(() {
+              _isCommitmentChecked = value ?? false;
+            });
+          },
+          activeColor: AppColors.primary,
+        ),
+        Expanded(
+          child: Text(
+            'Tôi cam kết thông tin trên là chính xác',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSubmitButton() {
     return ElevatedButton(
-      onPressed: () async {
+      onPressed: _isLoading ? null : () async {
         if (_nameController.text.trim().isEmpty) {
           DisplayMessage.errorMessage('Vui lòng điền họ và tên', context);
           FocusScope.of(context).requestFocus(_nameFocusNode);
@@ -718,6 +777,14 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
           FocusScope.of(context).requestFocus(_houseNameFocusNode);
           return;
         }
+        if (!_isCommitmentChecked) {
+          DisplayMessage.errorMessage('Vui lòng xác nhận cam kết thông tin', context);
+          return;
+        }
+
+        setState(() {
+          _isLoading = true;
+        });
 
         try {
           await sl<PutCustomerProfileUseCase>().call(
@@ -732,23 +799,62 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
               address: '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}',
             ),
           );
-          DisplayMessage.successMessage('Cập nhật thông tin thành công', context);
-          Navigator.of(context).pop();
+
+          if (mounted) {
+            final SharedPreferences prefs = await SharedPreferences.getInstance();
+            final address = '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}';
+            await prefs.setString('address', address);
+
+            if (image != null && !image!.path.startsWith('http')) {
+              final String? cachedImagePath = await _saveImageToCache(image!);
+              if (cachedImagePath != null) {
+                await prefs.setString('profileImage', cachedImagePath);
+              }
+            }
+
+            await prefs.setString('fullName', _nameController.text.trim());
+            await prefs.setString('userName', _userNameController.text.trim());
+            await prefs.setString('phoneNumber', _phoneNumberController.text.trim());
+            await prefs.setString('dateOfBirth', _dateOfBirthController.text.trim());
+            if (_selectedGender != null) {
+              await prefs.setString('gender', _selectedGender!);
+            }
+
+            DisplayMessage.successMessage('Cập nhật thông tin thành công', context);
+            Navigator.of(context).pop();
+          }
         } catch (error) {
-          DisplayMessage.errorMessage(error.toString(), context);
+          if (mounted) {
+            DisplayMessage.errorMessage(error.toString(), context);
+          }
+        } finally {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
         }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
+        backgroundColor: _isLoading ? Colors.grey : AppColors.primary,
         minimumSize: const Size(double.infinity, 60),
       ),
-      child: const Text(
-        'Cập nhật',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
+      child: _isLoading
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                strokeWidth: 2,
+              ),
+            )
+          : const Text(
+              'Cập nhật',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
     );
   }
 }

@@ -6,9 +6,33 @@ import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../pages/customer_profile_edit.dart';
 
-class CustomerProfile extends StatelessWidget {
+class CustomerProfile extends StatefulWidget {
   final CustomerProfileEntity customerProfile;
   const CustomerProfile({super.key, required this.customerProfile});
+
+  @override
+  State<CustomerProfile> createState() => _CustomerProfileState();
+}
+
+class _CustomerProfileState extends State<CustomerProfile> {
+  late CustomerProfileEntity _customerProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _customerProfile = widget.customerProfile;
+  }
+
+  Future<void> _refreshProfile() async {
+    // Simulate refresh delay
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Refresh would typically reload data from API
+    // For now, we just refresh the current state
+    setState(() {
+      _customerProfile = widget.customerProfile;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,80 +56,85 @@ class CustomerProfile extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.grey[50],
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.1),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+          child: RefreshIndicator(
+            onRefresh: _refreshProfile,
+            color: AppColors.primary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                    margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildImagePicker(),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildImagePicker(),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isTablet ? screenSize.width * 0.1 : 20,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        // Section: Chi tiết thêm
+                        _buildSectionTitle('Thông tin tài khoản', Icons.description),
+
+                        _buildCard([
+                          _buildEmailField(),
+                        ]),
+
+                        const SizedBox(height: 16),
+
+                        // Section: Thông tin cơ bản
+                        _buildSectionTitle('Thông tin cơ bản', Icons.info),
+
+                        _buildCard([
+                          _buildNameField(),
+                          const SizedBox(height: 16),
+                          _buildNickNameField(),
+                          const SizedBox(height: 16),
+                          _buildGenderField(),
+                          const SizedBox(height: 16),
+                          _buildBirthdayField(),
+                          const SizedBox(height: 16),
+                          _buildPhoneNumberField(),
+                        ]),
+
+                        const SizedBox(height: 16),
+
+                        // Section: Thông tin nơi ở
+                        _buildSectionTitle('Thông tin nơi ở', Icons.home),
+                        _buildCard([
+                          _buildAddressField(),
+                        ]),
+
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isTablet ? screenSize.width * 0.1 : 20,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-
-                      // Section: Chi tiết thêm
-                      _buildSectionTitle('Thông tin tài khoản', Icons.description),
-
-                      _buildCard([
-                        _buildEmailField(),
-                      ]),
-
-                      const SizedBox(height: 16),
-
-                      // Section: Thông tin cơ bản
-                      _buildSectionTitle('Thông tin cơ bản', Icons.info),
-
-                      _buildCard([
-                        _buildNameField(),
-                        const SizedBox(height: 16),
-                        _buildNickNameField(),
-                        const SizedBox(height: 16),
-                        _buildGenderField(),
-                        const SizedBox(height: 16),
-                        _buildBirthdayField(),
-                        const SizedBox(height: 16),
-                        _buildPhoneNumberField(),
-                      ]),
-
-                      const SizedBox(height: 16),
-
-                      // Section: Thông tin nơi ở
-                      _buildSectionTitle('Thông tin nơi ở', Icons.home),
-                      _buildCard([
-                        _buildAddressField(),
-                      ]),
-
-                    ],
-                  ),
-                ),
-                _buildButtonEdit(context),
-                const SizedBox(height: 50),
-              ]
+                  _buildButtonEdit(context),
+                  const SizedBox(height: 50),
+                ]
+              ),
             ),
           ),
         )
@@ -174,10 +203,10 @@ class CustomerProfile extends StatelessWidget {
         CircleAvatar(
           radius: 50,  // Kích thước vòng tròn
           backgroundColor: Colors.grey.shade300,  // Màu nền của vòng tròn
-          child: customerProfile.image != null && customerProfile.image!.isNotEmpty
+          child: _customerProfile.image != null && _customerProfile.image!.isNotEmpty
               ? ClipOval(
                   child: Image.network(
-                    customerProfile.image!,
+                    _customerProfile.image!,
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
@@ -192,7 +221,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildEmailField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.email?.trim(),
+      initialValue: _customerProfile.email?.trim(),
       decoration: InputDecoration(
         labelText: 'Email',
         border: OutlineInputBorder(
@@ -216,7 +245,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildNameField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.fullName?.trim(),
+      initialValue: _customerProfile.fullName?.trim(),
       decoration: InputDecoration(
         labelText: 'Họ và tên',
         border: OutlineInputBorder(
@@ -240,7 +269,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildNickNameField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.userName?.trim(),
+      initialValue: _customerProfile.userName?.trim(),
       decoration: InputDecoration(
         labelText: 'Tên hiển thị',
         border: OutlineInputBorder(
@@ -264,7 +293,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildGenderField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.gender?.trim(),
+      initialValue: _customerProfile.gender?.trim(),
       decoration: InputDecoration(
         labelText: 'Giới tính',
         border: OutlineInputBorder(
@@ -288,7 +317,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildBirthdayField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.dateOfBirth?.trim(),
+      initialValue: _customerProfile.dateOfBirth?.trim(),
       decoration: InputDecoration(
         labelText: 'Ngày sinh',
         border: OutlineInputBorder(
@@ -312,7 +341,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildPhoneNumberField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.phoneNumber?.trim(),
+      initialValue: _customerProfile.phoneNumber?.trim(),
       decoration: InputDecoration(
         labelText: 'Số điện thoại',
         border: OutlineInputBorder(
@@ -336,7 +365,7 @@ class CustomerProfile extends StatelessWidget {
   Widget _buildAddressField() {
     return TextFormField(
       readOnly: true,
-      initialValue: customerProfile.address?.trim(),
+      initialValue: _customerProfile.address?.trim(),
       decoration: InputDecoration(
         labelText: 'Địa chỉ',
         border: OutlineInputBorder(
@@ -364,10 +393,10 @@ class CustomerProfile extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           AppNavigator.push(context, CustomerProfileEditPage(
-            accountId: customerProfile.accountId,
-            customerProfile: customerProfile,
-            email: customerProfile.email?.trim(),
-            customerId: customerProfile.customerId,
+            accountId: _customerProfile.accountId,
+            customerProfile: _customerProfile,
+            email: _customerProfile.email?.trim(),
+            customerId: _customerProfile.customerId,
           ));
         },
         style: ElevatedButton.styleFrom(
