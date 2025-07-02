@@ -47,7 +47,7 @@ class AppointmentMicrochipChoicePage extends StatelessWidget {
                 child: SizedBox(
                   width: isTablet ? screenWidth * 0.7 : screenWidth * 0.85,
                   child: Text(
-                    'Tiếp tục đặt lịch cấy Microchip với $petName',
+                    'Tiếp tục đặt lịch cấy Microchip cho $petName',
                     style: TextStyle(
                       fontSize: isTablet ? 28 : 24,
                       fontWeight: FontWeight.bold,

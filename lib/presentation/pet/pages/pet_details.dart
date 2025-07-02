@@ -125,6 +125,7 @@ class PetDetailsPage extends StatelessWidget {
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,
+                          petImage: petImage,
                         ));
                       },
                     ),

@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../data/appointment/models/update_appointment.dart';
+
 abstract class AppointmentRepository {
   //Get
   Future<Either> getAppointmentByCustomerAndStatus(int customerId, String status);
@@ -9,6 +11,7 @@ abstract class AppointmentRepository {
   Future<Either> getFutureAppointmentByCusId(int customerId, int pageNumber, int pageSize);
   //Post
   //Put
+  Future<Either> putAppointmentById(UpdateAppointmentModel appointmentUpdate);
   //Delete
 
 }

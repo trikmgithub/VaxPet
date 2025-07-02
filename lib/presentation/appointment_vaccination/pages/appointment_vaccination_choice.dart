@@ -9,7 +9,8 @@ class AppointmentVaccinationChoicePage extends StatelessWidget {
   final String petName;
   final int petId;
   final String petSpecies;
-  const AppointmentVaccinationChoicePage({super.key, required this.petName, required this.petId, required this.petSpecies});
+  final String? petImage;
+  const AppointmentVaccinationChoicePage({super.key, required this.petName, required this.petId, required this.petSpecies, this.petImage});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class AppointmentVaccinationChoicePage extends StatelessWidget {
                 child: SizedBox(
                   width: isTablet ? screenWidth * 0.7 : screenWidth * 0.85,
                   child: Text(
-                    'Tiếp tục đặt lịch tiêm Vắc xin với $petName',
+                    'Tiếp tục đặt lịch tiêm Vắc xin cho $petName',
                     style: TextStyle(
                       fontSize: isTablet ? 28 : 24,
                       fontWeight: FontWeight.bold,
@@ -80,6 +81,7 @@ class AppointmentVaccinationChoicePage extends StatelessWidget {
                             petName: petName,
                             petId: petId,
                             petSpecies: petSpecies,
+                            petImage: petImage,
                           ),
                         );
                       },

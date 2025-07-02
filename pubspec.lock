@@ -98,7 +98,7 @@ packages:
     source: hosted
     version: "3.0.6"
   cupertino_icons:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: cupertino_icons
       sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
@@ -106,7 +106,7 @@ packages:
     source: hosted
     version: "1.0.8"
   dartz:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: dartz
       sha256: e6acf34ad2e31b1eb00948692468c30ab48ac8250e0f0df661e29f12dd252168
@@ -114,7 +114,7 @@ packages:
     source: hosted
     version: "0.10.1"
   dio:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: dio
       sha256: "253a18bbd4851fecba42f7343a1df3a9a4c1d31a2c1b37e221086b4fa8c8dbc9"
@@ -130,7 +130,7 @@ packages:
     source: hosted
     version: "2.1.1"
   equatable:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: equatable
       sha256: "567c64b3cb4cf82397aac55f4f0cbd3ca20d77c6c03bedbc4ceaddc08904aef7"
@@ -194,12 +194,12 @@ packages:
     source: hosted
     version: "0.9.3+4"
   flutter:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description: flutter
     source: sdk
     version: "0.0.0"
   flutter_bloc:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: flutter_bloc
       sha256: cf51747952201a455a1c840f8171d273be009b932c75093020f9af64f2123e38
@@ -223,7 +223,7 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_localizations:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -236,7 +236,7 @@ packages:
     source: hosted
     version: "2.0.28"
   flutter_svg:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: flutter_svg
       sha256: d44bf546b13025ec7353091516f6881f1d4c633993cb109c3916c3a0159dadf1
@@ -254,7 +254,7 @@ packages:
     source: sdk
     version: "0.0.0"
   get_it:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: get_it
       sha256: f126a3e286b7f5b578bf436d5592968706c4c1de28a228b870ce375d9f743103
@@ -286,7 +286,7 @@ packages:
     source: hosted
     version: "4.5.4"
   image_picker:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: image_picker
       sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
@@ -350,7 +350,7 @@ packages:
     source: hosted
     version: "0.2.1+1"
   intl:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: intl
       sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
@@ -398,7 +398,7 @@ packages:
     source: hosted
     version: "5.1.1"
   logger:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: logger
       sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
@@ -446,7 +446,7 @@ packages:
     source: hosted
     version: "1.0.0"
   path:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -462,7 +462,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
@@ -550,7 +550,7 @@ packages:
     source: hosted
     version: "6.1.5"
   shared_preferences:
-    dependency: "direct main"
+    dependency: "direct main_bottom_navigator"
     description:
       name: shared_preferences
       sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"

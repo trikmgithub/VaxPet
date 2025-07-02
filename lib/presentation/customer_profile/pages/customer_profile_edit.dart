@@ -118,7 +118,6 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
 
       return cachedImage.path;
     } catch (e) {
-      print('Error saving image to cache: $e');
       return null;
     }
   }
@@ -820,8 +819,11 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
               await prefs.setString('gender', _selectedGender!);
             }
 
-            DisplayMessage.successMessage('Cập nhật thông tin thành công', context);
-            Navigator.of(context).pop();
+            // Check mounted again before using BuildContext after async operations
+            if (mounted) {
+              DisplayMessage.successMessage('Cập nhật thông tin thành công', context);
+              Navigator.of(context).pop();
+            }
           }
         } catch (error) {
           if (mounted) {

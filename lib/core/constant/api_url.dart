@@ -37,11 +37,13 @@ class ApiUrl {
   //Post
   static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
   //Put
+  static const putUpdateAppointment = '${apiV}appointment/update-appointment';
   //Delete
 
   // APPOINTMENT FOR VACCINATION ENDPOINTS
   //Get
   static const getAppointmentForVaccinationByPetIdAndStatus = '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-pet-id-and-status';
+  static const getAppointmentForVaccinationById = '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-id';
   //Post
   static const postAppointmentForVaccination = '${apiV}AppointmentForVaccination/create-appointment-vaccination';
 

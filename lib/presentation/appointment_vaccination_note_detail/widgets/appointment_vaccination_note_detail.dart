@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/extensions/service_type_extension.dart';
+import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import '../bloc/appointment_vaccination_note_detail_cubit.dart';
 import '../bloc/appointment_vaccination_note_detail_state.dart';
+import '../bloc/appointment_vaccination_note_detail_edit_cubit.dart';
+import '../pages/appointment_vaccination_note_detail_edit.dart';
 
 class AppointmentVaccinationDetail extends StatelessWidget {
   const AppointmentVaccinationDetail({super.key});
@@ -17,14 +20,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
   }
 
   String _getLocationText(int location) {
-    switch (location) {
-      case 1:
-        return 'Trung tâm VaxPet';
-      case 2:
-        return 'Nhà bạn';
-      default:
-        return 'Không xác định';
-    }
+    return location == 1 ? 'Trung tâm' : 'Tại nhà';
+  }
+
+  String _getSpeciesText(String species) {
+    return species.toLowerCase() == 'dog' ? 'Chó' : 'Mèo';
   }
 
   String _formatDate(String dateString) {
@@ -50,296 +50,728 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     return BlocBuilder<AppointmentVaccinationNoteDetailCubit, AppointmentVaccinationNoteDetailState>(
       builder: (context, state) {
         if (state.status == AppointmentVaccinationNoteDetailStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Đang tải thông tin...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          );
         } else if (state.status == AppointmentVaccinationNoteDetailStatus.failure) {
-          return Center(child: Text('Lỗi: ${state.errorMessage}'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red[300],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Có lỗi xảy ra',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red[700],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  state.errorMessage ?? 'Không thể tải thông tin',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Quay lại'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          );
         } else if (state.status == AppointmentVaccinationNoteDetailStatus.success && state.appointmentDetail != null) {
           return state.appointmentDetail!.fold(
-            (failure) => const Center(child: Text('Không thể tải chi tiết lịch hẹn')),
+            (failure) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber_outlined,
+                    size: 64,
+                    color: Colors.orange[300],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Không thể tải chi tiết lịch hẹn',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             (response) {
-              // Extract the appointment data from the response
               final appointment = response['data'];
               return _buildAppointmentDetail(context, appointment);
             },
           );
         } else {
-          return const Center(child: Text('Không có dữ liệu'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.inbox_outlined,
+                  size: 64,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Không có dữ liệu',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          );
         }
       },
     );
   }
 
-  Widget _buildAppointmentDetail(BuildContext context, dynamic appointment) {
-    if (appointment == null) {
-      return const Center(child: Text('Không có dữ liệu lịch hẹn'));
+  Widget _buildAppointmentDetail(BuildContext context, dynamic data) {
+    if (data == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.info_outline,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Không có dữ liệu lịch hẹn',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
+    // Get screen dimensions for responsive design
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final isTablet = screenWidth > 600;
+    final horizontalPadding = isTablet ? screenWidth * 0.1 : 16.0;
+
     // Access petResponseDTO safely with null checks
-    final petResponseDTO = appointment['petResponseDTO'] as Map<String, dynamic>? ?? {};
-    // final customerResponseDTO = appointment['customerResponseDTO'] as Map<String, dynamic>? ?? {};
+    final petResponseDTO = data['appointment']['petResponseDTO'] as Map<String, dynamic>? ?? {};
+    final diseaseResponseDTO = data['appointmentHasDiseaseResponseDTO'] as Map<String, dynamic>? ?? {};
 
     final petName = petResponseDTO['name'] ?? 'Không xác định';
     final petSpecies = petResponseDTO['species'] ?? 'Không xác định';
     final petBreed = petResponseDTO['breed'] ?? 'Không xác định';
-    // final petGender = petResponseDTO['gender'] ?? 'Không xác định';
-    // final petWeight = petResponseDTO['weight'] ?? 'Không xác định';
-    // final petDob = petResponseDTO['dateOfBirth'] ?? '';
+    final petImage = petResponseDTO['image'];
 
-    // Get customer_profile email from the nested structure
-    // final accountResponseDTO = customerResponseDTO['accountResponseDTO'] as Map<String, dynamic>? ?? {};
-    // final customerEmail = accountResponseDTO['email'] ?? 'Không có email';
+    final serviceType = data['appointment']['serviceType'] ?? 0;
+    final appointmentDate = data['appointment']['appointmentDate'] ?? '';
+    final appointmentCode = data['appointment']['appointmentCode'] ?? '';
+    final location = data['appointment']['location'] ?? 0;
+    final address = data['appointment']['address'] ?? 'Không có thông tin';
+    final createdAt = data['appointment']['createdAt'] ?? '';
+    final appointmentStatus = data['appointment']['appointmentStatus'] ?? 0;
 
-    final serviceType = appointment['serviceType'] ?? 0;
-    final appointmentDate = appointment['appointmentDate'] ?? '';
-    final appointmentCode = appointment['appointmentCode'] ?? '';
-    final location = appointment['location'] ?? 0;
-    final address = appointment['address'] ?? 'Không có thông tin';
-    final createdAt = appointment['createdAt'] ?? '';
-    final appointmentStatus = appointment['appointmentStatus'] ?? 0;
+    // Handle disease name with multiple possible data structures
+    String nameDisease = 'Không có thông tin bệnh';
+
+    // Try different possible paths for disease information
+    if (diseaseResponseDTO.isNotEmpty) {
+      // First try: direct diseaseName field
+      if (diseaseResponseDTO['diseaseName'] != null) {
+        nameDisease = diseaseResponseDTO['diseaseName'];
+      }
+      // Second try: nested disease object with name field
+      else if (diseaseResponseDTO['disease'] != null && diseaseResponseDTO['disease']['name'] != null) {
+        nameDisease = diseaseResponseDTO['disease']['name'];
+      }
+      // Third try: other possible structure
+      else if (diseaseResponseDTO['disease'] != null && diseaseResponseDTO['disease']['diseaseName'] != null) {
+        nameDisease = diseaseResponseDTO['disease']['diseaseName'];
+      }
+    }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Status Badge and Header Card
+            _buildHeaderCard(context, appointmentStatus, appointmentCode, isTablet),
+
+            const SizedBox(height: 20),
+
+            // Pet Information Card at the top
+            _buildPetInfoCard(
+              context,
+              petName,
+              petSpecies,
+              petBreed,
+              petImage,
+              isTablet
+            ),
+
+            const SizedBox(height: 20),
+
+            // Appointment Information Card
+            _buildAppointmentInfoCard(
+              context,
+              appointmentDate,
+              serviceType,
+              nameDisease,
+              isTablet
+            ),
+
+            const SizedBox(height: 20),
+
+            // Location Information Card
+            _buildLocationCard(context, location, address, isTablet),
+
+            const SizedBox(height: 20),
+
+            // Additional Information Card
+            _buildAdditionalInfoCard(context, createdAt, isTablet),
+
+            const SizedBox(height: 32),
+
+            // Action Buttons (only for pending appointments)
+            if (appointmentStatus == 1)
+              _buildActionButtons(context, data, isTablet),
+
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderCard(BuildContext context, int appointmentStatus, String appointmentCode, bool isTablet) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isTablet ? 24.0 : 20.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary,
+            AppColors.primary.withValues(alpha: 0.9),
+            AppColors.primary.withValues(alpha: 0.9),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Card(
-            elevation: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      decoration: BoxDecoration(
-                        color: appointmentStatus == 1 ? Colors.orange : Colors.green,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        appointmentStatus == 1 ? 'Đang chờ xác nhận' : 'Đã xác nhận',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Mã lịch hẹn: $appointmentCode',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_today, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Ngày hẹn: ${_formatDate(appointmentDate)}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.access_time, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Thời gian: ${_formatTime(appointmentDate)}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.medical_services, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Dịch vụ: ${_getServiceTypeText(serviceType)}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            elevation: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Thông tin thú cưng',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Icon(Icons.pets, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Tên: $petName',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.category, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Loài: $petSpecies',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.pets, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Giống: $petBreed',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            elevation: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Địa điểm',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Địa điểm: ${_getLocationText(location)}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.home, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Địa chỉ: $address',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            elevation: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Thông tin khác',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Icon(Icons.history, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Ngày tạo: ${_formatDate(createdAt)}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (appointmentStatus == 1) // Only show action buttons for pending appointments
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle appointment modification
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    ),
-                    child: const Text('Chỉnh sửa lịch hẹn'),
-                  ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: appointmentStatus == 1 ? Colors.orange : Colors.green,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: (appointmentStatus == 1 ? Colors.orange : Colors.green).withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle appointment cancellation
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    ),
-                    child: const Text('Hủy lịch hẹn'),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  appointmentStatus == 1 ? Icons.schedule : Icons.check_circle,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  appointmentStatus == 1 ? 'Đang chờ xác nhận' : 'Đã xác nhận',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: isTablet ? 16 : 14,
                   ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 16),
+          Icon(
+            Icons.medical_services,
+            color: Colors.white,
+            size: isTablet ? 48 : 40,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Mã lịch hẹn',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.9),
+              fontSize: isTablet ? 16 : 14,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            appointmentCode,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isTablet ? 24 : 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppointmentInfoCard(BuildContext context, String appointmentDate, int serviceType, String nameDisease, bool isTablet) {
+    return _buildInfoCard(
+      title: 'Thông tin lịch hẹn',
+      icon: Icons.calendar_today,
+      iconColor: Colors.blue,
+      isTablet: isTablet,
+      children: [
+        _buildInfoRow(
+          icon: Icons.access_time,
+          label: 'Ngày hẹn',
+          value: _formatDate(appointmentDate),
+          isTablet: isTablet,
+        ),
+        _buildInfoRow(
+          icon: Icons.schedule,
+          label: 'Thời gian',
+          value: _formatTime(appointmentDate),
+          isTablet: isTablet,
+        ),
+        _buildInfoRow(
+          icon: Icons.medical_services,
+          label: 'Dịch vụ',
+          value: _getServiceTypeText(serviceType),
+          isTablet: isTablet,
+        ),
+        _buildInfoRow(
+          icon: Icons.healing,
+          label: 'Tên bệnh',
+          value: nameDisease,
+          isTablet: isTablet,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPetInfoCard(BuildContext context, String petName, String petSpecies, String petBreed, String? petImage, bool isTablet) {
+    return _buildInfoCard(
+      title: 'Thông tin thú cưng',
+      icon: Icons.pets,
+      iconColor: Colors.green,
+      isTablet: isTablet,
+      children: [
+        if (petImage != null) ...[
+          Center(
+            child: Container(
+              width: isTablet ? 100 : 80,
+              height: isTablet ? 100 : 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.network(
+                  petImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.pets,
+                        size: isTablet ? 50 : 40,
+                        color: Colors.grey[400],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        _buildInfoRow(
+          icon: Icons.badge,
+          label: 'Tên',
+          value: petName,
+          isTablet: isTablet,
+        ),
+        _buildInfoRow(
+          icon: Icons.category,
+          label: 'Loài',
+          value: _getSpeciesText(petSpecies),
+          isTablet: isTablet,
+        ),
+        _buildInfoRow(
+          icon: Icons.pets,
+          label: 'Giống',
+          value: petBreed,
+          isTablet: isTablet,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationCard(BuildContext context, int location, String address, bool isTablet) {
+    return _buildInfoCard(
+      title: 'Địa điểm',
+      icon: Icons.location_on,
+      iconColor: Colors.red,
+      isTablet: isTablet,
+      children: [
+        _buildInfoRow(
+          icon: Icons.place,
+          label: 'Địa điểm',
+          value: _getLocationText(location),
+          isTablet: isTablet,
+        ),
+        _buildInfoRow(
+          icon: Icons.home,
+          label: 'Địa chỉ',
+          value: address,
+          isTablet: isTablet,
+          isAddress: true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdditionalInfoCard(BuildContext context, String createdAt, bool isTablet) {
+    return _buildInfoCard(
+      title: 'Thông tin khác',
+      icon: Icons.info,
+      iconColor: Colors.purple,
+      isTablet: isTablet,
+      children: [
+        _buildInfoRow(
+          icon: Icons.history,
+          label: 'Ngày tạo',
+          value: _formatDate(createdAt),
+          isTablet: isTablet,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard({
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required List<Widget> children,
+    required bool isTablet,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isTablet ? 24.0 : 20.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: isTablet ? 24 : 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: isTablet ? 20 : 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isTablet,
+    bool isAddress = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        crossAxisAlignment: isAddress ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: Colors.grey[600],
+            size: isTablet ? 22 : 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: isTablet ? 18 : 16,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, dynamic data, bool isTablet) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final editCubit = AppointmentVaccinationNoteDetailEditCubit();
+
+                  final result = await Navigator.of(context).push<bool>(
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: editCubit,
+                        child: AppointmentVaccinationNoteDetailEditPage(
+                          appointmentData: data,
+                        ),
+                      ),
+                    ),
+                  );
+
+                  if (result == true && context.mounted) {
+                    final appointmentId = data['appointment']['appointmentId'];
+                    context.read<AppointmentVaccinationNoteDetailCubit>().fetchAppointmentDetail(appointmentId);
+                  }
+                },
+                icon: Icon(
+                  Icons.edit,
+                  size: isTablet ? 24 : 20,
+                ),
+                label: Text(
+                  'Chỉnh sửa',
+                  style: TextStyle(
+                    fontSize: isTablet ? 18 : 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isTablet ? 16.0 : 14.0,
+                    horizontal: isTablet ? 24.0 : 20.0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 2,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _showCancelDialog(context, data);
+                },
+                icon: Icon(
+                  Icons.cancel,
+                  size: isTablet ? 24 : 20,
+                ),
+                label: Text(
+                  'Hủy lịch hẹn',
+                  style: TextStyle(
+                    fontSize: isTablet ? 18 : 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isTablet ? 16.0 : 14.0,
+                    horizontal: isTablet ? 24.0 : 20.0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 2,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showCancelDialog(BuildContext context, dynamic data) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.orange,
+                size: 28,
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Xác nhận hủy',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Bạn có chắc chắn muốn hủy lịch hẹn này không? Hành động này không thể hoàn tác.',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Không',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // TODO: Implement appointment cancellation logic
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Tính năng hủy lịch hẹn sẽ được cập nhật sớm'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Có, hủy lịch',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

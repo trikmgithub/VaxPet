@@ -146,15 +146,6 @@ class Pets extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Kéo xuống để làm mới',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.primary,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
             ],
           ),
         ),
@@ -414,7 +405,7 @@ class PetCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8.0),
                       Text(
-                        pet.species ?? 'Không rõ',
+                        pet.species?.toLowerCase() == 'dog' ? 'Chó' : 'Mèo',
                         style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -519,7 +510,7 @@ class PetCard extends StatelessWidget {
                                       petId: pet.petId!,
                                       petName: pet.name ?? "Chưa đặt tên",
                                       petImage: pet.image,
-                                      petSpecies: pet.species == "Dog" ? "Chó" : "Mèo",
+                                      petSpecies: pet.species?.toLowerCase() == "dog" ? "Chó" : "Mèo",
                                     ),
                                   );
                                 },

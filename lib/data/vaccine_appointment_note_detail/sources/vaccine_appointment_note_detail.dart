@@ -14,7 +14,7 @@ class VaccineAppointmentNoteDetailServiceImpl extends VaccineAppointmentNoteDeta
   Future<Either> getVaccineAppointmentNoteDetail(int appointmentId) async {
     try {
       var response = await sl<DioClient>().get(
-        '${ApiUrl.getAppointmentById}/$appointmentId',
+        '${ApiUrl.getAppointmentForVaccinationById}/$appointmentId',
       );
 
       return Right(response.data);

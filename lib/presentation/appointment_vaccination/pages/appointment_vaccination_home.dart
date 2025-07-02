@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
+import 'package:vaxpet/presentation/main_bottom_navigator/pages/main_bottom_navigator.dart';
 import 'package:vaxpet/service_locator.dart';
 
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../data/appointment_vaccination/models/post_appointment_vaccination.dart';
 import '../../../domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
-import '../../main/pages/main.dart';
 import '../../disease/pages/choice_disease.dart';
-
-
 
 class AppointmentVaccinationHomePage extends StatefulWidget {
   final int serviceType = 1; // 1 cho dịch vụ tiêm vắc-xin
@@ -19,11 +17,13 @@ class AppointmentVaccinationHomePage extends StatefulWidget {
   final String petName;
   final int petId;
   final String petSpecies;
+  final String? petImage;
   const AppointmentVaccinationHomePage({
     super.key,
     required this.petName,
     required this.petId,
     required this.petSpecies,
+    this.petImage,
   });
 
   @override
@@ -33,9 +33,16 @@ class AppointmentVaccinationHomePage extends StatefulWidget {
 class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationHomePage> {
   final TextEditingController _dateOfScheduleController = TextEditingController();
   final TextEditingController _timeOfScheduleController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   int? _customerId;
   int? _selectedDiseaseId;
   String? _selectedDiseaseName;
+  String? _userAddress;
+  String? _originalAddress; // Lưu trữ địa chỉ gốc từ SharedPreferences khi trang được mở
+  bool _isEditingAddress = false;
+
+  // Key để lưu địa chỉ gốc trong SharedPreferences
+  final String _originalAddressKey = 'original_address';
 
   // Parse the date and time separately with validation
   DateTime? selectedDate;
@@ -60,215 +67,256 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
     // Tính toán padding dựa trên kích thước màn hình
     final double horizontalPadding = screenWidth * 0.05;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Back button ở góc trái trên cùng
-              Container(
-                alignment: Alignment.topLeft,
-                padding: EdgeInsets.only(
-                  top: screenHeight * 0.01,
-                  left: horizontalPadding,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) async {
+        // Khi người dùng nhấn nút back, reset địa chỉ về địa chỉ gốc trong SharedPreferences
+        _resetAddressToOriginal();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Back button ở góc trái trên cùng
+                Container(
+                  alignment: Alignment.topLeft,
+                  padding: EdgeInsets.only(
+                    top: screenHeight * 0.01,
+                    left: horizontalPadding,
+                  ),
+                  child: BackButtonBasic(),
                 ),
-                child: BackButtonBasic(),
-              ),
 
-              // Header section with title and pet info
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: horizontalPadding,
-                  vertical: screenHeight * 0.02,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Tiêu đề trang
-                    Center(
-                      child: Text(
-                        'Đặt lịch tiêm vắc xin tại nhà',
-                        style: TextStyle(
-                          fontSize: isTablet ? 28 : 22,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                    SizedBox(height: screenHeight * 0.02),
-
-                    // Pet info card
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
-                            spreadRadius: 0,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[100],
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.pets,
-                              color: Theme.of(context).primaryColor,
-                              size: 28,
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.petName,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  widget.petSpecies,
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: screenHeight * 0.03),
-                  ],
-                ),
-              ),
-
-              // Form Section
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      spreadRadius: 0,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(20),
+                // Header section with title and pet info
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: screenHeight * 0.02,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Form title
-                      Text(
-                        'Thông tin lịch hẹn',
-                        style: TextStyle(
-                          fontSize: isTablet ? 22 : 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                      // Tiêu đề trang
+                      Center(
+                        child: Text(
+                          'Đặt lịch tiêm vắc xin tại nhà',
+                          style: TextStyle(
+                            fontSize: isTablet ? 28 : 22,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      Divider(height: 30, thickness: 1),
 
-                      // Date selection
-                      _buildFormLabel('Ngày hẹn tiêm vắc xin:'),
-                      SizedBox(height: 8),
-                      _buildDateField(context),
-                      SizedBox(height: 20),
+                      SizedBox(height: screenHeight * 0.02),
 
-                      // Time selection
-                      _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
-                      SizedBox(height: 8),
-                      _buildTimeField(context),
-                      SizedBox(height: 20),
+                      // Pet info card
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              spreadRadius: 0,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: widget.petImage != null ? Colors.transparent : Colors.blue[100],
+                                shape: BoxShape.circle,
+                              ),
+                              child: widget.petImage != null
+                                  ? ClipOval(
+                                      child: Image.network(
+                                        widget.petImage!,
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Icon(
+                                            Icons.pets,
+                                            color: Theme.of(context).primaryColor,
+                                            size: 28,
+                                          );
+                                        },
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress.expectedTotalBytes != null
+                                                  ? loadingProgress.cumulativeBytesLoaded /
+                                                      loadingProgress.expectedTotalBytes!
+                                                  : null,
+                                              strokeWidth: 2,
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.pets,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 28,
+                                    ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.petName,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    widget.petSpecies,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-                      // Disease selection button
-                      _buildFormLabel('Bệnh cần tiêm vắc xin:'),
-                      SizedBox(height: 8),
-                      _buildDiseaseSelectionButton(context),
-                      SizedBox(height: 16),
-
-                      // Disease selection result
-                      _buildDiseaseSelectionResult(),
-                      SizedBox(height: 24),
-
-                      // Submit button
-                      _buildSubmitButton(context),
+                      SizedBox(height: screenHeight * 0.03),
                     ],
                   ),
                 ),
-              ),
 
-              SizedBox(height: screenHeight * 0.04),
-
-              // Note section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: Container(
-                  padding: EdgeInsets.all(16),
+                // Form Section
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue[200]!),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.blue[700], size: 18),
-                          SizedBox(width: 8),
-                          Text(
-                            'Lưu ý',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Bạn sẽ được Bác sĩ tư vấn loại Vắc xin tương ứng với bệnh bạn chọn sau!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue[800],
-                        ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                ),
-              ),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Form title
+                        Text(
+                          'Thông tin lịch hẹn',
+                          style: TextStyle(
+                            fontSize: isTablet ? 22 : 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(height: 30, thickness: 1),
 
-              SizedBox(height: screenHeight * 0.03),
-            ],
+                        // Date selection
+                        _buildFormLabel('Ngày hẹn tiêm vắc xin:'),
+                        SizedBox(height: 8),
+                        _buildDateField(context),
+                        SizedBox(height: 20),
+
+                        // Time selection
+                        _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
+                        SizedBox(height: 8),
+                        _buildTimeField(context),
+                        SizedBox(height: 20),
+
+                        // Address input
+                        _buildFormLabel('Địa chỉ nhà:'),
+                        SizedBox(height: 8),
+                        _buildAddressField(context),
+                        SizedBox(height: 20),
+
+                        // Disease selection button
+                        _buildFormLabel('Bệnh cần tiêm vắc xin:'),
+                        SizedBox(height: 8),
+                        _buildDiseaseSelectionButton(context),
+                        SizedBox(height: 16),
+
+                        // Disease selection result
+                        _buildDiseaseSelectionResult(),
+                        SizedBox(height: 24),
+
+                        // Submit button
+                        _buildSubmitButton(context),
+                      ],
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: screenHeight * 0.04),
+
+                // Note section
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue[200]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.info_outline, color: Colors.blue[700], size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Lưu ý',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Bạn sẽ được Bác sĩ tư vấn loại Vắc xin tương ứng với bệnh bạn chọn sau!',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.blue[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: screenHeight * 0.03),
+              ],
+            ),
           ),
         ),
       ),
@@ -605,6 +653,12 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
             throw 'Vui lòng chọn bệnh cần tiêm vắc-xin';
           }
 
+          // Kiểm tra địa chỉ
+          if (_addressController.text.isEmpty) {
+            _showSnackBar('Vui lòng nhập địa chỉ nhận dịch vụ', isError: true);
+            throw 'Vui lòng nhập địa chỉ nhận dịch vụ';
+          }
+
           try {
             try {
               selectedDate = DateFormat('dd/MM/yyyy').parse(_dateOfScheduleController.text);
@@ -638,8 +692,8 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                 appointmentDate: formattedDate,
                 serviceType: widget.serviceType,
                 location: widget.location,
-                address: "Địa chỉ mặc định", // Sử dụng địa chỉ mặc định thay vì nhập
-                diseaseId: _selectedDiseaseId!
+                address: _addressController.text, // Sử dụng địa chỉ từ người dùng nhập
+                diseaseId: _selectedDiseaseId!,
             ));
 
             return result;
@@ -653,7 +707,7 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
         title: 'Đặt lịch ngay',
         onSuccess: () {
           _showSnackBar('Đặt lịch thành công');
-          AppNavigator.pushAndRemove(context, MainPage());
+          AppNavigator.pushAndRemove(context, MainBottomNavigatorPage());
         },
         onFailure: (error) {
           debugPrint('Error creating vaccination schedule: $error');
@@ -670,6 +724,24 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         _customerId = prefs.getInt('customerId');
+        _userAddress = prefs.getString('address'); // Lấy địa chỉ người dùng hiện tại
+
+        // Đọc địa chỉ gốc từ SharedPreferences (nếu đã lưu trước đó)
+        _originalAddress = prefs.getString(_originalAddressKey);
+
+        // Nếu chưa có địa chỉ gốc được lưu, sử dụng địa chỉ hiện tại làm địa chỉ gốc
+        // và lưu vào SharedPreferences để sử dụng sau này
+        if (_originalAddress == null && _userAddress != null) {
+          _originalAddress = _userAddress;
+          prefs.setString(_originalAddressKey, _userAddress!);
+          debugPrint('Saved original address: $_originalAddress');
+        }
+
+        // Luôn reset địa chỉ về địa chỉ gốc mỗi khi trang được tạo mới
+        if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+          _addressController.text = _originalAddress!;
+          debugPrint('Reset address to original: $_originalAddress');
+        }
       });
 
       if (_customerId == null) {
@@ -740,6 +812,223 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
     Future.delayed(const Duration(seconds: 3), () {
       overlayEntry?.remove();
     });
+  }
+
+  // Stylized address field
+  Widget _buildAddressField(BuildContext context) {
+    // Đặt địa chỉ vào controller nếu có và chưa có giá trị
+    if (_userAddress != null && _userAddress!.isNotEmpty && _addressController.text.isEmpty) {
+      _addressController.text = _userAddress!;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: _isEditingAddress ? Colors.white : Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: _isEditingAddress ? Theme.of(context).primaryColor : Colors.grey[300]!),
+          ),
+          child: TextFormField(
+            controller: _addressController,
+            decoration: InputDecoration(
+              hintText: _isEditingAddress ? 'Nhập địa chỉ mới' : 'Đang tải địa chỉ...',
+              hintStyle: TextStyle(color: Colors.grey[500]),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: InputBorder.none,
+              filled: true,
+              fillColor: Colors.transparent,
+              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).primaryColor),
+            ),
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+            ),
+            maxLines: 2,
+            readOnly: !_isEditingAddress,
+            enabled: _isEditingAddress,
+          ),
+        ),
+
+        // Nút đổi địa chỉ và nút nhà bạn được đặt ở phía dưới trường địa chỉ
+        if (!_isEditingAddress)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Nút "Nhà bạn" - Để lấy lại địa chỉ gốc đã lưu khi mở form
+                GestureDetector(
+                  onTap: () {
+                    if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+                      setState(() {
+                        _addressController.text = _originalAddress!;
+                        // Không cập nhật _userAddress để không ảnh hưởng đến giá trị hiện tại
+                      });
+                      _showSnackBar(
+                        'Đã lấy lại địa chỉ nhà bạn',
+                        isError: false,
+                        icon: Icons.home,
+                      );
+                    } else {
+                      _showSnackBar(
+                        'Không tìm thấy địa chỉ đã lưu',
+                        isError: true,
+                        icon: Icons.warning,
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color: Colors.green,
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Nhà bạn',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                // Nút đổi địa chỉ
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isEditingAddress = true;
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Theme.of(context).primaryColor,
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Đổi địa chỉ',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+        // Các nút lưu và hủy khi đang chỉnh sửa
+        if (_isEditingAddress)
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      // Khôi phục giá trị ban đầu
+                      _addressController.text = _userAddress ?? '';
+                      _isEditingAddress = false;
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey[700],
+                  ),
+                  child: Text('Hủy'),
+                ),
+                SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_addressController.text.trim().isEmpty) {
+                      _showSnackBar('Vui lòng nhập địa chỉ', isError: true);
+                      return;
+                    }
+
+                    setState(() {
+                      // Lưu địa chỉ mới vào biến _userAddress
+                      _userAddress = _addressController.text;
+                      _isEditingAddress = false;
+                    });
+
+                    try {
+                      // Lưu địa chỉ mới vào SharedPreferences
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('address', _addressController.text);
+                      _showSnackBar(
+                        'Đã cập nhật địa chỉ thành công',
+                        isError: false,
+                        icon: Icons.check_circle,
+                      );
+                    } catch (e) {
+                      debugPrint('Error saving address: $e');
+                      _showSnackBar('Không thể lưu địa chỉ: $e', isError: true);
+                    }
+                  },
+                  icon: Icon(Icons.save, size: 18),
+                  label: Text('Lưu'),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  // Phương thức reset địa chỉ về địa chỉ gốc trong SharedPreferences
+  void _resetAddressToOriginal() {
+    if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+      setState(() {
+        _addressController.text = _originalAddress!;
+        _userAddress = _originalAddress; // Cập nhật _userAddress để khôi phục địa chỉ gốc
+      });
+      _showSnackBar(
+        'Đã khôi phục địa chỉ gốc',
+        isError: false,
+        icon: Icons.restore,
+      );
+    } else {
+      _showSnackBar(
+        'Không tìm thấy địa chỉ gốc để khôi phục',
+        isError: true,
+        icon: Icons.warning,
+      );
+    }
   }
 }
 

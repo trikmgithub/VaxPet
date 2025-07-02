@@ -5,14 +5,14 @@ import '../widgets/future_appointment_tab.dart';
 import '../widgets/past_appointment_tab.dart';
 import '../widgets/today_appointment_tab.dart';
 
-class CalendarPage extends StatefulWidget {
-  const CalendarPage({super.key});
+class AppointmentAllNotificationPage extends StatefulWidget {
+  const AppointmentAllNotificationPage({super.key});
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  State<AppointmentAllNotificationPage> createState() => _AppointmentAllNotificationPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderStateMixin {
+class _AppointmentAllNotificationPageState extends State<AppointmentAllNotificationPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -117,17 +117,17 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
               controller: _tabController,
               children: [
                 // First tab - Hôm nay
-                CalendarTabContainer(
+                AppointmentAllNotificationTabContainer(
                   child: TodayAppointmentTab(),
                 ),
 
                 // Second tab - Tương lai
-                CalendarTabContainer(
+                AppointmentAllNotificationTabContainer(
                   child: FutureAppointmentTab(),
                 ),
 
                 // Third tab - Quá kh��
-                CalendarTabContainer(
+                AppointmentAllNotificationTabContainer(
                   child: PastAppointmentTab(),
                 ),
               ],
@@ -140,10 +140,10 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
 }
 
 // Widget bọc mỗi tab để thêm padding và hiệu ứng
-class CalendarTabContainer extends StatelessWidget {
+class AppointmentAllNotificationTabContainer extends StatelessWidget {
   final Widget child;
 
-  const CalendarTabContainer({
+  const AppointmentAllNotificationTabContainer({
     super.key,
     required this.child,
   });

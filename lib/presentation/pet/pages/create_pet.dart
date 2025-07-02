@@ -5,13 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/extensions/string_extension.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/data/pet/models/create_pet_req_params.dart';
-import 'package:vaxpet/presentation/main/pages/main.dart';
-
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../domain/pet/usecases/create_pet.dart';
 import '../../../service_locator.dart';
+import '../../main_bottom_navigator/pages/main_bottom_navigator.dart';
 
 class CreatePetPage extends StatefulWidget {
   const CreatePetPage({super.key});
@@ -795,7 +794,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
               (success) {
                 debugPrint('Pet created successfully');
                 DisplayMessage.successMessage('Đã tạo thú cưng thành công', context);
-                AppNavigator.pushAndRemove(context, MainPage());
+                AppNavigator.pushAndRemove(context, MainBottomNavigatorPage());
               }
             );
           } catch (e) {

@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/domain/auth/usecases/get_customer_id.dart';
-import 'package:vaxpet/presentation/calendar/pages/calendar.dart';
 import 'package:vaxpet/presentation/customer_profile/pages/customer_profile_edit.dart';
 import 'package:vaxpet/presentation/profile/pages/profile.dart';
 import 'package:vaxpet/service_locator.dart';
@@ -12,16 +11,17 @@ import 'package:vaxpet/service_locator.dart';
 import '../../../common/bloc/bottom_nav_bar/bottom_nav_bar_bloc.dart';
 import '../../../common/bloc/bottom_nav_bar/bottom_nav_bar_event.dart';
 import '../../../common/bloc/bottom_nav_bar/bottom_nav_bar_state.dart';
+import '../../appointment_all_notification/pages/appointment_all_notification.dart';
 import '../../home/pages/home.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class MainBottomNavigatorPage extends StatefulWidget {
+  const MainBottomNavigatorPage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MainBottomNavigatorPage> createState() => _MainBottomNavigatorPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
   @override
   void initState() {
     super.initState();
@@ -67,7 +67,7 @@ class _MainPageState extends State<MainPage> {
     // Danh sách các trang theo tab
     final List<Widget> pages = [
       const HomePage(), // Tab 1: Trang hồ sơ thú cưng
-      const CalendarPage(),   // Tab 2: Trang lịch sử tiêm chủng
+      const AppointmentAllNotificationPage(),   // Tab 2: Trang lịch sử tiêm chủng
       const ProfilePage()     // Tab 3: Trang tài khoản
     ];
 

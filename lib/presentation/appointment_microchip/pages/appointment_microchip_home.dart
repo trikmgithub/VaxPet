@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
+import 'package:vaxpet/presentation/main_bottom_navigator/pages/main_bottom_navigator.dart';
 import 'package:vaxpet/service_locator.dart';
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../data/appointment_microchip/models/post_appointment_micrcochip.dart';
 import '../../../domain/appointment_microchip/usecases/post_appointment_microchip.dart';
-import '../../main/pages/main.dart';
 
 class AppointmentMicrochipHomePage extends StatefulWidget {
   final int serviceType = 2; // 2 cho cấy microchip
@@ -544,7 +544,7 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
         title: 'Đặt lịch ngay',
         onSuccess: () {
           _showSnackBar('Đặt lịch thành công');
-          AppNavigator.pushAndRemove(context, MainPage());
+          AppNavigator.pushAndRemove(context, MainBottomNavigatorPage());
         },
         onFailure: (error) {
           debugPrint('Error creating vaccination schedule: $error');

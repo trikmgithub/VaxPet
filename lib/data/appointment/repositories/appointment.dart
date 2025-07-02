@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:vaxpet/common/helper/mapper/past_appointment_mapper.dart';
+import 'package:vaxpet/data/appointment/models/update_appointment.dart';
 
 import '../../../common/helper/mapper/future_appointment_mapper.dart';
 import '../../../common/helper/mapper/today_appointment_mapper.dart';
@@ -117,6 +118,20 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
             .toList();
         return Right(appointmentDetail);
       },
+    );
+  }
+
+  @override
+  Future<Either> putAppointmentById(UpdateAppointmentModel appointmentUpdate) async {
+    var returnedData = await sl<AppointmentService>().putAppointmentById(
+      appointmentUpdate
+    );
+
+    return returnedData.fold(
+      (error) => Left(Exception(error.toString())),
+      (data) {
+        return Right(data);
+      }
     );
   }
 }

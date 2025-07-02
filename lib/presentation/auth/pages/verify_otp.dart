@@ -5,10 +5,9 @@ import 'package:vaxpet/common/widgets/reactive_button/reactive_button.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/data/auth/models/verify_otp_req_params.dart';
 import 'package:vaxpet/domain/auth/usecases/verify_otp.dart';
+import 'package:vaxpet/presentation/main_bottom_navigator/pages/main_bottom_navigator.dart';
 import 'package:vaxpet/service_locator.dart';
-
 import '../../../common/widgets/app_bar/app_bar.dart';
-import '../../main/pages/main.dart';
 
 class VerifyOtpPage extends StatelessWidget {
   final String email;
@@ -153,7 +152,7 @@ class VerifyOtpPage extends StatelessWidget {
           controller.clear();
         }
 
-        AppNavigator.pushAndRemove(context, MainPage());
+        AppNavigator.pushAndRemove(context, MainBottomNavigatorPage());
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

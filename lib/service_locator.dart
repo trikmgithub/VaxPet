@@ -27,6 +27,7 @@ import 'domain/appointment/usecases/get_appointment_by_id.dart';
 import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_past_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_today_appointment_by_cusid.dart';
+import 'domain/appointment/usecases/put_appointment_by_id.dart';
 import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
 import 'domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import 'domain/appointment_vaccination/repositories/appointment_vaccination.dart';
@@ -107,5 +108,6 @@ void setupServiceLocator() {
   sl.registerSingleton<GetVaccineAppointmentNoteDetailUseCase>(GetVaccineAppointmentNoteDetailUseCase());
   sl.registerSingleton<GetCustomerProfileUseCase>(GetCustomerProfileUseCase());
   sl.registerSingleton<PutCustomerProfileUseCase>(PutCustomerProfileUseCase());
+  sl.registerSingleton<PutAppointmentByIdUseCase>(PutAppointmentByIdUseCase());
 
 }

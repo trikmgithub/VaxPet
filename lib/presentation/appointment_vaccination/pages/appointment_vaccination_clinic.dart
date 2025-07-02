@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
+import 'package:vaxpet/presentation/main_bottom_navigator/pages/main_bottom_navigator.dart';
 import 'package:vaxpet/service_locator.dart';
 
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../data/appointment_vaccination/models/post_appointment_vaccination.dart';
 import '../../../domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
-import '../../main/pages/main.dart';
 import '../../disease/pages/choice_disease.dart';
-
-
 
 class AppointmentVaccinationClinicPage extends StatefulWidget {
   final int serviceType = 1; // 1 cho dịch vụ tiêm vắc-xin
@@ -653,7 +651,7 @@ class _AppointmentVaccinationClinicPageState extends State<AppointmentVaccinatio
         title: 'Đặt lịch ngay',
         onSuccess: () {
           _showSnackBar('Đặt lịch thành công');
-          AppNavigator.pushAndRemove(context, MainPage());
+          AppNavigator.pushAndRemove(context, MainBottomNavigatorPage());
         },
         onFailure: (error) {
           debugPrint('Error creating vaccination schedule: $error');

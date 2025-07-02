@@ -5,8 +5,8 @@ import 'package:vaxpet/common/extensions/location_type_extension.dart';
 import 'package:vaxpet/common/extensions/service_type_extension.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/domain/appointment/entities/past_appointment.dart';
-import 'package:vaxpet/presentation/calendar/bloc/past_appointment_cubit.dart';
-import 'package:vaxpet/presentation/calendar/bloc/past_appointment_state.dart';
+import '../bloc/past_appointment_cubit.dart';
+import '../bloc/past_appointment_state.dart';
 
 class PastAppointmentTab extends StatefulWidget {
   const PastAppointmentTab({super.key});

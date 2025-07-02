@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/assets/app_vectors.dart';
-
-import '../../main/pages/main.dart';
+import 'package:vaxpet/presentation/main_bottom_navigator/pages/main_bottom_navigator.dart';
 import '../bloc/splash_cubit.dart';
 import '../bloc/splash_state.dart';
 import 'introduce.dart';
@@ -21,7 +20,7 @@ class SplashPage extends StatelessWidget {
             AppNavigator.pushReplacement(context, const IntroducePage());
           }
           if (state is Authenticated) {
-            AppNavigator.pushReplacement(context, MainPage());
+            AppNavigator.pushReplacement(context, MainBottomNavigatorPage());
           }
         },
         child: Container(

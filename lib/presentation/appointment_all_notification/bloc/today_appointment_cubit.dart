@@ -1,45 +1,46 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vaxpet/domain/appointment/entities/past_appointment.dart';
-import 'package:vaxpet/domain/appointment/usecases/get_past_appointment_by_cusid.dart';
-import 'package:vaxpet/presentation/calendar/bloc/past_appointment_state.dart';
+import 'package:vaxpet/presentation/appointment_all_notification/bloc/today_appointment_state.dart';
 import 'package:vaxpet/service_locator.dart';
 
-class PastAppointmentCubit extends Cubit<PastAppointmentState> {
-  PastAppointmentCubit() : super(PastAppointmentLoading());
+import '../../../domain/appointment/entities/today_appointment.dart';
+import '../../../domain/appointment/usecases/get_today_appointment_by_cusid.dart';
+
+class TodayAppointmentCubit extends Cubit<TodayAppointmentState> {
+  TodayAppointmentCubit() : super(TodayAppointmentLoading());
 
   // Thêm các thuộc tính để quản lý pagination
   int _currentPage = 1;
   final int _pageSize = 10;
   bool _hasMoreData = true;
-  List<PastAppointmentEntity> _allAppointments = [];
+  List<TodayAppointmentEntity> _allAppointments = [];
 
   // Getter cho các thuộc tính
   int get currentPage => _currentPage;
   bool get hasMoreData => _hasMoreData;
 
   // Phương thức khởi tạo để lấy dữ liệu đầu tiên
-  void getPastAppointments() async {
+  void getTodayAppointments() async {
     try {
       // Reset state khi gọi lại từ đầu
       _currentPage = 1;
       _hasMoreData = true;
       _allAppointments = [];
 
-      emit(PastAppointmentLoading());
+      emit(TodayAppointmentLoading());
 
       // Get customer_profile ID from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final customerId = prefs.getInt('customerId');
 
       if (customerId == null) {
-        emit(PastAppointmentError(message: 'Customer ID not found'));
+        emit(TodayAppointmentError(message: 'Customer ID not found'));
         return;
       }
 
       // Truyền một đối tượng có các thuộc tính cần thiết
-      var returnedData = await sl<GetPastAppointmentByCusId>().call(
-        params: _PastAppointmentParams(
+      var returnedData = await sl<GetTodayAppointmentByCusId>().call(
+        params: _TodayAppointmentParams(
           customerId: customerId,
           pageNumber: _currentPage,
           pageSize: _pageSize,
@@ -47,8 +48,8 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
       );
 
       returnedData.fold(
-        (error) => emit(PastAppointmentError(message: error.toString())),
-        (appointments) {
+            (error) => emit(TodayAppointmentError(message: error.toString())),
+            (appointments) {
           _allAppointments = appointments;
 
           // Nếu số lượng kết quả nhỏ hơn page size, đã hết dữ liệu
@@ -56,7 +57,7 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
             _hasMoreData = false;
           }
 
-          emit(PastAppointmentLoaded(
+          emit(TodayAppointmentLoaded(
             appointments: _allAppointments,
             hasMoreData: _hasMoreData,
             currentPage: _currentPage,
@@ -64,19 +65,19 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
         },
       );
     } catch (e) {
-      emit(PastAppointmentError(message: e.toString()));
+      emit(TodayAppointmentError(message: e.toString()));
     }
   }
 
   // Phương thức để tải thêm dữ liệu cho trang tiếp theo
   void loadMoreAppointments() async {
     // Nếu không còn dữ liệu hoặc đang tải, không làm gì
-    if (!_hasMoreData || state is PastAppointmentLoading) {
+    if (!_hasMoreData || state is TodayAppointmentLoading) {
       return;
     }
 
     try {
-      emit(PastAppointmentLoadingMore(
+      emit(TodayAppointmentLoadingMore(
         appointments: _allAppointments,
         currentPage: _currentPage,
       ));
@@ -89,13 +90,13 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
       final customerId = prefs.getInt('customerId');
 
       if (customerId == null) {
-        emit(PastAppointmentError(message: 'Customer ID not found'));
+        emit(TodayAppointmentError(message: 'Customer ID not found'));
         return;
       }
 
       // Truyền một đối tượng có các thuộc tính cần thiết
-      var returnedData = await sl<GetPastAppointmentByCusId>().call(
-        params: _PastAppointmentParams(
+      var returnedData = await sl<GetTodayAppointmentByCusId>().call(
+        params: _TodayAppointmentParams(
           customerId: customerId,
           pageNumber: _currentPage,
           pageSize: _pageSize,
@@ -103,12 +104,12 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
       );
 
       returnedData.fold(
-        (error) => emit(PastAppointmentError(message: error.toString())),
-        (newAppointments) {
+            (error) => emit(TodayAppointmentError(message: error.toString())),
+            (newAppointments) {
           // Nếu không có dữ liệu mới, đã hết dữ liệu
           if (newAppointments.isEmpty) {
             _hasMoreData = false;
-            emit(PastAppointmentLoaded(
+            emit(TodayAppointmentLoaded(
               appointments: _allAppointments,
               hasMoreData: _hasMoreData,
               currentPage: _currentPage - 1, // Giảm trang lại vì không có dữ liệu
@@ -124,7 +125,7 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
             _hasMoreData = false;
           }
 
-          emit(PastAppointmentLoaded(
+          emit(TodayAppointmentLoaded(
             appointments: _allAppointments,
             hasMoreData: _hasMoreData,
             currentPage: _currentPage,
@@ -132,23 +133,23 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
         },
       );
     } catch (e) {
-      emit(PastAppointmentError(message: e.toString()));
+      emit(TodayAppointmentError(message: e.toString()));
     }
   }
 
   // Phương thức để làm mới dữ liệu
   void refreshAppointments() {
-    getPastAppointments();
+    getTodayAppointments();
   }
 }
 
 // Lớp giúp đóng gói các tham số
-class _PastAppointmentParams {
+class _TodayAppointmentParams {
   final int customerId;
   final int pageNumber;
   final int pageSize;
 
-  _PastAppointmentParams({
+  _TodayAppointmentParams({
     required this.customerId,
     required this.pageNumber,
     required this.pageSize,
