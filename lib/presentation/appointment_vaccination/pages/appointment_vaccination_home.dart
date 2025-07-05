@@ -68,10 +68,6 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
     final double horizontalPadding = screenWidth * 0.05;
 
     return PopScope(
-      onPopInvokedWithResult: (didPop, result) async {
-        // Khi người dùng nhấn nút back, reset địa chỉ về địa chỉ gốc trong SharedPreferences
-        _resetAddressToOriginal();
-      },
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         body: SafeArea(
@@ -1010,26 +1006,6 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
     );
   }
 
-  // Phương thức reset địa chỉ về địa chỉ gốc trong SharedPreferences
-  void _resetAddressToOriginal() {
-    if (_originalAddress != null && _originalAddress!.isNotEmpty) {
-      setState(() {
-        _addressController.text = _originalAddress!;
-        _userAddress = _originalAddress; // Cập nhật _userAddress để khôi phục địa chỉ gốc
-      });
-      _showSnackBar(
-        'Đã khôi phục địa chỉ gốc',
-        isError: false,
-        icon: Icons.restore,
-      );
-    } else {
-      _showSnackBar(
-        'Không tìm thấy địa chỉ gốc để khôi phục',
-        isError: true,
-        icon: Icons.warning,
-      );
-    }
-  }
 }
 
 class TimeOfDayRange {

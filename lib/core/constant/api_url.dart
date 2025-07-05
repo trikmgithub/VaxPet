@@ -18,13 +18,14 @@ class ApiUrl {
   // PET ENDPOINTS
   //Get
   static const getPetByAccountId = '${apiV}pets/get-pets-by-account-id';
+  static const getPetById = '${apiV}pets/get-pet-by-id';
   //Delete
   static const deletePetById = '${apiV}pets/delete-pet';
-
   //Post
   static const createPet = '${apiV}pets/create-pet';
-
   static const updatePet = '${apiV}pets/update-pet';
+  //Put
+  static const putUpdatePet = '${apiV}pets/update-pet-by';
 
   // APPOINTMENT ENDPOINTS
   //Get

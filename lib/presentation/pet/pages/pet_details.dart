@@ -6,6 +6,7 @@ import '../../appointment_health_certificate/pages/appointment_health_certificat
 import '../../appointment_microchip/pages/appointment_microchip_choice.dart';
 import '../../appointment_vaccination/pages/appointment_vaccination_choice.dart';
 import '../../appointment_vaccination_note/pages/appointment_vaccination_note.dart';
+import '../../pet_information/pages/pet_information.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final int petId;
@@ -211,7 +212,10 @@ class PetDetailsPage extends StatelessWidget {
                     ServiceItem(
                       title: 'Thông tin',
                       icon: Icons.medical_information,
-                      onTap: () {},
+                      onTap: () {
+                        // Navigate to pet information page
+                        AppNavigator.push(context, PetInformationPage(petId: petId));
+                      },
                     ),
                     ServiceItem(
                       title: 'Hồ sơ tiêm chủng',

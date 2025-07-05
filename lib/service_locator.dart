@@ -47,6 +47,7 @@ import 'domain/disease/repositories/disease.dart';
 import 'domain/disease/usecases/get_disease_by_species.dart';
 import 'domain/pet/repositories/pet.dart';
 import 'domain/pet/usecases/delete_pet.dart';
+import 'domain/pet/usecases/get_pet.dart';
 import 'domain/pet/usecases/get_pets.dart';
 import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
@@ -109,5 +110,6 @@ void setupServiceLocator() {
   sl.registerSingleton<GetCustomerProfileUseCase>(GetCustomerProfileUseCase());
   sl.registerSingleton<PutCustomerProfileUseCase>(PutCustomerProfileUseCase());
   sl.registerSingleton<PutAppointmentByIdUseCase>(PutAppointmentByIdUseCase());
+  sl.registerSingleton<GetPetUseCase>(GetPetUseCase());
 
 }

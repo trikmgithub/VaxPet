@@ -67,5 +67,36 @@ class PetRepositoryImpl extends PetRepository {
     );
   }
 
+  @override
+  Future<Either> getPetById(int petId) async {
+    var returnedData = await sl<PetService>().getPetById(petId);
+    return returnedData.fold(
+      (error) => Left(error.toString()),
+      (data) {
+        try {
+          if (data is Map<dynamic, dynamic> && data.containsKey('data') && data['success'] == true) {
+            var petData = data['data'];
+            var petModel = PetParams.fromJson(petData);
+            var petEntity = PetsMapper.toEntity(petModel);
+            return Right(petEntity);
+          } else {
+            return Left('Invalid data format');
+          }
+        } catch (e) {
+          return Left('Error processing pet data: $e');
+        }
+      },
+    );
+  }
+
+  @override
+  Future<Either> updatePet(PetEntity pet) async {
+    var returnedData = await sl<PetService>().updatePet(pet);
+    return returnedData.fold(
+          (error) => Left(error.toString()),
+          (data) => Right(data),
+    );
+  }
+
 
 }

@@ -14,7 +14,7 @@ class PetsMapper {
     gender: pet.gender,
     dateOfBirth: pet.dateOfBirth,
     placeToLive: pet.placeToLive,
-    placeOfBirth: pet.dateOfBirth,
+    placeOfBirth: pet.placeOfBirth,
     image: pet.image,
     weight: pet.weight,
     color: pet.color,

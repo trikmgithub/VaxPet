@@ -29,7 +29,14 @@ class AppointmentMicrochipHomePage extends StatefulWidget {
 class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomePage> {
   final TextEditingController _dateOfScheduleController = TextEditingController();
   final TextEditingController _timeOfScheduleController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   int? _customerId;
+  String? _userAddress;
+  String? _originalAddress; // Lưu trữ địa chỉ gốc từ SharedPreferences khi trang được mở
+  bool _isEditingAddress = false;
+
+  // Key để lưu địa chỉ gốc trong SharedPreferences
+  final String _originalAddressKey = 'original_address';
 
   // Parse the date and time separately with validation
   DateTime? selectedDate;
@@ -200,6 +207,12 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                       _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
                       SizedBox(height: 8),
                       _buildTimeField(context),
+                      SizedBox(height: 20),
+
+                      // Address selection
+                      _buildFormLabel('Địa chỉ nhà:'),
+                      SizedBox(height: 8),
+                      _buildAddressField(context),
                       SizedBox(height: 20),
 
                       // Submit button
@@ -455,6 +468,208 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
     );
   }
 
+  // Stylized address field
+  Widget _buildAddressField(BuildContext context) {
+    // Đặt địa chỉ vào controller nếu có và chưa có giá trị
+    if (_userAddress != null && _userAddress!.isNotEmpty && _addressController.text.isEmpty) {
+      _addressController.text = _userAddress!;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: _isEditingAddress ? Colors.white : Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: _isEditingAddress ? Theme.of(context).primaryColor : Colors.grey[300]!),
+          ),
+          child: TextFormField(
+            controller: _addressController,
+            decoration: InputDecoration(
+              hintText: _isEditingAddress ? 'Nhập địa chỉ mới' : 'Đang tải địa chỉ...',
+              hintStyle: TextStyle(color: Colors.grey[500]),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: InputBorder.none,
+              filled: true,
+              fillColor: Colors.transparent,
+              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).primaryColor),
+            ),
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+            ),
+            maxLines: 2,
+            readOnly: !_isEditingAddress,
+            enabled: _isEditingAddress,
+            onChanged: (value) {
+              setState(() {
+                _userAddress = value;
+              });
+            },
+          ),
+        ),
+
+        // Nút đổi địa chỉ và nút nhà bạn được đặt ở phía dưới trường địa chỉ
+        if (!_isEditingAddress)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Nút "Nhà bạn" - Để lấy lại địa chỉ gốc đã lưu khi mở form
+                GestureDetector(
+                  onTap: () {
+                    if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+                      setState(() {
+                        _addressController.text = _originalAddress!;
+                        _userAddress = _originalAddress!;
+                      });
+                      _showSnackBar(
+                        'Đã lấy lại địa chỉ nhà bạn',
+                        isError: false,
+                        icon: Icons.home,
+                      );
+                    } else {
+                      _showSnackBar(
+                        'Không tìm thấy địa chỉ đã lưu',
+                        isError: true,
+                        icon: Icons.warning,
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color: Colors.green,
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Nhà bạn',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                // Nút đổi địa chỉ
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isEditingAddress = true;
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Theme.of(context).primaryColor,
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Đổi địa chỉ',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+        // Các nút lưu và hủy khi đang chỉnh sửa
+        if (_isEditingAddress)
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      // Khôi phục giá trị ban đầu
+                      _addressController.text = _originalAddress ?? '';
+                      _userAddress = _originalAddress;
+                      _isEditingAddress = false;
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey[700],
+                  ),
+                  child: Text('Hủy'),
+                ),
+                SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_addressController.text.trim().isEmpty) {
+                      _showSnackBar('Vui lòng nhập địa chỉ', isError: true);
+                      return;
+                    }
+
+                    setState(() {
+                      // Lưu địa chỉ mới vào biến _userAddress
+                      _userAddress = _addressController.text;
+                      _isEditingAddress = false;
+                    });
+
+                    try {
+                      // Lưu địa chỉ mới vào SharedPreferences
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('address', _addressController.text);
+                      _showSnackBar(
+                        'Đã cập nhật địa chỉ thành công',
+                        isError: false,
+                        icon: Icons.check_circle,
+                      );
+                    } catch (e) {
+                      debugPrint('Error saving address: $e');
+                      _showSnackBar('Không thể lưu địa chỉ: $e', isError: true);
+                    }
+                  },
+                  icon: Icon(Icons.save, size: 18),
+                  label: Text('Lưu'),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
   // Helper method to check if time is in allowed ranges
   bool _isTimeInAllowedRanges(TimeOfDay time) {
     final morningStart = const TimeOfDay(hour: 8, minute: 0);
@@ -498,6 +713,12 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
             throw 'Vui lòng chọn giờ hẹn';
           }
 
+          // Kiểm tra trường địa chỉ
+          if (_userAddress == null || _userAddress!.isEmpty) {
+            _showSnackBar('Vui lòng nhập địa chỉ nhận dịch vụ', isError: true);
+            throw 'Vui lòng nhập địa chỉ nhận dịch vụ';
+          }
+
           try {
             try {
               selectedDate = DateFormat('dd/MM/yyyy').parse(_dateOfScheduleController.text);
@@ -531,7 +752,7 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                 appointmentDate: formattedDate,
                 serviceType: widget.serviceType,
                 location: widget.location,
-                address: "Địa chỉ mặc định" // Không cần địa chỉ cho dịch vụ tại trung tâm
+                address: _userAddress! // Sử dụng địa chỉ người dùng nhập
             ));
 
             return result;
@@ -561,6 +782,25 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         _customerId = prefs.getInt('customerId');
+        _userAddress = prefs.getString('address'); // Lấy địa chỉ người dùng hiện tại
+
+        // Đọc địa chỉ gốc từ SharedPreferences (nếu đã lưu trước đó)
+        _originalAddress = prefs.getString(_originalAddressKey);
+
+        // Nếu chưa có địa chỉ gốc được lưu, sử dụng địa chỉ hiện tại làm địa chỉ gốc
+        // và lưu vào SharedPreferences để sử dụng sau này
+        if (_originalAddress == null && _userAddress != null) {
+          _originalAddress = _userAddress;
+          prefs.setString(_originalAddressKey, _userAddress!);
+          debugPrint('Saved original address: $_originalAddress');
+        }
+
+        // Luôn reset địa chỉ về địa chỉ gốc mỗi khi trang được tạo mới
+        if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+          _addressController.text = _originalAddress!;
+          _userAddress = _originalAddress!;
+          debugPrint('Reset address to original: $_originalAddress');
+        }
       });
 
       if (_customerId == null) {
