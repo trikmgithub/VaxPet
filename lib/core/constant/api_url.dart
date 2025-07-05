@@ -23,7 +23,7 @@ class ApiUrl {
   static const deletePetById = '${apiV}pets/delete-pet';
   //Post
   static const createPet = '${apiV}pets/create-pet';
-  static const updatePet = '${apiV}pets/update-pet';
+  static const updatePet = '${apiV}pets/update-pet-by';
   //Put
   static const putUpdatePet = '${apiV}pets/update-pet-by';
 
@@ -59,4 +59,8 @@ class ApiUrl {
   //Post
   //Put
   //Delete
+
+  // VACCINE PROFILES ENDPOINTS
+  //Get
+  static const getVaccineProfileByPetId = '${apiV}vaccineProfiles/getVaccineProfileByPetId';
 }

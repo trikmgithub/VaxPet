@@ -374,6 +374,7 @@ class PetCard extends StatelessWidget {
               petName: pet.name ?? "Chưa đặt tên",
               petImage: pet.image,
               petSpecies: pet.species ?? "Không rõ",
+              petBirthday: pet.dateOfBirth,
             ),
           );
         },
@@ -511,6 +512,7 @@ class PetCard extends StatelessWidget {
                                       petName: pet.name ?? "Chưa đặt tên",
                                       petImage: pet.image,
                                       petSpecies: pet.species?.toLowerCase() == "dog" ? "Chó" : "Mèo",
+                                      petBirthday: pet.dateOfBirth,
                                     ),
                                   );
                                 },

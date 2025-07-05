@@ -17,22 +17,22 @@ class PetEntity {
   final bool? isSterilized;
 
   PetEntity({
-    required this.petId,
-    required this.customerId,
-    required this.petCode,
-    required this.name,
-    required this.species,
-    required this.breed,
-    required this.age,
-    required this.gender,
-    required this.dateOfBirth,
-    required this.placeToLive,
-    required this.placeOfBirth,
-    required this.image,
-    required this.weight,
-    required this.color,
-    required this.nationality,
-    required this.isSterilized,
+    this.petId,
+    this.customerId,
+    this.petCode,
+    this.name,
+    this.species,
+    this.breed,
+    this.age,
+    this.gender,
+    this.dateOfBirth,
+    this.placeToLive,
+    this.placeOfBirth,
+    this.image,
+    this.weight,
+    this.color,
+    this.nationality,
+    this.isSterilized,
   });
 
 }

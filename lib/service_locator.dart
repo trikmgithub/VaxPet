@@ -16,6 +16,8 @@ import 'data/customer_profile/repositories/customer_profile.dart';
 import 'data/customer_profile/sources/customer_profile.dart';
 import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
+import 'data/pet_record/repositories/pet_record.dart';
+import 'data/pet_record/sources/pet_record.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
 import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
@@ -49,6 +51,9 @@ import 'domain/pet/repositories/pet.dart';
 import 'domain/pet/usecases/delete_pet.dart';
 import 'domain/pet/usecases/get_pet.dart';
 import 'domain/pet/usecases/get_pets.dart';
+import 'domain/pet/usecases/put_pet.dart';
+import 'domain/pet_record/repositories/pet_record.dart';
+import 'domain/pet_record/usecases/get_pet_record.dart';
 import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
 import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
@@ -73,6 +78,7 @@ void setupServiceLocator() {
   sl.registerSingleton<AppointmentVaccinationService>(AppointmentVaccinationServiceImpl());
   sl.registerSingleton<VaccineAppointmentNoteDetailService>(VaccineAppointmentNoteDetailServiceImpl());
   sl.registerSingleton<CustomerProfileService>(CustomerProfileServiceImpl());
+  sl.registerSingleton<PetRecordService>(PetRecordServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -85,6 +91,7 @@ void setupServiceLocator() {
   sl.registerSingleton<AppointmentVaccinationRepository>(AppointmentVaccinationRepositoryImpl());
   sl.registerSingleton<VaccineAppointmentNoteDetailRepository>(VaccineAppointmentNoteDetailRepositoryImpl());
   sl.registerSingleton<CustomerProfileRepository>(CustomerProfileRepositoryImpl());
+  sl.registerSingleton<PetRecordRepository>(PetRecordRepositoryImpl());
 
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -111,5 +118,7 @@ void setupServiceLocator() {
   sl.registerSingleton<PutCustomerProfileUseCase>(PutCustomerProfileUseCase());
   sl.registerSingleton<PutAppointmentByIdUseCase>(PutAppointmentByIdUseCase());
   sl.registerSingleton<GetPetUseCase>(GetPetUseCase());
+  sl.registerSingleton<PutPetUseCase>(PutPetUseCase());
+  sl.registerSingleton<GetPetRecordUseCase>(GetPetRecordUseCase());
 
 }

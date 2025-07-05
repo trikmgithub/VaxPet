@@ -7,13 +7,15 @@ import '../../appointment_microchip/pages/appointment_microchip_choice.dart';
 import '../../appointment_vaccination/pages/appointment_vaccination_choice.dart';
 import '../../appointment_vaccination_note/pages/appointment_vaccination_note.dart';
 import '../../pet_information/pages/pet_information.dart';
+import '../../pet_record/pages/pet_record.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final int petId;
   final String petName;
   final String? petImage;
   final String petSpecies;
-  const PetDetailsPage({super.key, required this.petId, required this.petName, this.petImage, required this.petSpecies});
+  final String? petBirthday;
+  const PetDetailsPage({super.key, required this.petId, required this.petName, this.petImage, required this.petSpecies, this.petBirthday});
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +222,9 @@ class PetDetailsPage extends StatelessWidget {
                     ServiceItem(
                       title: 'Hồ sơ tiêm chủng',
                       icon: Icons.emergency_recording,
-                      onTap: () {},
+                      onTap: () {
+                        AppNavigator.push(context, PetRecordPage(petId: petId, petName: petName, petSpecies: petSpecies, petImage: petImage, petBirthday: petBirthday));
+                      },
                     ),
                   ],
                 ),

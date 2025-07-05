@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/presentation/pet_information/bloc/pet_information_cubit.dart';
 import 'package:vaxpet/presentation/pet_information/bloc/pet_information_state.dart';
+import 'package:vaxpet/presentation/pet_information/pages/edit_pet_page.dart';
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/theme/app_colors.dart';
@@ -151,11 +152,18 @@ class PetInformationPage extends StatelessWidget {
     );
   }
 
-  void _navigateToEditPet(BuildContext context) {
-    DisplayMessage.errorMessage(
-      'Chức năng chỉnh sửa thông tin thú cưng chưa được triển khai.',
+  void _navigateToEditPet(BuildContext context, PetInformationLoaded state) async {
+    final result = await Navigator.push(
       context,
+      MaterialPageRoute(
+        builder: (context) => EditPetPage(pet: state.pet),
+      ),
     );
+
+    // If edit was successful, refresh the pet information
+    if (result == true) {
+      context.read<PetInformationCubit>().refreshPetInformation(petId);
+    }
   }
 
   Widget _buildLoadingState() {
@@ -299,33 +307,41 @@ class PetInformationPage extends StatelessWidget {
   }
 
   Widget _buildEditButton(BuildContext context, bool isTablet) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
-      child: ElevatedButton.icon(
-        onPressed: () => _navigateToEditPet(context),
-        icon: const Icon(Icons.edit, size: 20),
-        label: const Text(
-          'Chỉnh sửa thông tin',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+    return BlocBuilder<PetInformationCubit, PetInformationState>(
+      builder: (context, state) {
+        if (state is! PetInformationLoaded) {
+          return const SizedBox.shrink();
+        }
+
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
+          child: ElevatedButton.icon(
+            onPressed: () => _navigateToEditPet(context, state),
+            icon: const Icon(Icons.edit, size: 20),
+            label: const Text(
+              'Chỉnh sửa thông tin',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(
+                vertical: isTablet ? 16 : 14,
+                horizontal: 24,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 2,
+              shadowColor: AppColors.primary.withOpacity(0.3),
+            ),
           ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          padding: EdgeInsets.symmetric(
-            vertical: isTablet ? 16 : 14,
-            horizontal: 24,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 2,
-          shadowColor: AppColors.primary.withOpacity(0.3),
-        ),
-      ),
+        );
+      },
     );
   }
 
