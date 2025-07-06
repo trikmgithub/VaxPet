@@ -8,18 +8,20 @@ import '../models/post_appointment_vaccination.dart';
 
 abstract class AppointmentVaccinationService {
   // Post
-  Future<Either> postAppointmentVaccination(PostAppointmentVaccinationModel params);
+  Future<Either> postAppointmentVaccination(
+    PostAppointmentVaccinationModel params,
+  );
 }
 
-class AppointmentVaccinationServiceImpl implements AppointmentVaccinationService {
+class AppointmentVaccinationServiceImpl
+    implements AppointmentVaccinationService {
   @override
-  Future<Either> postAppointmentVaccination(PostAppointmentVaccinationModel params) async {
+  Future<Either> postAppointmentVaccination(
+    PostAppointmentVaccinationModel params,
+  ) async {
     try {
       final url = ApiUrl.postAppointmentForVaccination;
-      final response = await sl<DioClient>().post(
-        url,
-        data: params.toMap(),
-      );
+      final response = await sl<DioClient>().post(url, data: params.toMap());
       return Right(response.data);
     } on DioException catch (e) {
       debugPrint('DioException: ${e.message}');
@@ -28,6 +30,4 @@ class AppointmentVaccinationServiceImpl implements AppointmentVaccinationService
       return Left('Lỗi tại postAppointmentVaccination: ${e.toString()}');
     }
   }
-
-
 }

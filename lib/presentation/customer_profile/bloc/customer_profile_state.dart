@@ -1,4 +1,3 @@
-
 import '../../../domain/customer_profile/entities/customer_profile.dart';
 
 abstract class CustomerProfileState {}

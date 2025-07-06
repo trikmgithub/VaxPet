@@ -9,18 +9,18 @@ import '../bloc/appointment_vaccination_note_state.dart';
 class AppointmentVaccinationNote extends StatefulWidget {
   final int petId;
 
-  const AppointmentVaccinationNote({
-    super.key,
-    required this.petId,
-  });
+  const AppointmentVaccinationNote({super.key, required this.petId});
 
   @override
-  State<AppointmentVaccinationNote> createState() => _AppointmentVaccinationNoteState();
+  State<AppointmentVaccinationNote> createState() =>
+      _AppointmentVaccinationNoteState();
 }
 
-class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote> with SingleTickerProviderStateMixin {
+class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  static const vaccinationType = 1; // Assuming 1 is the serviceType for vaccination
+  static const vaccinationType =
+      1; // Assuming 1 is the serviceType for vaccination
 
   @override
   void initState() {
@@ -28,7 +28,9 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
     _tabController = TabController(length: 2, vsync: this);
 
     // Fetch vaccine appointments when widget initializes
-    context.read<AppointmentVaccinationNoteCubit>().fetchAppointmentVaccinationNotes(widget.petId);
+    context
+        .read<AppointmentVaccinationNoteCubit>()
+        .fetchAppointmentVaccinationNotes(widget.petId);
   }
 
   @override
@@ -39,23 +41,26 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppointmentVaccinationNoteCubit, AppointmentVaccinationNoteState>(
+    return BlocBuilder<
+      AppointmentVaccinationNoteCubit,
+      AppointmentVaccinationNoteState
+    >(
       builder: (context, state) {
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Theme.of(context).scaffoldBackgroundColor,
-                Colors.white,
-              ],
+              colors: [Theme.of(context).scaffoldBackgroundColor, Colors.white],
             ),
           ),
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: TabBar(
                   controller: _tabController,
                   tabs: [
@@ -65,7 +70,12 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                         children: [
                           Icon(Icons.schedule, size: 18),
                           SizedBox(width: 8),
-                          Flexible(child: Text('Chờ xác nhận', overflow: TextOverflow.ellipsis)),
+                          Flexible(
+                            child: Text(
+                              'Chờ xác nhận',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -75,7 +85,12 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                         children: [
                           Icon(Icons.check_circle, size: 18),
                           SizedBox(width: 8),
-                          Flexible(child: Text('Đã xác nhận', overflow: TextOverflow.ellipsis)),
+                          Flexible(
+                            child: Text(
+                              'Đã xác nhận',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -126,21 +141,33 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
         (failure) => Center(child: Text('Lỗi khi tải dữ liệu')),
         (pendingAppointments) {
           // Filter to only include appointments with serviceType == 1
-          final filteredAppointments = pendingAppointments.where((appointment) =>
-            appointment['serviceType'] == vaccinationType).toList();
+          final filteredAppointments =
+              pendingAppointments
+                  .where(
+                    (appointment) =>
+                        appointment['serviceType'] == vaccinationType,
+                  )
+                  .toList();
 
           if (filteredAppointments.isEmpty) {
-            return const Center(child: Text('Không có lịch hẹn tiêm phòng đang chờ xác nhận'));
+            return const Center(
+              child: Text('Không có lịch hẹn tiêm phòng đang chờ xác nhận'),
+            );
           }
 
           return RefreshIndicator(
-            onRefresh: () async => await context.read<AppointmentVaccinationNoteCubit>()
-                .refreshAppointments(widget.petId),
+            onRefresh:
+                () async => await context
+                    .read<AppointmentVaccinationNoteCubit>()
+                    .refreshAppointments(widget.petId),
             child: ListView.builder(
               itemCount: filteredAppointments.length,
               itemBuilder: (context, index) {
                 final appointment = filteredAppointments[index];
-                return AppointmentCard(appointment: appointment, isPending: true);
+                return AppointmentCard(
+                  appointment: appointment,
+                  isPending: true,
+                );
               },
             ),
           );
@@ -171,8 +198,10 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
             Text('Lỗi: ${state.errorMessage}', textAlign: TextAlign.center),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () => context.read<AppointmentVaccinationNoteCubit>()
-                  .fetchAppointmentVaccinationNotes(widget.petId),
+              onPressed:
+                  () => context
+                      .read<AppointmentVaccinationNoteCubit>()
+                      .fetchAppointmentVaccinationNotes(widget.petId),
               icon: const Icon(Icons.refresh),
               label: const Text('Thử lại'),
             ),
@@ -191,138 +220,253 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
         ),
       );
     } else {
-      return state.confirmedAppointments!.fold(
-        (failure) => Center(
+      // Sử dụng filteredAppointments từ state
+      final filteredAppointments = state.filteredAppointments;
+
+      if (filteredAppointments.isEmpty) {
+        return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-              const SizedBox(height: 16),
-              const Text('Lỗi khi tải dữ liệu', textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () => context.read<AppointmentVaccinationNoteCubit>()
-                    .fetchAppointmentVaccinationNotes(widget.petId),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Thử lại'),
+              Icon(
+                Icons.check_circle_outline,
+                size: 64,
+                color: Colors.grey,
               ),
+              SizedBox(height: 16),
+              Text(
+                state.selectedStatusFilter != null
+                    ? 'Không có lịch hẹn với trạng thái đã chọn'
+                    : 'Không có lịch hẹn tiêm phòng\nđã xác nhận',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+              if (state.selectedStatusFilter != null) ...[
+                SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed:
+                      () =>
+                          context
+                              .read<AppointmentVaccinationNoteCubit>()
+                              .clearStatusFilter(),
+                  icon: Icon(Icons.clear),
+                  label: Text('Xóa bộ lọc'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
             ],
           ),
-        ),
-        (confirmedAppointments) {
-          // Filter to only include appointments with serviceType == 1
-          final filteredAppointments = confirmedAppointments.where((appointment) =>
-            appointment['serviceType'] == vaccinationType).toList();
+        );
+      }
 
-          if (filteredAppointments.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.check_circle_outline, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'Không có lịch hẹn tiêm phòng\nđã xác nhận',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+      return Column(
+        children: [
+          // Filter Header with Filter Icon
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tổng: ${filteredAppointments.length} lịch hẹn',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (state.selectedStatusFilter != null) ...[
+                        SizedBox(height: 4),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.filter_list,
+                                size: 14,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                _getStatusName(state.selectedStatusFilter!),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              GestureDetector(
+                                onTap:
+                                    () =>
+                                        context
+                                            .read<
+                                              AppointmentVaccinationNoteCubit
+                                            >()
+                                            .clearStatusFilter(),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 14,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
-              ),
-            );
-          }
-
-          return Column(
-            children: [
-              // Filter Header with Filter Icon
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Tổng: ${filteredAppointments.length} lịch hẹn',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        onPressed: () => _showFilterDialog(context, confirmedAppointments),
-                        icon: Icon(
-                          Icons.filter_list,
-                          color: Theme.of(context).primaryColor,
-                          size: 20,
-                        ),
-                        tooltip: 'Lọc theo trạng thái',
-                        iconSize: 20,
-                        constraints: const BoxConstraints(
-                          minWidth: 36,
-                          minHeight: 36,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
-              ),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async => await context.read<AppointmentVaccinationNoteCubit>()
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IconButton(
+                    onPressed:
+                        () => _showFilterDialog(context, state),
+                    icon: Icon(
+                      Icons.filter_list,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    ),
+                    tooltip: 'Lọc theo trạng thái',
+                    iconSize: 20,
+                    constraints: const BoxConstraints(
+                      minWidth: 36,
+                      minHeight: 36,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh:
+                  () async => await context
+                      .read<AppointmentVaccinationNoteCubit>()
                       .refreshAppointments(widget.petId),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: filteredAppointments.length,
-                    itemBuilder: (context, index) {
-                      final appointment = filteredAppointments[index];
-                      return AnimatedContainer(
-                        duration: Duration(milliseconds: 300 + (index * 100)),
-                        curve: Curves.easeOutCubic,
-                        child: AppointmentCard(appointment: appointment, isPending: false),
-                      );
-                    },
-                  ),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
+                itemCount: filteredAppointments.length,
+                itemBuilder: (context, index) {
+                  final appointment = filteredAppointments[index];
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 300 + (index * 100)),
+                    curve: Curves.easeOutCubic,
+                    child: AppointmentCard(
+                      appointment: appointment,
+                      isPending: false,
+                    ),
+                  );
+                },
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       );
     }
   }
 
-  void _showFilterDialog(BuildContext context, List<dynamic> confirmedAppointments) {
+  // Helper method to get status name
+  String _getStatusName(int status) {
+    final statusMap = {
+      2: 'Đã xác nhận',
+      3: 'Đã check-in',
+      4: 'Đã tiêm',
+      5: 'Đã cấy chip',
+      6: 'Đã thanh toán',
+      7: 'Đã áp dụng',
+      8: 'Hoàn thành',
+      9: 'Completed',
+      10: 'Đã hủy',
+      11: 'Bị từ chối',
+    };
+    return statusMap[status] ?? 'Không xác định';
+  }
+
+  void _showFilterDialog(
+    BuildContext context,
+    AppointmentVaccinationNoteState state,
+  ) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
 
+    // Lấy cubit instance trước khi mở dialog
+    final cubit = context.read<AppointmentVaccinationNoteCubit>();
+
     // Map appointment statuses to readable text
     final statusMap = {
-      2: {'name': 'Đã xác nhận', 'color': Colors.green, 'icon': Icons.check_circle},
+      2: {
+        'name': 'Đã xác nhận',
+        'color': Colors.green,
+        'icon': Icons.check_circle,
+      },
       3: {'name': 'Đã check-in', 'color': Colors.blue, 'icon': Icons.login},
-      4: {'name': 'Đã tiêm', 'color': Colors.purple, 'icon': Icons.medical_services},
+      4: {
+        'name': 'Đã tiêm',
+        'color': Colors.purple,
+        'icon': Icons.medical_services,
+      },
       5: {'name': 'Đã cấy chip', 'color': Colors.indigo, 'icon': Icons.memory},
       6: {'name': 'Đã thanh toán', 'color': Colors.teal, 'icon': Icons.payment},
       7: {'name': 'Đã áp dụng', 'color': Colors.amber, 'icon': Icons.done_all},
       8: {'name': 'Hoàn thành', 'color': Colors.cyan, 'icon': Icons.task_alt},
-      9: {'name': 'Completed', 'color': Colors.lightGreen, 'icon': Icons.verified},
+      9: {
+        'name': 'Completed',
+        'color': Colors.lightGreen,
+        'icon': Icons.verified,
+      },
       10: {'name': 'Đã hủy', 'color': Colors.red, 'icon': Icons.cancel},
       11: {'name': 'Bị từ chối', 'color': Colors.grey, 'icon': Icons.block},
     };
 
-    // Count appointments by status
+    // Sử dụng appointmentsByStatus từ state để đếm appointments
     final statusCounts = <int, int>{};
-    for (var appointment in confirmedAppointments) {
-      final status = appointment['appointment']?['appointmentStatus'] ?? 0;
-      statusCounts[status] = (statusCounts[status] ?? 0) + 1;
+    int totalVaccinationAppointments = 0;
+
+    for (int status in state.availableStatuses) {
+      final count = state.getCountForStatus(status);
+      if (count > 0) {
+        statusCounts[status] = count;
+        totalVaccinationAppointments += count;
+      }
     }
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -330,17 +474,14 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
           child: Container(
             width: isTablet ? screenWidth * 0.5 : null,
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.7,
+              maxHeight: MediaQuery.of(dialogContext).size.height * 0.7,
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  Colors.grey.shade50,
-                ],
+                colors: [Colors.white, Colors.grey.shade50],
               ),
             ),
             child: Column(
@@ -350,7 +491,9 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                 Container(
                   padding: EdgeInsets.all(isTablet ? 24 : 20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                    color: Theme.of(
+                      context,
+                    ).primaryColor.withValues(alpha: 0.1),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -382,7 +525,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                         ),
                       ),
                       IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
                         icon: Icon(
                           Icons.close,
                           color: Colors.grey[600],
@@ -404,9 +547,20 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                         Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color:
+                                state.selectedStatusFilter == null
+                                    ? Theme.of(
+                                      context,
+                                    ).primaryColor.withValues(alpha: 0.1)
+                                    : Colors.white,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade200),
+                            border: Border.all(
+                              color:
+                                  state.selectedStatusFilter == null
+                                      ? Theme.of(context).primaryColor
+                                      : Colors.grey.shade200,
+                              width: state.selectedStatusFilter == null ? 2 : 1,
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withValues(alpha: 0.1),
@@ -420,7 +574,9 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                                color: Theme.of(
+                                  context,
+                                ).primaryColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
@@ -432,39 +588,63 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                             title: Text(
                               'Tất cả',
                               style: TextStyle(
-                                fontWeight: FontWeight.w600,
+                                fontWeight:
+                                    state.selectedStatusFilter == null
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
                                 fontSize: isTablet ? 16 : 14,
                               ),
                             ),
                             subtitle: Text(
-                              '${confirmedAppointments.length} lịch hẹn',
+                              '$totalVaccinationAppointments lịch hẹn',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: isTablet ? 14 : 12,
                               ),
                             ),
+                            trailing:
+                                state.selectedStatusFilter == null
+                                    ? Icon(
+                                      Icons.check_circle,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 20,
+                                    )
+                                    : null,
                             onTap: () {
-                              Navigator.of(context).pop();
-                              // Reset filter - show all appointments
-                              // You can implement state management here
+                              Navigator.of(dialogContext).pop();
+                              // Clear filter - show all appointments
+                              cubit.clearStatusFilter();
                             },
                           ),
                         ),
 
-                        // Status filter options
-                        ...statusCounts.entries.map((entry) {
-                          final status = entry.key;
-                          final count = entry.value;
+                        // Status filter options - sử dụng availableStatuses từ state
+                        ...state.availableStatuses.map((status) {
+                          final count = state.getCountForStatus(status);
                           final statusInfo = statusMap[status];
 
-                          if (statusInfo == null) return const SizedBox.shrink();
+                          if (statusInfo == null || count == 0)
+                            return const SizedBox.shrink();
+
+                          final isSelected =
+                              state.selectedStatusFilter == status;
 
                           return Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color:
+                                  isSelected
+                                      ? (statusInfo['color'] as Color)
+                                          .withValues(alpha: 0.1)
+                                      : Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey.shade200),
+                              border: Border.all(
+                                color:
+                                    isSelected
+                                        ? (statusInfo['color'] as Color)
+                                        : Colors.grey.shade200,
+                                width: isSelected ? 2 : 1,
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withValues(alpha: 0.1),
@@ -478,7 +658,8 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                               leading: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: (statusInfo['color'] as Color).withValues(alpha: 0.1),
+                                  color: (statusInfo['color'] as Color)
+                                      .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -490,7 +671,10 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                               title: Text(
                                 statusInfo['name'] as String,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight:
+                                      isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.w600,
                                   fontSize: isTablet ? 16 : 14,
                                 ),
                               ),
@@ -501,25 +685,42 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                                   fontSize: isTablet ? 14 : 12,
                                 ),
                               ),
-                              trailing: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: (statusInfo['color'] as Color).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  '$count',
-                                  style: TextStyle(
-                                    color: statusInfo['color'] as Color,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: (statusInfo['color'] as Color)
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      '$count',
+                                      style: TextStyle(
+                                        color: statusInfo['color'] as Color,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  if (isSelected) ...[
+                                    const SizedBox(width: 8),
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: statusInfo['color'] as Color,
+                                      size: 20,
+                                    ),
+                                  ],
+                                ],
                               ),
                               onTap: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(dialogContext).pop();
                                 // Filter by this status
-                                _filterByStatus(status, confirmedAppointments);
+                                cubit.setStatusFilter(status);
                               },
                             ),
                           );
@@ -540,8 +741,29 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      if (state.selectedStatusFilter != null)
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop();
+                            cubit.clearStatusFilter();
+                          },
+                          icon: Icon(
+                            Icons.clear,
+                            size: isTablet ? 20 : 18,
+                            color: Colors.red,
+                          ),
+                          label: Text(
+                            'Xóa bộ lọc',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: isTablet ? 16 : 14,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      const Spacer(),
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -553,7 +775,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Navigator.of(dialogContext).pop(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             foregroundColor: Colors.white,
@@ -569,10 +791,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.close,
-                                size: isTablet ? 20 : 18,
-                              ),
+                              Icon(Icons.close, size: isTablet ? 20 : 18),
                               const SizedBox(width: 8),
                               Text(
                                 'Đóng',
@@ -597,34 +816,9 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
   }
 
   void _filterByStatus(int status, List<dynamic> confirmedAppointments) {
-    // Here you would implement filtering logic
-    // For now, we'll just show a snackbar
-    final statusMap = {
-      2: 'Đã xác nhận',
-      3: 'Đã check-in',
-      4: 'Đã tiêm',
-      5: 'Đã cấy chip',
-      6: 'Đã thanh toán',
-      7: 'Đã áp dụng',
-      8: 'Hoàn thành',
-      9: 'Completed',
-      10: 'Đã hủy',
-      11: 'Bị từ chối',
-    };
-
-    final filteredCount = confirmedAppointments.where((appointment) =>
-      appointment['appointment']?['appointmentStatus'] == status).length;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Đang lọc ${statusMap[status]} - $filteredCount lịch hẹn'),
-        backgroundColor: Theme.of(context).primaryColor,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
+    // This method is now replaced by direct cubit calls in the dialog
+    // But keeping it for backward compatibility if needed
+    context.read<AppointmentVaccinationNoteCubit>().setStatusFilter(status);
   }
 }
 
@@ -638,10 +832,55 @@ class AppointmentCard extends StatelessWidget {
     required this.isPending,
   });
 
+  // Helper method to get status info
+  Map<String, dynamic> _getStatusInfo(int status) {
+    final statusMap = {
+      1: {
+        'name': 'Chờ xác nhận',
+        'color': Colors.orange,
+        'icon': Icons.schedule,
+      },
+      2: {
+        'name': 'Đã xác nhận',
+        'color': Colors.green,
+        'icon': Icons.check_circle,
+      },
+      3: {'name': 'Đã check-in', 'color': Colors.blue, 'icon': Icons.login},
+      4: {
+        'name': 'Đã tiêm',
+        'color': Colors.purple,
+        'icon': Icons.medical_services,
+      },
+      5: {'name': 'Đã cấy chip', 'color': Colors.indigo, 'icon': Icons.memory},
+      6: {'name': 'Đã thanh toán', 'color': Colors.teal, 'icon': Icons.payment},
+      7: {'name': 'Đã áp dụng', 'color': Colors.amber, 'icon': Icons.done_all},
+      8: {'name': 'Hoàn thành', 'color': Colors.cyan, 'icon': Icons.task_alt},
+      9: {
+        'name': 'Completed',
+        'color': Colors.lightGreen,
+        'icon': Icons.verified,
+      },
+      10: {'name': 'Đã hủy', 'color': Colors.red, 'icon': Icons.cancel},
+      11: {'name': 'Bị từ chối', 'color': Colors.grey, 'icon': Icons.block},
+    };
+
+    return statusMap[status] ??
+        {
+          'name': 'Không xác định',
+          'color': Colors.grey,
+          'icon': Icons.help_outline,
+        };
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
+
+    // Get the actual appointment status
+    final appointmentStatus =
+        appointment?['appointment']?['appointmentStatus'] ?? 0;
+    final statusInfo = _getStatusInfo(appointmentStatus);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -668,7 +907,8 @@ class AppointmentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        appointment?['appointment']?['appointmentCode'] ?? 'Không có mã',
+                        appointment?['appointment']?['appointmentCode'] ??
+                            'Không có mã',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: isTablet ? 18 : 16,
@@ -679,14 +919,17 @@ class AppointmentCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: isPending
-                        ? Colors.orange.withValues(alpha: 0.1)
-                        : Colors.green.withValues(alpha: 0.1),
+                    color: (statusInfo['color'] as Color).withValues(
+                      alpha: 0.1,
+                    ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isPending ? Colors.orange : Colors.green,
+                      color: statusInfo['color'] as Color,
                       width: 1,
                     ),
                   ),
@@ -694,15 +937,15 @@ class AppointmentCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        isPending ? Icons.schedule : Icons.check_circle,
+                        statusInfo['icon'] as IconData,
                         size: 16,
-                        color: isPending ? Colors.orange : Colors.green,
+                        color: statusInfo['color'] as Color,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        isPending ? 'Chờ xác nhận' : 'Đã xác nhận',
+                        statusInfo['name'] as String,
                         style: TextStyle(
-                          color: isPending ? Colors.orange : Colors.green,
+                          color: statusInfo['color'] as Color,
                           fontSize: isTablet ? 13 : 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -794,7 +1037,8 @@ class AppointmentCard extends StatelessWidget {
               context,
               Icons.pets,
               'Tên thú cưng',
-              appointment?['appointment']?['petResponseDTO']?['name'] ?? 'Không xác định',
+              appointment?['appointment']?['petResponseDTO']?['name'] ??
+                  'Không xác định',
               isTablet,
             ),
             const SizedBox(height: 8),
@@ -802,7 +1046,10 @@ class AppointmentCard extends StatelessWidget {
               context,
               Icons.category,
               'Loài',
-              _getSpeciesText(appointment?['appointment']?['petResponseDTO']?['species'] ?? ''),
+              _getSpeciesText(
+                appointment?['appointment']?['petResponseDTO']?['species'] ??
+                    '',
+              ),
               isTablet,
             ),
             const SizedBox(height: 8),
@@ -818,7 +1065,8 @@ class AppointmentCard extends StatelessWidget {
               context,
               Icons.location_on,
               'Địa điểm',
-              _getLocationText(appointment?['appointment']?['location'] ?? 0) ?? 'Không xác định',
+              _getLocationText(appointment?['appointment']?['location'] ?? 0) ??
+                  'Không xác định',
               isTablet,
             ),
 
@@ -839,7 +1087,9 @@ class AppointmentCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.3),
                         spreadRadius: 1,
                         blurRadius: 8,
                         offset: const Offset(0, 2),
@@ -855,15 +1105,25 @@ class AppointmentCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) =>
-                                AppointmentVaccinationNoteDetailPage(
-                                  appointmentId: appointmentId,
-                                ),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    AppointmentVaccinationNoteDetailPage(
+                                      appointmentId: appointmentId,
+                                    ),
+                            transitionsBuilder: (
+                              context,
+                              animation,
+                              secondaryAnimation,
+                              child,
+                            ) {
                               return SlideTransition(
                                 position: animation.drive(
-                                  Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                                      .chain(CurveTween(curve: Curves.easeOutCubic)),
+                                  Tween(
+                                    begin: const Offset(1.0, 0.0),
+                                    end: Offset.zero,
+                                  ).chain(
+                                    CurveTween(curve: Curves.easeOutCubic),
+                                  ),
                                 ),
                                 child: child,
                               );
@@ -874,7 +1134,9 @@ class AppointmentCard extends StatelessWidget {
                         // Show error message if appointmentId is null
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Không thể tải chi tiết lịch hẹn. Vui lòng thử lại.'),
+                            content: Text(
+                              'Không thể tải chi tiết lịch hẹn. Vui lòng thử lại.',
+                            ),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -892,10 +1154,7 @@ class AppointmentCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: Icon(
-                      Icons.visibility,
-                      size: isTablet ? 20 : 18,
-                    ),
+                    icon: Icon(Icons.visibility, size: isTablet ? 20 : 18),
                     label: Text(
                       'Xem chi tiết',
                       style: TextStyle(
@@ -913,7 +1172,13 @@ class AppointmentCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value, bool isTablet) {
+  Widget _buildInfoRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    bool isTablet,
+  ) {
     return Row(
       children: [
         Container(

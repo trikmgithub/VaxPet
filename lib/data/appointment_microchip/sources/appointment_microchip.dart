@@ -14,13 +14,12 @@ abstract class AppointmentMicrochipService {
 
 class AppointmentMicrochipServiceImpl implements AppointmentMicrochipService {
   @override
-  Future<Either> postAppointmentMicrochip(PostAppointmentMicrochipModel params) async {
+  Future<Either> postAppointmentMicrochip(
+    PostAppointmentMicrochipModel params,
+  ) async {
     try {
       final url = ApiUrl.postAppointmentForMicrochip;
-      final response = await sl<DioClient>().post(
-        url,
-        data: params.toMap(),
-      );
+      final response = await sl<DioClient>().post(url, data: params.toMap());
       return Right(response.data);
     } on DioException catch (e) {
       debugPrint('DioException: ${e.message}');
@@ -29,6 +28,4 @@ class AppointmentMicrochipServiceImpl implements AppointmentMicrochipService {
       return Left('Lỗi tại postAppointmentMicrochip: ${e.toString()}');
     }
   }
-
-
 }

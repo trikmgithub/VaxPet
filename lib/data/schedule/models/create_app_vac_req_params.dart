@@ -27,10 +27,7 @@ class CreateAppVacReqParams {
         'location': location,
         'address': address ?? "",
       },
-      'appointmentDetailVaccination': {
-        'diseaseId': diseaseId,
-      },
+      'appointmentDetailVaccination': {'diseaseId': diseaseId},
     };
   }
-
 }

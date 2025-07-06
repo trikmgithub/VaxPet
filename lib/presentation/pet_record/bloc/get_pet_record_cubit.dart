@@ -20,7 +20,7 @@ class GetPetRecordCubit extends Cubit<GetPetRecordState> {
         },
         (data) {
           emit(GetPetRecordLoaded(petRecords: data));
-        }
+        },
       );
     } catch (e) {
       emit(GetPetRecordError(e.toString()));

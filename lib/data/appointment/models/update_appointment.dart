@@ -27,11 +27,12 @@ class UpdateAppointmentModel {
         "appointmentDate": appointmentDate,
         "serviceType": 1, // Luôn là 1 (tiêm chủng)
         "location": location,
-        "address": location == 1 ? null : address, // Trung tâm = null, Tại nhà = address
+        "address":
+            location == 1
+                ? null
+                : address, // Trung tâm = null, Tại nhà = address
       },
-      "updateDiseaseForAppointmentDTO": {
-        "diseaseId": diseaseId,
-      }
+      "updateDiseaseForAppointmentDTO": {"diseaseId": diseaseId},
     };
   }
 }

@@ -10,12 +10,12 @@ class ReactiveButtonCubit extends Cubit<ReactiveButtonState> {
     try {
       Either result = await asyncFunction();
       result.fold(
-              (error) {
-            emit(ReactiveButtonFailureState(errorMessage: error));
-          },
-              (data) {
-            emit(ReactiveButtonSuccessState());
-          }
+        (error) {
+          emit(ReactiveButtonFailureState(errorMessage: error));
+        },
+        (data) {
+          emit(ReactiveButtonSuccessState());
+        },
       );
     } catch (e) {
       emit(ReactiveButtonFailureState(errorMessage: e.toString()));

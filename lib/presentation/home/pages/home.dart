@@ -17,7 +17,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   int? accountId;
   bool isLoading = true;
   final TextEditingController _searchController = TextEditingController();
@@ -101,7 +102,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.pets, color: Colors.white, size: isSmallScreen ? 24 : 28),
+            Icon(
+              Icons.pets,
+              color: Colors.white,
+              size: isSmallScreen ? 24 : 28,
+            ),
             const SizedBox(width: 8),
             Text(
               'Hồ sơ thú cưng',
@@ -126,122 +131,136 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Search and header section
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenSize.width * 0.04,
-                      vertical: 16.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Danh sách thú cưng',
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 18 : 20,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textBlack,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Icon(
-                                Icons.filter_list,
-                                color: AppColors.primary,
-                                size: isSmallScreen ? 20 : 24,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        // Search bar
-                        TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Tìm kiếm thú cưng...',
-                            prefixIcon: const Icon(Icons.search, color: AppColors.textGray),
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+      body:
+          isLoading
+              ? const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              )
+              : SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Search and header section
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenSize.width * 0.04,
+                        vertical: 16.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Pet list
-                  Expanded(
-                    child: accountId != null
-                        ? Pets(
-                            accountId: accountId!,
-                            isSmallScreen: isSmallScreen,
-                          )
-                        : Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 48,
-                                  color: Colors.grey[400],
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Danh sách thú cưng',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 18 : 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textBlack,
                                 ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Không tìm thấy account ID',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: AppColors.textGray
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.1,
                                   ),
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
-                              ],
+                                child: Icon(
+                                  Icons.filter_list,
+                                  color: AppColors.primary,
+                                  size: isSmallScreen ? 20 : 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          // Search bar
+                          TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Tìm kiếm thú cưng...',
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: AppColors.textGray,
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0,
+                              ),
                             ),
                           ),
-                  ),
-                ],
+                        ],
+                      ),
+                    ),
+
+                    // Pet list
+                    Expanded(
+                      child:
+                          accountId != null
+                              ? Pets(
+                                accountId: accountId!,
+                                isSmallScreen: isSmallScreen,
+                              )
+                              : Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline,
+                                      size: 48,
+                                      color: Colors.grey[400],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'Không tìm thấy account ID',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: AppColors.textGray,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                    ),
+                  ],
+                ),
               ),
-            ),
       floatingActionButton: ScaleTransition(
         scale: _animation,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 20), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-          ),
+          margin: const EdgeInsets.only(
+            bottom: 20,
+          ), // Tạo khoảng cách với đáy để tránh bị che bởi thanh pagination
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
           child: FloatingActionButton(
             onPressed: () {
               AppNavigator.push(context, CreatePetPage());
             },
             backgroundColor: AppColors.primary,
             elevation: 0,
-            child: Icon(Icons.add,
-                color: Colors.white, size: isSmallScreen ? 24 : 30),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: isSmallScreen ? 24 : 30,
+            ),
           ),
         ),
       ),

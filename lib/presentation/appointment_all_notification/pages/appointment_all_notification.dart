@@ -9,10 +9,13 @@ class AppointmentAllNotificationPage extends StatefulWidget {
   const AppointmentAllNotificationPage({super.key});
 
   @override
-  State<AppointmentAllNotificationPage> createState() => _AppointmentAllNotificationPageState();
+  State<AppointmentAllNotificationPage> createState() =>
+      _AppointmentAllNotificationPageState();
 }
 
-class _AppointmentAllNotificationPageState extends State<AppointmentAllNotificationPage> with SingleTickerProviderStateMixin {
+class _AppointmentAllNotificationPageState
+    extends State<AppointmentAllNotificationPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -83,7 +86,8 @@ class _AppointmentAllNotificationPageState extends State<AppointmentAllNotificat
             child: TabBar(
               controller: _tabController,
               labelColor: primaryColor, // Màu chữ khi tab được chọn
-              unselectedLabelColor: Colors.grey, // Màu chữ khi tab không được chọn
+              unselectedLabelColor:
+                  Colors.grey, // Màu chữ khi tab không được chọn
               indicatorSize: TabBarIndicatorSize.tab,
               indicatorColor: primaryColor, // Màu gạch chân
               dividerColor: Colors.transparent,
@@ -92,24 +96,19 @@ class _AppointmentAllNotificationPageState extends State<AppointmentAllNotificat
                 fontSize: screenSize.width > 600 ? 16 : 14,
               ),
               tabs: const [
-                Tab(
-                  text: 'Hôm nay',
-                  icon: Icon(Icons.today),
-                ),
-                Tab(
-                  text: 'Tương lai',
-                  icon: Icon(Icons.calendar_month),
-                ),
-                Tab(
-                  text: 'Quá khứ',
-                  icon: Icon(Icons.history),
-                ),
+                Tab(text: 'Hôm nay', icon: Icon(Icons.today)),
+                Tab(text: 'Tương lai', icon: Icon(Icons.calendar_month)),
+                Tab(text: 'Quá khứ', icon: Icon(Icons.history)),
               ],
             ),
           ),
 
           // Đường kẻ mỏng ngăn cách TabBar và nội dung
-          Divider(height: 1, thickness: 1, color: Colors.grey.withValues(alpha: 0.2)),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.grey.withValues(alpha: 0.2),
+          ),
 
           // Phần nội dung
           Expanded(
@@ -157,10 +156,7 @@ class AppointmentAllNotificationTabContainer extends StatelessWidget {
         horizontal: screenSize.width * 0.04,
         vertical: screenSize.height * 0.02,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: child,
-      ),
+      child: ClipRRect(borderRadius: BorderRadius.circular(12), child: child),
     );
   }
 }

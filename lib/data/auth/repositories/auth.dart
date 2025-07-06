@@ -34,84 +34,71 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Either> register(RegisterReqParams params) async {
     var data = await sl<AuthService>().register(params);
-    return data.fold(
-      (error) => Left(error),
-      (data) async {
+    return data.fold((error) => Left(error), (data) async {
       return Right(data);
-    }
-    );
+    });
   }
 
   @override
   Future<Either> verifyEmail(VerifyEmailReqParams params) async {
     var data = await sl<AuthService>().verifyEmail(params);
-    return data.fold(
-      (error) => Left(error),
-      (data) async {
-        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return data.fold((error) => Left(error), (data) async {
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
 
-        // Lưu thông tin token
-        sharedPreferences.setString('accessToken', data['data']['accessToken']);
-        sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
+      // Lưu thông tin token
+      sharedPreferences.setString('accessToken', data['data']['accessToken']);
+      sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
 
-        // Lưu thông tin người dùng
-        sharedPreferences.setString('email', data['data']['email']);
-        sharedPreferences.setInt('accountId', data['data']['accountId']);
+      // Lưu thông tin người dùng
+      sharedPreferences.setString('email', data['data']['email']);
+      sharedPreferences.setInt('accountId', data['data']['accountId']);
 
-        return Right(data);
-      },
-    );
+      return Right(data);
+    });
   }
 
   @override
   Future<Either> verifyOtp(params) async {
     var data = await sl<AuthService>().verifyOtp(params);
-    return data.fold(
-      (error) => Left(error),
-      (data) async {
-        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return data.fold((error) => Left(error), (data) async {
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
 
-        // Lưu thông tin token
-        sharedPreferences.setString('accessToken', data['data']['accessToken']);
-        sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
+      // Lưu thông tin token
+      sharedPreferences.setString('accessToken', data['data']['accessToken']);
+      sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
 
-        // Lưu thông tin người dùng
-        sharedPreferences.setString('email', data['data']['email']);
-        sharedPreferences.setInt('accountId', data['data']['accountId']);
+      // Lưu thông tin người dùng
+      sharedPreferences.setString('email', data['data']['email']);
+      sharedPreferences.setInt('accountId', data['data']['accountId']);
 
-        return Right(data);
-      },
-    );
+      return Right(data);
+    });
   }
 
   @override
   Future<Either> logout() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     var logoutResult = await sl<AuthService>().logout();
-    return logoutResult.fold(
-      (error) => Left(error),
-      (data) async {
-        await sharedPreferences.clear();
-        return Right(data);
-      },
-    );
+    return logoutResult.fold((error) => Left(error), (data) async {
+      await sharedPreferences.clear();
+      return Right(data);
+    });
   }
 
   @override
   Future<Either> getCustomerId(int accountId) async {
     var data = await sl<AuthService>().getCustomerId(accountId);
-    return data.fold(
-      (error) => Left(error),
-      (data) async {
-        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return data.fold((error) => Left(error), (data) async {
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
 
-        // Lưu thông tin người dùng
-        await sharedPreferences.setInt('customerId', data['data']['customerId']);
+      // Lưu thông tin người dùng
+      await sharedPreferences.setInt('customerId', data['data']['customerId']);
 
-        return Right(data);
-      },
-    );
+      return Right(data);
+    });
   }
-
-
 }

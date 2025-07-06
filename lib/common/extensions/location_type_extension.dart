@@ -13,6 +13,8 @@ extension LocationTypeExtension on int {
   }
 
   String? get toLocationTypeString {
-    return toLocationType?.name.toLowerCase() == 'clinic' ? 'Trung tâm' : 'Tại nhà';
+    return toLocationType?.name.toLowerCase() == 'clinic'
+        ? 'Trung tâm'
+        : 'Tại nhà';
   }
 }

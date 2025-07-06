@@ -6,17 +6,35 @@ import '../../../core/network/dio_client.dart';
 import '../../../service_locator.dart';
 
 abstract class AppointmentService {
-  Future<Either> getAppointmentByCustomerAndStatus(int customerId, String status);
+  Future<Either> getAppointmentByCustomerAndStatus(
+    int customerId,
+    String status,
+  );
   Future<Either> getAppointmentById(int appointmentId);
-  Future<Either> getPastAppointmentByCusId(int customerId, int pageNumber, int pageSize);
-  Future<Either> getTodayAppointmentByCusId(int customerId, int pageNumber, int pageSize);
-  Future<Either> getFutureAppointmentByCusId(int customerId, int pageNumber, int pageSize);
+  Future<Either> getPastAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  );
+  Future<Either> getTodayAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  );
+  Future<Either> getFutureAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  );
   Future<Either> putAppointmentById(UpdateAppointmentModel appointmentUpdate);
 }
 
 class AppointmentServiceImpl extends AppointmentService {
   @override
-  Future<Either> getAppointmentByCustomerAndStatus(int customerId, String status) async {
+  Future<Either> getAppointmentByCustomerAndStatus(
+    int customerId,
+    String status,
+  ) async {
     try {
       var response = await sl<DioClient>().get(
         '${ApiUrl.getAppointmentByCustomerAndStatus}/$customerId/$status',
@@ -44,10 +62,14 @@ class AppointmentServiceImpl extends AppointmentService {
       return Left('Lỗi không xác định: $e');
     }
   }
+
   @override
-  Future<Either> putAppointmentById(UpdateAppointmentModel appointmentUpdate) async {
+  Future<Either> putAppointmentById(
+    UpdateAppointmentModel appointmentUpdate,
+  ) async {
     try {
-      final url = '${ApiUrl.putUpdateAppointment}/${appointmentUpdate.appointmentId}';
+      final url =
+          '${ApiUrl.putUpdateAppointment}/${appointmentUpdate.appointmentId}';
 
       // Sử dụng JSON body thay vì form data
       final jsonBody = appointmentUpdate.toJson();
@@ -55,11 +77,7 @@ class AppointmentServiceImpl extends AppointmentService {
       final response = await sl<DioClient>().put(
         url,
         data: jsonBody, // Gửi JSON body
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       return Right(response.data);
@@ -71,14 +89,15 @@ class AppointmentServiceImpl extends AppointmentService {
   }
 
   @override
-  Future<Either> getFutureAppointmentByCusId(int customerId, int pageNumber, int pageSize) async {
+  Future<Either> getFutureAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  ) async {
     try {
       var response = await sl<DioClient>().get(
         '${ApiUrl.getFutureAppointmentByCusId}/$customerId',
-        queryParameters: {
-          'pageNumber': pageNumber,
-          'pageSize': pageSize,
-        },
+        queryParameters: {'pageNumber': pageNumber, 'pageSize': pageSize},
       );
       return Right(response.data);
     } on DioException catch (e) {
@@ -89,14 +108,15 @@ class AppointmentServiceImpl extends AppointmentService {
   }
 
   @override
-  Future<Either> getPastAppointmentByCusId(int customerId, int pageNumber, int pageSize) async {
+  Future<Either> getPastAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  ) async {
     try {
       var response = await sl<DioClient>().get(
         '${ApiUrl.getPastAppointmentByCusId}/$customerId',
-        queryParameters: {
-          'pageNumber': pageNumber,
-          'pageSize': pageSize,
-        },
+        queryParameters: {'pageNumber': pageNumber, 'pageSize': pageSize},
       );
       return Right(response.data);
     } on DioException catch (e) {
@@ -107,14 +127,15 @@ class AppointmentServiceImpl extends AppointmentService {
   }
 
   @override
-  Future<Either> getTodayAppointmentByCusId(int customerId, int pageNumber, int pageSize) async {
+  Future<Either> getTodayAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  ) async {
     try {
       var response = await sl<DioClient>().get(
         '${ApiUrl.getTodayAppointmentByCusId}/$customerId',
-        queryParameters: {
-          'pageNumber': pageNumber,
-          'pageSize': pageSize,
-        },
+        queryParameters: {'pageNumber': pageNumber, 'pageSize': pageSize},
       );
       return Right(response.data);
     } on DioException catch (e) {
@@ -123,5 +144,4 @@ class AppointmentServiceImpl extends AppointmentService {
       return Left('Lỗi không xác định: $e');
     }
   }
-
 }

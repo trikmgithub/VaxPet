@@ -1,4 +1,1 @@
-enum LocationTypeEnum {
-  clinic,
-  homeVisit
-}
+enum LocationTypeEnum { clinic, homeVisit }

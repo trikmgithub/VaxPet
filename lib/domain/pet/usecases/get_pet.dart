@@ -9,5 +9,4 @@ class GetPetUseCase extends UseCase<Either, int> {
   Future<Either> call({int? params}) {
     return sl<PetRepository>().getPetById(params!);
   }
-
 }

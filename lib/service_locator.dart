@@ -64,7 +64,6 @@ import 'domain/vaccine_appointment_note_detail/usecases/get_vaccine_appointment_
 final sl = GetIt.instance;
 
 void setupServiceLocator() {
-
   sl.registerSingleton<DioClient>(DioClient());
 
   // Services
@@ -73,10 +72,18 @@ void setupServiceLocator() {
   sl.registerSingleton<ScheduleService>(ScheduleServiceImpl());
   sl.registerSingleton<DiseaseService>(DiseaseServiceImpl());
   sl.registerSingleton<AppointmentService>(AppointmentServiceImpl());
-  sl.registerSingleton<VaccineAppointmentNoteService>(VaccineAppointmentNoteServiceImpl());
-  sl.registerSingleton<AppointmentMicrochipService>(AppointmentMicrochipServiceImpl());
-  sl.registerSingleton<AppointmentVaccinationService>(AppointmentVaccinationServiceImpl());
-  sl.registerSingleton<VaccineAppointmentNoteDetailService>(VaccineAppointmentNoteDetailServiceImpl());
+  sl.registerSingleton<VaccineAppointmentNoteService>(
+    VaccineAppointmentNoteServiceImpl(),
+  );
+  sl.registerSingleton<AppointmentMicrochipService>(
+    AppointmentMicrochipServiceImpl(),
+  );
+  sl.registerSingleton<AppointmentVaccinationService>(
+    AppointmentVaccinationServiceImpl(),
+  );
+  sl.registerSingleton<VaccineAppointmentNoteDetailService>(
+    VaccineAppointmentNoteDetailServiceImpl(),
+  );
   sl.registerSingleton<CustomerProfileService>(CustomerProfileServiceImpl());
   sl.registerSingleton<PetRecordService>(PetRecordServiceImpl());
 
@@ -86,11 +93,21 @@ void setupServiceLocator() {
   sl.registerSingleton<ScheduleRepository>(ScheduleRepositoryImpl());
   sl.registerSingleton<DiseaseRepository>(DiseaseRepositoryImpl());
   sl.registerSingleton<AppointmentRepository>(AppointmentRepositoryImpl());
-  sl.registerSingleton<VaccineAppointmentNoteRepository>(VaccineAppointmentNoteRepositoryImpl());
-  sl.registerSingleton<AppointmentMicrochipRepository>(AppointmentMicrochipRepositoryImpl());
-  sl.registerSingleton<AppointmentVaccinationRepository>(AppointmentVaccinationRepositoryImpl());
-  sl.registerSingleton<VaccineAppointmentNoteDetailRepository>(VaccineAppointmentNoteDetailRepositoryImpl());
-  sl.registerSingleton<CustomerProfileRepository>(CustomerProfileRepositoryImpl());
+  sl.registerSingleton<VaccineAppointmentNoteRepository>(
+    VaccineAppointmentNoteRepositoryImpl(),
+  );
+  sl.registerSingleton<AppointmentMicrochipRepository>(
+    AppointmentMicrochipRepositoryImpl(),
+  );
+  sl.registerSingleton<AppointmentVaccinationRepository>(
+    AppointmentVaccinationRepositoryImpl(),
+  );
+  sl.registerSingleton<VaccineAppointmentNoteDetailRepository>(
+    VaccineAppointmentNoteDetailRepositoryImpl(),
+  );
+  sl.registerSingleton<CustomerProfileRepository>(
+    CustomerProfileRepositoryImpl(),
+  );
   sl.registerSingleton<PetRecordRepository>(PetRecordRepositoryImpl());
 
   // User Cases
@@ -105,20 +122,35 @@ void setupServiceLocator() {
   sl.registerSingleton<CreatePetUseCase>(CreatePetUseCase());
   sl.registerSingleton<DeletePetUseCase>(DeletePetUseCase());
   sl.registerSingleton<CreateAppVacUseCase>(CreateAppVacUseCase());
-  sl.registerSingleton<GetDiseaseBySpeciesUseCase>(GetDiseaseBySpeciesUseCase());
-  sl.registerSingleton<GetVaccineAppointmentNoteUseCase>(GetVaccineAppointmentNoteUseCase());
-  sl.registerSingleton<GetAppointmentsByIdUseCase>(GetAppointmentsByIdUseCase());
-  sl.registerSingleton<GetFutureAppointmentByCusId>(GetFutureAppointmentByCusId());
+  sl.registerSingleton<GetDiseaseBySpeciesUseCase>(
+    GetDiseaseBySpeciesUseCase(),
+  );
+  sl.registerSingleton<GetVaccineAppointmentNoteUseCase>(
+    GetVaccineAppointmentNoteUseCase(),
+  );
+  sl.registerSingleton<GetAppointmentsByIdUseCase>(
+    GetAppointmentsByIdUseCase(),
+  );
+  sl.registerSingleton<GetFutureAppointmentByCusId>(
+    GetFutureAppointmentByCusId(),
+  );
   sl.registerSingleton<GetPastAppointmentByCusId>(GetPastAppointmentByCusId());
-  sl.registerSingleton<GetTodayAppointmentByCusId>(GetTodayAppointmentByCusId());
-  sl.registerSingleton<PostAppointmentMicrochipUseCase>(PostAppointmentMicrochipUseCase());
-  sl.registerSingleton<PostAppointmentVaccinationUseCase>(PostAppointmentVaccinationUseCase());
-  sl.registerSingleton<GetVaccineAppointmentNoteDetailUseCase>(GetVaccineAppointmentNoteDetailUseCase());
+  sl.registerSingleton<GetTodayAppointmentByCusId>(
+    GetTodayAppointmentByCusId(),
+  );
+  sl.registerSingleton<PostAppointmentMicrochipUseCase>(
+    PostAppointmentMicrochipUseCase(),
+  );
+  sl.registerSingleton<PostAppointmentVaccinationUseCase>(
+    PostAppointmentVaccinationUseCase(),
+  );
+  sl.registerSingleton<GetVaccineAppointmentNoteDetailUseCase>(
+    GetVaccineAppointmentNoteDetailUseCase(),
+  );
   sl.registerSingleton<GetCustomerProfileUseCase>(GetCustomerProfileUseCase());
   sl.registerSingleton<PutCustomerProfileUseCase>(PutCustomerProfileUseCase());
   sl.registerSingleton<PutAppointmentByIdUseCase>(PutAppointmentByIdUseCase());
   sl.registerSingleton<GetPetUseCase>(GetPetUseCase());
   sl.registerSingleton<PutPetUseCase>(PutPetUseCase());
   sl.registerSingleton<GetPetRecordUseCase>(GetPetRecordUseCase());
-
 }

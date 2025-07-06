@@ -26,7 +26,7 @@ class CreatePetReqParams {
     required this.weight,
     required this.color,
     required this.nationality,
-    required this.isSterilized
+    required this.isSterilized,
   });
 
   Map<String, dynamic> toMap() {

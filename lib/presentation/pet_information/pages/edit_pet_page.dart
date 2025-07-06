@@ -42,11 +42,19 @@ class _EditPetPageState extends State<EditPetPage> {
     _breedController = TextEditingController(text: widget.pet.breed ?? '');
     _weightController = TextEditingController(text: widget.pet.weight ?? '');
     _colorController = TextEditingController(text: widget.pet.color ?? '');
-    _placeToLiveController = TextEditingController(text: widget.pet.placeToLive ?? '');
-    _placeOfBirthController = TextEditingController(text: widget.pet.placeOfBirth ?? '');
-    _nationalityController = TextEditingController(text: widget.pet.nationality ?? '');
+    _placeToLiveController = TextEditingController(
+      text: widget.pet.placeToLive ?? '',
+    );
+    _placeOfBirthController = TextEditingController(
+      text: widget.pet.placeOfBirth ?? '',
+    );
+    _nationalityController = TextEditingController(
+      text: widget.pet.nationality ?? '',
+    );
     // Format ngày sinh về dd/mm/yyyy ngay từ đầu
-    _dateOfBirthController = TextEditingController(text: _formatDateToDDMMYYYY(widget.pet.dateOfBirth));
+    _dateOfBirthController = TextEditingController(
+      text: _formatDateToDDMMYYYY(widget.pet.dateOfBirth),
+    );
 
     _selectedSpecies = widget.pet.species;
     // Convert Vietnamese gender to English for dropdown
@@ -193,52 +201,67 @@ class _EditPetPageState extends State<EditPetPage> {
       customerId: widget.pet.customerId,
       petCode: widget.pet.petCode,
       // Chỉ gửi name nếu thay đổi
-      name: _nameController.text.trim() != (widget.pet.name ?? '')
-          ? _nameController.text.trim()
-          : widget.pet.name,
+      name:
+          _nameController.text.trim() != (widget.pet.name ?? '')
+              ? _nameController.text.trim()
+              : widget.pet.name,
       // Chỉ gửi species nếu thay đổi
-      species: _selectedSpecies != widget.pet.species
-          ? _selectedSpecies
-          : widget.pet.species,
+      species:
+          _selectedSpecies != widget.pet.species
+              ? _selectedSpecies
+              : widget.pet.species,
       // Chỉ gửi breed nếu thay đổi
-      breed: _breedController.text.trim() != (widget.pet.breed ?? '')
-          ? _breedController.text.trim()
-          : widget.pet.breed,
+      breed:
+          _breedController.text.trim() != (widget.pet.breed ?? '')
+              ? _breedController.text.trim()
+              : widget.pet.breed,
       age: widget.pet.age, // Keep original age
       // Chỉ gửi gender nếu thay đổi (so sánh với giá trị đã convert)
-      gender: _selectedGender != _convertGenderToEnglish(widget.pet.gender)
-          ? _selectedGender
-          : widget.pet.gender,
+      gender:
+          _selectedGender != _convertGenderToEnglish(widget.pet.gender)
+              ? _selectedGender
+              : widget.pet.gender,
       // Chỉ gửi dateOfBirth nếu thay đổi (so sánh với format chuẩn)
-      dateOfBirth: _dateOfBirthController.text.trim() != _formatDateToDDMMYYYY(widget.pet.dateOfBirth)
-          ? _dateOfBirthController.text.trim()
-          : widget.pet.dateOfBirth,
+      dateOfBirth:
+          _dateOfBirthController.text.trim() !=
+                  _formatDateToDDMMYYYY(widget.pet.dateOfBirth)
+              ? _dateOfBirthController.text.trim()
+              : widget.pet.dateOfBirth,
       // Chỉ gửi placeToLive nếu thay đổi
-      placeToLive: _placeToLiveController.text.trim() != (widget.pet.placeToLive ?? '')
-          ? _placeToLiveController.text.trim()
-          : widget.pet.placeToLive,
+      placeToLive:
+          _placeToLiveController.text.trim() != (widget.pet.placeToLive ?? '')
+              ? _placeToLiveController.text.trim()
+              : widget.pet.placeToLive,
       // Chỉ gửi placeOfBirth nếu thay đổi
-      placeOfBirth: _placeOfBirthController.text.trim() != (widget.pet.placeOfBirth ?? '')
-          ? _placeOfBirthController.text.trim()
-          : widget.pet.placeOfBirth,
+      placeOfBirth:
+          _placeOfBirthController.text.trim() != (widget.pet.placeOfBirth ?? '')
+              ? _placeOfBirthController.text.trim()
+              : widget.pet.placeOfBirth,
       // Không gửi image URL hiện tại (Cloudinary), chỉ gửi khi có ảnh mới
-      image: widget.pet.image, // Keep original image URL, sẽ được thay đổi khi user chọn ảnh mới
+      image:
+          widget
+              .pet
+              .image, // Keep original image URL, sẽ được thay đổi khi user chọn ảnh mới
       // Chỉ gửi weight nếu thay đổi
-      weight: _weightController.text.trim() != (widget.pet.weight ?? '')
-          ? _weightController.text.trim()
-          : widget.pet.weight,
+      weight:
+          _weightController.text.trim() != (widget.pet.weight ?? '')
+              ? _weightController.text.trim()
+              : widget.pet.weight,
       // Chỉ gửi color nếu thay đổi
-      color: _colorController.text.trim() != (widget.pet.color ?? '')
-          ? _colorController.text.trim()
-          : widget.pet.color,
+      color:
+          _colorController.text.trim() != (widget.pet.color ?? '')
+              ? _colorController.text.trim()
+              : widget.pet.color,
       // Chỉ gửi nationality nếu thay đổi
-      nationality: _nationalityController.text.trim() != (widget.pet.nationality ?? '')
-          ? _nationalityController.text.trim()
-          : widget.pet.nationality,
+      nationality:
+          _nationalityController.text.trim() != (widget.pet.nationality ?? '')
+              ? _nationalityController.text.trim()
+              : widget.pet.nationality,
       // Chỉ gửi isSterilized nếu thay đổi
-      isSterilized: _isSterilized != (widget.pet.isSterilized ?? false)
-          ? _isSterilized
-          : widget.pet.isSterilized,
+      isSterilized:
+          _isSterilized != (widget.pet.isSterilized ?? false)
+              ? _isSterilized
+              : widget.pet.isSterilized,
     );
   }
 
@@ -336,7 +359,10 @@ class _EditPetForm extends StatelessWidget {
       body: BlocListener<EditPetCubit, EditPetState>(
         listener: (context, state) {
           if (state is EditPetSuccess) {
-            DisplayMessage.successMessage('Cập nhật thông tin thành công!', context);
+            DisplayMessage.successMessage(
+              'Cập nhật thông tin thành công!',
+              context,
+            );
             Navigator.pop(context, true); // Return true to indicate success
           } else if (state is EditPetError) {
             DisplayMessage.errorMessage(state.message, context);
@@ -632,13 +658,23 @@ class _EditPetForm extends StatelessWidget {
         filled: true,
         fillColor: Colors.grey[50],
       ),
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item == 'Dog' ? 'Chó' : item == 'Cat' ? 'Mèo' :
-                      item == 'Male' ? 'Đực' : item == 'Female' ? 'Cái' : item),
-        );
-      }).toList(),
+      items:
+          items.map((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(
+                item == 'Dog'
+                    ? 'Chó'
+                    : item == 'Cat'
+                    ? 'Mèo'
+                    : item == 'Male'
+                    ? 'Đực'
+                    : item == 'Female'
+                    ? 'Cái'
+                    : item,
+              ),
+            );
+          }).toList(),
     );
   }
 
@@ -685,10 +721,7 @@ class _EditPetForm extends StatelessWidget {
         ),
         child: const Text(
           'Cập nhật thông tin',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );

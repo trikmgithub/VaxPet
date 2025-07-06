@@ -7,12 +7,15 @@ import 'customer_profile_edit_state.dart';
 class CustomerProfileEditCubit extends Cubit<CustomerProfileEditState> {
   CustomerProfileEditCubit() : super(CustomerProfileEditLoading());
 
-  Future<void> putCustomerProfileEdit(CustomerProfileModel customerProfile) async {
-    var returnedData = await sl<PutCustomerProfileUseCase>().call(params: customerProfile);
+  Future<void> putCustomerProfileEdit(
+    CustomerProfileModel customerProfile,
+  ) async {
+    var returnedData = await sl<PutCustomerProfileUseCase>().call(
+      params: customerProfile,
+    );
     returnedData.fold(
-          (error) => emit(CustomerProfileEditError(errorMessage: error.toString())),
-          (data) => emit(CustomerProfileEditUpdated(customerProfile: data)),
+      (error) => emit(CustomerProfileEditError(errorMessage: error.toString())),
+      (data) => emit(CustomerProfileEditUpdated(customerProfile: data)),
     );
   }
-
 }

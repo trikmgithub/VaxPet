@@ -17,9 +17,8 @@ class VaccineAppointmentNoteServiceImpl extends VaccineAppointmentNoteService {
         '${ApiUrl.getAppointmentForVaccinationByPetIdAndStatus}/$petId/$status',
       );
       return Right(response.data);
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       return Left(e.response!.data['message']);
     }
   }
-
 }

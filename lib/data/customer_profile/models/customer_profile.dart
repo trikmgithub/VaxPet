@@ -26,7 +26,7 @@ class CustomerProfileModel {
     this.dateOfBirth,
     this.gender,
     this.address,
-    this.currentPoints
+    this.currentPoints,
   });
 
   factory CustomerProfileModel.fromJson(Map<dynamic, dynamic> json) {
@@ -48,5 +48,4 @@ class CustomerProfileModel {
       currentPoints: json['currentPoints'],
     );
   }
-
 }

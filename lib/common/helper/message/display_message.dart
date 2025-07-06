@@ -39,12 +39,10 @@ class DisplayMessage {
     final isSmallScreen = screenSize.width < 600;
 
     // Check if we're in a scaffold with bottom navigation
-    final viewInsets = MediaQuery.of(context).viewInsets;
     final viewPadding = MediaQuery.of(context).viewPadding;
 
     // Calculate safe top position accounting for system UI and navigation
     final safeTopMargin = viewPadding.top + 16;
-    final bottomSafeArea = viewPadding.bottom + 80; // Account for bottom nav bar
 
     final snackBar = SnackBar(
       content: Row(
@@ -73,7 +71,10 @@ class DisplayMessage {
       duration: const Duration(seconds: 4),
       dismissDirection: DismissDirection.horizontal,
       margin: EdgeInsets.only(
-        bottom: screenSize.height - safeTopMargin - 60, // Position at top with safe area
+        bottom:
+            screenSize.height -
+            safeTopMargin -
+            60, // Position at top with safe area
         left: isSmallScreen ? 16 : screenSize.width * 0.2,
         right: isSmallScreen ? 16 : screenSize.width * 0.2,
         top: safeTopMargin,

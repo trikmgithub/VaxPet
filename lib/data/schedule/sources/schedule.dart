@@ -12,7 +12,9 @@ class ScheduleServiceImpl extends ScheduleService {
   final Dio _dio = Dio();
 
   @override
-  Future<Either> createAppointmentVaccinationHome(CreateAppVacReqParams params) async {
+  Future<Either> createAppointmentVaccinationHome(
+    CreateAppVacReqParams params,
+  ) async {
     try {
       final url = ApiUrl.createAppointmentVaccination;
       final response = await _dio.post(
@@ -23,9 +25,10 @@ class ScheduleServiceImpl extends ScheduleService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Right(response.data);
       } else {
-        return Left(Exception('Failed to create appointment: ${response.statusMessage}'));
+        return Left(
+          Exception('Failed to create appointment: ${response.statusMessage}'),
+        );
       }
-
     } on DioException catch (e) {
       return Left(e);
     } catch (e) {

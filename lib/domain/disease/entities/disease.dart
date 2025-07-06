@@ -14,6 +14,6 @@ class DiseaseEntity {
     this.species,
     this.symptoms,
     this.treatment,
-    this.status
+    this.status,
   });
 }

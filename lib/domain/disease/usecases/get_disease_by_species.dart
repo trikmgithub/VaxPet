@@ -9,5 +9,4 @@ class GetDiseaseBySpeciesUseCase extends UseCase<Either, String> {
   Future<Either> call({String? params}) {
     return sl<DiseaseRepository>().getDiseaseBySpecies(params!);
   }
-
 }

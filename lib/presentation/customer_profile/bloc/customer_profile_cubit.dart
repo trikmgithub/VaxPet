@@ -7,11 +7,12 @@ class CustomerProfileCubit extends Cubit<CustomerProfileState> {
   CustomerProfileCubit() : super(CustomerProfileLoading());
 
   Future<void> getCustomerProfile(int accountId) async {
-    var returnedData = await sl<GetCustomerProfileUseCase>().call(params: accountId);
+    var returnedData = await sl<GetCustomerProfileUseCase>().call(
+      params: accountId,
+    );
     returnedData.fold(
       (error) => emit(CustomerProfileError(errorMessage: error.toString())),
       (data) => emit(CustomerProfileLoaded(customerProfile: data)),
     );
   }
-
 }

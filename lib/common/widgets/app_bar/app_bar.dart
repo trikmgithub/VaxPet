@@ -26,7 +26,7 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.roundedBottom = true,
     this.withBlurEffect = false,
     this.elevation = 2,
-    super.key
+    super.key,
   });
 
   @override
@@ -46,22 +46,24 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       decoration: BoxDecoration(
-        boxShadow: elevation > 0
-          ? [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.3),
-                blurRadius: elevation * 2,
-              ),
-            ]
-          : null,
+        boxShadow:
+            elevation > 0
+                ? [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    blurRadius: elevation * 2,
+                  ),
+                ]
+                : null,
       ),
       child: ClipRRect(
-        borderRadius: roundedBottom
-          ? const BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
-            )
-          : BorderRadius.zero,
+        borderRadius:
+            roundedBottom
+                ? const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                )
+                : BorderRadius.zero,
         child: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -73,14 +75,17 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
           title: title ?? const Text(''),
           actions: actionWidgets.isEmpty ? null : actionWidgets,
           flexibleSpace: ClipRect(
-            child: withBlurEffect
-              ? BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: _buildBackgroundGradient(),
-                )
-              : _buildBackgroundGradient(),
+            child:
+                withBlurEffect
+                    ? BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: _buildBackgroundGradient(),
+                    )
+                    : _buildBackgroundGradient(),
           ),
-          leading: leading ?? (hideBack ? null : _buildBackButton(context, isSmallScreen)),
+          leading:
+              leading ??
+              (hideBack ? null : _buildBackButton(context, isSmallScreen)),
         ),
       ),
     );

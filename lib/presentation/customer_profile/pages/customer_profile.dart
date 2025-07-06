@@ -12,7 +12,8 @@ class CustomerProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CustomerProfileCubit()..getCustomerProfile(accountId!),
+      create:
+          (context) => CustomerProfileCubit()..getCustomerProfile(accountId!),
       child: BlocBuilder<CustomerProfileCubit, CustomerProfileState>(
         builder: (context, state) {
           if (state is CustomerProfileLoading) {
@@ -20,9 +21,7 @@ class CustomerProfilePage extends StatelessWidget {
           }
 
           if (state is CustomerProfileLoaded) {
-            return CustomerProfile(
-              customerProfile: state.customerProfile,
-            );
+            return CustomerProfile(customerProfile: state.customerProfile);
           }
 
           if (state is CustomerProfileError) {
@@ -31,8 +30,7 @@ class CustomerProfilePage extends StatelessWidget {
 
           return Container();
         },
-      )
+      ),
     );
   }
 }
-

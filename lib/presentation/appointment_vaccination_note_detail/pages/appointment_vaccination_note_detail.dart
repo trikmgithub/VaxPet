@@ -27,7 +27,10 @@ class AppointmentVaccinationNoteDetailPage extends StatelessWidget {
         ),
       ),
       body: BlocProvider(
-        create: (context) => AppointmentVaccinationNoteDetailCubit()..fetchAppointmentDetail(appointmentId),
+        create:
+            (context) =>
+                AppointmentVaccinationNoteDetailCubit()
+                  ..fetchAppointmentDetail(appointmentId),
         child: const AppointmentVaccinationDetail(),
       ),
     );

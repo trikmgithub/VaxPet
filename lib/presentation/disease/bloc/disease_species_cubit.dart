@@ -9,17 +9,18 @@ class DiseaseSpeciesCubit extends Cubit<DiseaseSpeciesState> {
   DiseaseSpeciesCubit() : super(DiseaseSpeciesLoading());
 
   Future<void> getDiseaseBySpecies(String species) async {
-    var returnedData = await sl<GetDiseaseBySpeciesUseCase>().call(params: species);
+    var returnedData = await sl<GetDiseaseBySpeciesUseCase>().call(
+      params: species,
+    );
 
     returnedData.fold(
-        (error) {
-          emit(DiseaseSpeciesError(message: error));
-        },
-        (data) {
-          debugPrint('getDiseaseBySpecies returned: $data');
-          emit(DiseaseSpeciesLoaded(diseases: data));
-        }
+      (error) {
+        emit(DiseaseSpeciesError(message: error));
+      },
+      (data) {
+        debugPrint('getDiseaseBySpecies returned: $data');
+        emit(DiseaseSpeciesLoaded(diseases: data));
+      },
     );
   }
-
 }

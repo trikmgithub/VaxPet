@@ -7,5 +7,4 @@ class IsLoggedInUseCase extends UseCase<bool, dynamic> {
   Future<bool> call({params}) async {
     return await sl<AuthRepository>().isLoggedIn();
   }
-
 }

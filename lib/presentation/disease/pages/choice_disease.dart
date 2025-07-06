@@ -25,17 +25,12 @@ class ChoiceDiseasePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            CategoryText(
-              title: 'Loài: $species',
-              sizeTitle: 16
-            ),
+            CategoryText(title: 'Loài: $species', sizeTitle: 16),
             const SizedBox(height: 16),
-            Expanded(
-              child: DiseaseSpecies(species: species),
-            ),
+            Expanded(child: DiseaseSpecies(species: species)),
           ],
         ),
-      )
+      ),
     );
   }
 }

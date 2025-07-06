@@ -13,7 +13,8 @@ class IntroducePage extends StatefulWidget {
   State<IntroducePage> createState() => _IntroducePageState();
 }
 
-class _IntroducePageState extends State<IntroducePage> with SingleTickerProviderStateMixin {
+class _IntroducePageState extends State<IntroducePage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
   late Animation<Offset> _slideAnimation;
@@ -61,7 +62,8 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
     final isLargeScreen = screenSize.width >= 600;
 
     // Adjust padding based on screen size
-    final horizontalPadding = isSmallScreen ? 16.0 : (isMediumScreen ? 24.0 : 32.0);
+    final horizontalPadding =
+        isSmallScreen ? 16.0 : (isMediumScreen ? 24.0 : 32.0);
     final topPadding = isSmallScreen ? 60.0 : (isMediumScreen ? 80.0 : 100.0);
 
     return Scaffold(
@@ -70,11 +72,7 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Color(0xFFF5F9FF),
-              Color(0xFFEDF5FF),
-            ],
+            colors: [Colors.white, Color(0xFFF5F9FF), Color(0xFFEDF5FF)],
           ),
         ),
         child: SafeArea(
@@ -129,7 +127,11 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
                           position: _slideAnimation,
                           child: FadeTransition(
                             opacity: _fadeInAnimation,
-                            child: _buttonGetStarted(context, isSmallScreen, isMediumScreen),
+                            child: _buttonGetStarted(
+                              context,
+                              isSmallScreen,
+                              isMediumScreen,
+                            ),
                           ),
                         ),
                       ],
@@ -150,10 +152,7 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
   Widget _logoVaxPet(bool isLargeScreen) {
     return Container(
       alignment: Alignment.center,
-      child: SvgPicture.asset(
-        AppVectors.logoVaxPet,
-        fit: BoxFit.contain,
-      ),
+      child: SvgPicture.asset(AppVectors.logoVaxPet, fit: BoxFit.contain),
     );
   }
 
@@ -172,9 +171,7 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
 
   Widget _description(bool isSmallScreen, bool isMediumScreen) {
     return Container(
-      constraints: BoxConstraints(
-        maxWidth: isMediumScreen ? 320 : 480,
-      ),
+      constraints: BoxConstraints(maxWidth: isMediumScreen ? 320 : 480),
       child: Text(
         'Theo dõi lịch tiêm chủng và chăm sóc sức khỏe cho thú cưng dễ dàng hơn bao giờ hết.',
         style: TextStyle(
@@ -187,7 +184,11 @@ class _IntroducePageState extends State<IntroducePage> with SingleTickerProvider
     );
   }
 
-  Widget _buttonGetStarted(BuildContext context, bool isSmallScreen, bool isMediumScreen) {
+  Widget _buttonGetStarted(
+    BuildContext context,
+    bool isSmallScreen,
+    bool isMediumScreen,
+  ) {
     return SizedBox(
       width: double.infinity,
       height: isSmallScreen ? 50 : 56,

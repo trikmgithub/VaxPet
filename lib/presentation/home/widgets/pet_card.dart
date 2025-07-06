@@ -47,12 +47,8 @@ class Pets extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => PetsCubit()..getPets(accountId),
-        ),
-        BlocProvider(
-          create: (context) => DeletePetCubit(),
-        ),
+        BlocProvider(create: (context) => PetsCubit()..getPets(accountId)),
+        BlocProvider(create: (context) => DeletePetCubit()),
       ],
       child: BlocListener<DeletePetCubit, DeletePetState>(
         listener: (context, state) {
@@ -75,22 +71,23 @@ class Pets extends StatelessWidget {
           builder: (context, state) {
             if (state is PetsLoading) {
               return const Center(
-                child: CircularProgressIndicator(color: AppColors.primary)
+                child: CircularProgressIndicator(color: AppColors.primary),
               );
             }
-            
+
             if (state is PetsLoaded) {
               return RefreshIndicator(
                 onRefresh: () => _refreshPets(context),
                 color: AppColors.primary,
                 backgroundColor: Colors.white,
                 strokeWidth: 2.5,
-                child: state.pets.isEmpty 
-                  ? _buildEmptyState()
-                  : _buildPetsList(state.pets),
+                child:
+                    state.pets.isEmpty
+                        ? _buildEmptyState()
+                        : _buildPetsList(state.pets),
               );
             }
-            
+
             if (state is PetsError) {
               return RefreshIndicator(
                 onRefresh: () => _refreshPets(context),
@@ -98,7 +95,7 @@ class Pets extends StatelessWidget {
                 child: _buildErrorState(state.message),
               );
             }
-            
+
             return const SizedBox.shrink();
           },
         ),
@@ -140,10 +137,7 @@ class Pets extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Nhấn nút "+" để thêm thú cưng đầu tiên',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[500]),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -187,10 +181,7 @@ class Pets extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 message,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[500]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -260,62 +251,68 @@ class Pets extends StatelessWidget {
     _removeCurrentNotification(context);
 
     final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).viewPadding.top + 10,
-        left: 10,
-        right: 10,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isSuccess ? Colors.green : Colors.red,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+      builder:
+          (context) => Positioned(
+            top: MediaQuery.of(context).viewPadding.top + 10,
+            left: 10,
+            right: 10,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Icon(
-                        isSuccess ? Icons.check_circle : Icons.error_outline,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Flexible(
-                        child: Text(
-                          message,
-                          style: const TextStyle(
+                decoration: BoxDecoration(
+                  color: isSuccess ? Colors.green : Colors.red,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            isSuccess
+                                ? Icons.check_circle
+                                : Icons.error_outline,
                             color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            size: 20,
                           ),
-                        ),
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Text(
+                              message,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    InkWell(
+                      onTap: () => _removeCurrentNotification(context),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                  ],
                 ),
-                InkWell(
-                  onTap: () => _removeCurrentNotification(context),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
     );
 
     _currentNotification = overlayEntry;
@@ -349,7 +346,7 @@ class PetCard extends StatelessWidget {
     super.key,
     required this.pet,
     required this.deletePetCubit,
-    this.isSmallScreen = true
+    this.isSmallScreen = true,
   });
 
   @override
@@ -359,9 +356,7 @@ class PetCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       elevation: 3.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         splashColor: tagColor.withValues(alpha: 0.1),
@@ -384,7 +379,10 @@ class PetCard extends StatelessWidget {
           children: [
             // Species tag and gender icon
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8.0,
+              ),
               decoration: BoxDecoration(
                 color: tagColor,
                 borderRadius: const BorderRadius.only(
@@ -454,16 +452,18 @@ class PetCard extends StatelessWidget {
                           offset: const Offset(0, 2),
                         ),
                       ],
-                      image: pet.image != null && pet.image!.isNotEmpty
-                          ? DecorationImage(
-                              image: NetworkImage(pet.image!),
-                              fit: BoxFit.cover,
-                            )
-                          : null,
+                      image:
+                          pet.image != null && pet.image!.isNotEmpty
+                              ? DecorationImage(
+                                image: NetworkImage(pet.image!),
+                                fit: BoxFit.cover,
+                              )
+                              : null,
                     ),
-                    child: pet.image == null || pet.image!.isEmpty
-                        ? ClipOval(child: _buildPlaceholderImage(tagColor))
-                        : null,
+                    child:
+                        pet.image == null || pet.image!.isEmpty
+                            ? ClipOval(child: _buildPlaceholderImage(tagColor))
+                            : null,
                   ),
 
                   const SizedBox(width: 16.0),
@@ -487,7 +487,11 @@ class PetCard extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.cake_rounded, size: 14.0, color: tagColor),
+                            Icon(
+                              Icons.cake_rounded,
+                              size: 14.0,
+                              color: tagColor,
+                            ),
                             const SizedBox(width: 4.0),
                             Text(
                               calculateAge(pet.dateOfBirth),
@@ -511,16 +515,23 @@ class PetCard extends StatelessWidget {
                                       petId: pet.petId!,
                                       petName: pet.name ?? "Chưa đặt tên",
                                       petImage: pet.image,
-                                      petSpecies: pet.species?.toLowerCase() == "dog" ? "Chó" : "Mèo",
+                                      petSpecies:
+                                          pet.species?.toLowerCase() == "dog"
+                                              ? "Chó"
+                                              : "Mèo",
                                       petBirthday: pet.dateOfBirth,
                                     ),
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: tagColor.withValues(alpha: 0.9),
+                                  backgroundColor: tagColor.withValues(
+                                    alpha: 0.9,
+                                  ),
                                   foregroundColor: Colors.white,
                                   elevation: 0,
-                                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6.0,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
@@ -539,18 +550,27 @@ class PetCard extends StatelessWidget {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  _showDeleteConfirmDialog(context, pet.petId!, pet.name);
+                                  _showDeleteConfirmDialog(
+                                    context,
+                                    pet.petId!,
+                                    pet.name,
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red.shade400,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
-                                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6.0,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
-                                child: const Icon(Icons.delete_outline, size: 20.0),
+                                child: const Icon(
+                                  Icons.delete_outline,
+                                  size: 20.0,
+                                ),
                               ),
                             ),
                           ],
@@ -613,13 +633,19 @@ class PetCard extends StatelessWidget {
     }
   }
 
-  void _showDeleteConfirmDialog(BuildContext context, int petId, String? petName) {
+  void _showDeleteConfirmDialog(
+    BuildContext context,
+    int petId,
+    String? petName,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Xác nhận xóa'),
-          content: Text('Bạn có chắc chắn muốn xóa thú cưng "${petName ?? ''}" không?'),
+          content: Text(
+            'Bạn có chắc chắn muốn xóa thú cưng "${petName ?? ''}" không?',
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('Hủy'),
@@ -628,10 +654,7 @@ class PetCard extends StatelessWidget {
               },
             ),
             TextButton(
-              child: const Text(
-                'Xóa',
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Xóa', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 deletePetCubit.deletePet(petId);
@@ -643,4 +666,3 @@ class PetCard extends StatelessWidget {
     );
   }
 }
-

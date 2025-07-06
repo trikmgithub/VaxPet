@@ -152,12 +152,13 @@ class PetInformationPage extends StatelessWidget {
     );
   }
 
-  void _navigateToEditPet(BuildContext context, PetInformationLoaded state) async {
+  void _navigateToEditPet(
+    BuildContext context,
+    PetInformationLoaded state,
+  ) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditPetPage(pet: state.pet),
-      ),
+      MaterialPageRoute(builder: (context) => EditPetPage(pet: state.pet)),
     );
 
     // If edit was successful, refresh the pet information
@@ -171,10 +172,7 @@ class PetInformationPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AppColors.primary,
-            strokeWidth: 3,
-          ),
+          CircularProgressIndicator(color: AppColors.primary, strokeWidth: 3),
           const SizedBox(height: 16),
           Text(
             'Đang tải thông tin...',
@@ -191,7 +189,9 @@ class PetInformationPage extends StatelessWidget {
 
   Widget _buildErrorState(BuildContext context, PetInformationError state) {
     return RefreshIndicator(
-      onRefresh: () => context.read<PetInformationCubit>().refreshPetInformation(petId),
+      onRefresh:
+          () =>
+              context.read<PetInformationCubit>().refreshPetInformation(petId),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
@@ -236,13 +236,19 @@ class PetInformationPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
-                  onPressed: () => context.read<PetInformationCubit>().getPetInformation(petId),
+                  onPressed:
+                      () => context
+                          .read<PetInformationCubit>()
+                          .getPetInformation(petId),
                   icon: const Icon(Icons.refresh),
                   label: const Text('Thử lại'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -262,7 +268,9 @@ class PetInformationPage extends StatelessWidget {
     final isTablet = screenSize.width > 600;
 
     return RefreshIndicator(
-      onRefresh: () => context.read<PetInformationCubit>().refreshPetInformation(petId),
+      onRefresh:
+          () =>
+              context.read<PetInformationCubit>().refreshPetInformation(petId),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
@@ -321,10 +329,7 @@ class PetInformationPage extends StatelessWidget {
             icon: const Icon(Icons.edit, size: 20),
             label: const Text(
               'Chỉnh sửa thông tin',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
@@ -362,10 +367,7 @@ class PetInformationPage extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary.withOpacity(0.8),
-            AppColors.primary,
-          ],
+          colors: [AppColors.primary.withOpacity(0.8), AppColors.primary],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -385,10 +387,7 @@ class PetInformationPage extends StatelessWidget {
             height: isTablet ? 160 : 120,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white,
-                width: 4,
-              ),
+              border: Border.all(color: Colors.white, width: 4),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -399,13 +398,16 @@ class PetInformationPage extends StatelessWidget {
               ],
             ),
             child: ClipOval(
-              child: pet.image != null && pet.image!.isNotEmpty
-                  ? Image.network(
-                      pet.image!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(isTablet),
-                    )
-                  : _buildDefaultAvatar(isTablet),
+              child:
+                  pet.image != null && pet.image!.isNotEmpty
+                      ? Image.network(
+                        pet.image!,
+                        fit: BoxFit.cover,
+                        errorBuilder:
+                            (context, error, stackTrace) =>
+                                _buildDefaultAvatar(isTablet),
+                      )
+                      : _buildDefaultAvatar(isTablet),
             ),
           ),
 
@@ -463,12 +465,25 @@ class PetInformationPage extends StatelessWidget {
       isTablet: isTablet,
       children: [
         _buildInfoRow('Tên:', pet.name ?? 'N/A', Icons.pets),
-        _buildInfoRow('Loài:', _convertSpeciesToVietnamese(pet.species) ?? 'N/A', Icons.category),
+        _buildInfoRow(
+          'Loài:',
+          _convertSpeciesToVietnamese(pet.species) ?? 'N/A',
+          Icons.category,
+        ),
         _buildInfoRow('Giống:', pet.breed ?? 'N/A', Icons.label),
-        _buildInfoRow('Giới tính:', pet.gender ?? 'N/A',
-            pet.gender?.toLowerCase() == 'male' || pet.gender?.toLowerCase() == 'đực'
-                ? Icons.male : Icons.female),
-        _buildInfoRow('Ngày sinh:', _formatDateOfBirth(pet.dateOfBirth), Icons.cake),
+        _buildInfoRow(
+          'Giới tính:',
+          pet.gender ?? 'N/A',
+          pet.gender?.toLowerCase() == 'male' ||
+                  pet.gender?.toLowerCase() == 'đực'
+              ? Icons.male
+              : Icons.female,
+        ),
+        _buildInfoRow(
+          'Ngày sinh:',
+          _formatDateOfBirth(pet.dateOfBirth),
+          Icons.cake,
+        ),
       ],
     );
   }
@@ -480,7 +495,11 @@ class PetInformationPage extends StatelessWidget {
       icon: Icons.fitness_center,
       isTablet: isTablet,
       children: [
-        _buildInfoRow('Cân nặng (kg):', pet.weight ?? 'N/A', Icons.monitor_weight),
+        _buildInfoRow(
+          'Cân nặng (kg):',
+          pet.weight ?? 'N/A',
+          Icons.monitor_weight,
+        ),
         _buildInfoRow('Màu sắc:', pet.color ?? 'N/A', Icons.palette),
         _buildInfoRow('Tuổi:', _calculateAge(pet.dateOfBirth), Icons.schedule),
       ],
@@ -512,7 +531,8 @@ class PetInformationPage extends StatelessWidget {
           'Tình trạng triệt sản:',
           pet.isSterilized == true ? 'Đã triệt sản' : 'Chưa triệt sản',
           pet.isSterilized == true ? Icons.check_circle : Icons.cancel,
-          valueColor: pet.isSterilized == true ? Colors.green[600] : Colors.orange[600],
+          valueColor:
+              pet.isSterilized == true ? Colors.green[600] : Colors.orange[600],
         ),
       ],
     );
@@ -551,11 +571,7 @@ class PetInformationPage extends StatelessWidget {
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: AppColors.primary,
-                ),
+                child: Icon(icon, size: 20, color: AppColors.primary),
               ),
               const SizedBox(width: 12),
               Text(
@@ -575,17 +591,18 @@ class PetInformationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value, IconData icon, {Color? valueColor}) {
+  Widget _buildInfoRow(
+    String label,
+    String value,
+    IconData icon, {
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: Colors.grey[500],
-          ),
+          Icon(icon, size: 18, color: Colors.grey[500]),
           const SizedBox(width: 12),
           Expanded(
             flex: 2,

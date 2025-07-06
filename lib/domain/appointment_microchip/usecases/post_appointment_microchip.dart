@@ -5,10 +5,12 @@ import '../../../data/appointment_microchip/models/post_appointment_micrcochip.d
 import '../../../service_locator.dart';
 import '../repositories/appointment_microchip.dart';
 
-class PostAppointmentMicrochipUseCase extends UseCase<Either, PostAppointmentMicrochipModel> {
+class PostAppointmentMicrochipUseCase
+    extends UseCase<Either, PostAppointmentMicrochipModel> {
   @override
   Future<Either> call({PostAppointmentMicrochipModel? params}) async {
-    return await sl<AppointmentMicrochipRepository>().postAppointmentMicrochip(params!);
+    return await sl<AppointmentMicrochipRepository>().postAppointmentMicrochip(
+      params!,
+    );
   }
-
 }

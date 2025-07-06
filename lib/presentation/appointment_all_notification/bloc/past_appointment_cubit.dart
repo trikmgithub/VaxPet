@@ -56,11 +56,13 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
             _hasMoreData = false;
           }
 
-          emit(PastAppointmentLoaded(
-            appointments: _allAppointments,
-            hasMoreData: _hasMoreData,
-            currentPage: _currentPage,
-          ));
+          emit(
+            PastAppointmentLoaded(
+              appointments: _allAppointments,
+              hasMoreData: _hasMoreData,
+              currentPage: _currentPage,
+            ),
+          );
         },
       );
     } catch (e) {
@@ -76,10 +78,12 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
     }
 
     try {
-      emit(PastAppointmentLoadingMore(
-        appointments: _allAppointments,
-        currentPage: _currentPage,
-      ));
+      emit(
+        PastAppointmentLoadingMore(
+          appointments: _allAppointments,
+          currentPage: _currentPage,
+        ),
+      );
 
       // Tăng số trang lên 1
       _currentPage++;
@@ -108,11 +112,14 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
           // Nếu không có dữ liệu mới, đã hết dữ liệu
           if (newAppointments.isEmpty) {
             _hasMoreData = false;
-            emit(PastAppointmentLoaded(
-              appointments: _allAppointments,
-              hasMoreData: _hasMoreData,
-              currentPage: _currentPage - 1, // Giảm trang lại vì không có dữ liệu
-            ));
+            emit(
+              PastAppointmentLoaded(
+                appointments: _allAppointments,
+                hasMoreData: _hasMoreData,
+                currentPage:
+                    _currentPage - 1, // Giảm trang lại vì không có dữ liệu
+              ),
+            );
             return;
           }
 
@@ -124,11 +131,13 @@ class PastAppointmentCubit extends Cubit<PastAppointmentState> {
             _hasMoreData = false;
           }
 
-          emit(PastAppointmentLoaded(
-            appointments: _allAppointments,
-            hasMoreData: _hasMoreData,
-            currentPage: _currentPage,
-          ));
+          emit(
+            PastAppointmentLoaded(
+              appointments: _allAppointments,
+              hasMoreData: _hasMoreData,
+              currentPage: _currentPage,
+            ),
+          );
         },
       );
     } catch (e) {

@@ -27,18 +27,23 @@ class AppointmentVaccinationHomePage extends StatefulWidget {
   });
 
   @override
-  State<AppointmentVaccinationHomePage> createState() => _AppointmentVaccinationHomePageState();
+  State<AppointmentVaccinationHomePage> createState() =>
+      _AppointmentVaccinationHomePageState();
 }
 
-class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationHomePage> {
-  final TextEditingController _dateOfScheduleController = TextEditingController();
-  final TextEditingController _timeOfScheduleController = TextEditingController();
+class _AppointmentVaccinationHomePageState
+    extends State<AppointmentVaccinationHomePage> {
+  final TextEditingController _dateOfScheduleController =
+      TextEditingController();
+  final TextEditingController _timeOfScheduleController =
+      TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   int? _customerId;
   int? _selectedDiseaseId;
   String? _selectedDiseaseName;
   String? _userAddress;
-  String? _originalAddress; // Lưu trữ địa chỉ gốc từ SharedPreferences khi trang được mở
+  String?
+  _originalAddress; // Lưu trữ địa chỉ gốc từ SharedPreferences khi trang được mở
   bool _isEditingAddress = false;
 
   // Key để lưu địa chỉ gốc trong SharedPreferences
@@ -132,43 +137,67 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: widget.petImage != null ? Colors.transparent : Colors.blue[100],
+                                color:
+                                    widget.petImage != null
+                                        ? Colors.transparent
+                                        : Colors.blue[100],
                                 shape: BoxShape.circle,
                               ),
-                              child: widget.petImage != null
-                                  ? ClipOval(
-                                      child: Image.network(
-                                        widget.petImage!,
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Icon(
-                                            Icons.pets,
-                                            color: Theme.of(context).primaryColor,
-                                            size: 28,
-                                          );
-                                        },
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress.expectedTotalBytes != null
-                                                  ? loadingProgress.cumulativeBytesLoaded /
-                                                      loadingProgress.expectedTotalBytes!
-                                                  : null,
-                                              strokeWidth: 2,
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          );
-                                        },
+                              child:
+                                  widget.petImage != null
+                                      ? ClipOval(
+                                        child: Image.network(
+                                          widget.petImage!,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (
+                                            context,
+                                            error,
+                                            stackTrace,
+                                          ) {
+                                            return Icon(
+                                              Icons.pets,
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColor,
+                                              size: 28,
+                                            );
+                                          },
+                                          loadingBuilder: (
+                                            context,
+                                            child,
+                                            loadingProgress,
+                                          ) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value:
+                                                    loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
+                                                strokeWidth: 2,
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).primaryColor,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                      : Icon(
+                                        Icons.pets,
+                                        color: Theme.of(context).primaryColor,
+                                        size: 28,
                                       ),
-                                    )
-                                  : Icon(
-                                      Icons.pets,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 28,
-                                    ),
                             ),
                             SizedBox(width: 16),
                             Expanded(
@@ -240,7 +269,9 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                         SizedBox(height: 20),
 
                         // Time selection
-                        _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
+                        _buildFormLabel(
+                          'Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):',
+                        ),
                         SizedBox(height: 8),
                         _buildTimeField(context),
                         SizedBox(height: 20),
@@ -285,7 +316,11 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.info_outline, color: Colors.blue[700], size: 18),
+                            Icon(
+                              Icons.info_outline,
+                              color: Colors.blue[700],
+                              size: 18,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Lưu ý',
@@ -345,7 +380,10 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
           hintText: 'Chọn ngày mong muốn',
           hintStyle: TextStyle(color: Colors.grey[500]),
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+          suffixIcon: Icon(
+            Icons.calendar_today,
+            color: Theme.of(context).primaryColor,
+          ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.datetime,
@@ -376,15 +414,16 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
           );
 
           if (pickedDate != null) {
-            String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+            String formattedDate =
+                "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
             _dateOfScheduleController.text = formattedDate;
             selectedDate = pickedDate;
 
             // Hiển thị thông báo khi chọn ngày thành công
             _showSnackBar(
-                'Đã chọn ngày hẹn: $formattedDate',
-                isError: false,
-                icon: Icons.calendar_month,
+              'Đã chọn ngày hẹn: $formattedDate',
+              isError: false,
+              icon: Icons.calendar_month,
             );
           }
         },
@@ -406,7 +445,10 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
           hintText: 'Chọn giờ mong muốn',
           hintStyle: TextStyle(color: Colors.grey[500]),
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Icon(Icons.access_time, color: Theme.of(context).primaryColor),
+          suffixIcon: Icon(
+            Icons.access_time,
+            color: Theme.of(context).primaryColor,
+          ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.datetime,
@@ -418,8 +460,8 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
             try {
               final timeParts = _timeOfScheduleController.text.split(':');
               initialTime = TimeOfDay(
-                  hour: int.parse(timeParts[0]),
-                  minute: int.parse(timeParts[1])
+                hour: int.parse(timeParts[0]),
+                minute: int.parse(timeParts[1]),
               );
             } catch (_) {}
           }
@@ -440,20 +482,26 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
               ),
               dayPeriodColor: Colors.blue.shade50,
               dayPeriodTextColor: Colors.blue.shade700,
-              hourMinuteColor: WidgetStateColor.resolveWith((states) =>
-              states.contains(WidgetState.selected)
-                  ? Theme.of(context).primaryColor
-                  : Colors.blue.shade50),
-              hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
-              states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.blue.shade700),
+              hourMinuteColor: WidgetStateColor.resolveWith(
+                (states) =>
+                    states.contains(WidgetState.selected)
+                        ? Theme.of(context).primaryColor
+                        : Colors.blue.shade50,
+              ),
+              hourMinuteTextColor: WidgetStateColor.resolveWith(
+                (states) =>
+                    states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.blue.shade700,
+              ),
               dialBackgroundColor: Colors.grey.shade100,
               dialHandColor: Theme.of(context).primaryColor,
-              dialTextColor: WidgetStateColor.resolveWith((states) =>
-              states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.black87),
+              dialTextColor: WidgetStateColor.resolveWith(
+                (states) =>
+                    states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black87,
+              ),
               entryModeIconColor: Theme.of(context).primaryColor,
             ),
             colorScheme: ColorScheme.light(
@@ -467,7 +515,8 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                 foregroundColor: Theme.of(context).primaryColor,
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-            ), dialogTheme: DialogThemeData(backgroundColor: Colors.white),
+            ),
+            dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           );
 
           TimeOfDay? pickedTime = await showTimePicker(
@@ -482,7 +531,9 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
               return Theme(
                 data: theme,
                 child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(alwaysUse24HourFormat: true),
                   child: child!,
                 ),
               );
@@ -498,15 +549,18 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
               // Show time confirmation with appropriate color
               final bool isMorningTime = pickedTime.hour < 12;
               _showSnackBar(
-                  'Đã chọn giờ hẹn: $hour:$minute',
-                  isError: false,
-                  icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
-                  color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
+                'Đã chọn giờ hẹn: $hour:$minute',
+                isError: false,
+                icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
+                color:
+                    isMorningTime
+                        ? Colors.amber.shade700
+                        : Colors.indigo.shade700,
               );
             } else {
               _showSnackBar(
-                  'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
-                  isError: true
+                'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
+                isError: true,
               );
             }
           }
@@ -526,12 +580,15 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
     final timeInMinutes = time.hour * 60 + time.minute;
     final morningStartMinutes = morningStart.hour * 60 + morningStart.minute;
     final morningEndMinutes = morningEnd.hour * 60 + morningEnd.minute;
-    final afternoonStartMinutes = afternoonStart.hour * 60 + afternoonStart.minute;
+    final afternoonStartMinutes =
+        afternoonStart.hour * 60 + afternoonStart.minute;
     final afternoonEndMinutes = afternoonEnd.hour * 60 + afternoonEnd.minute;
 
     // Check if time is in morning range (8:00-12:00) or afternoon range (13:00-17:00)
-    return (timeInMinutes >= morningStartMinutes && timeInMinutes <= morningEndMinutes) ||
-        (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
+    return (timeInMinutes >= morningStartMinutes &&
+            timeInMinutes <= morningEndMinutes) ||
+        (timeInMinutes >= afternoonStartMinutes &&
+            timeInMinutes <= afternoonEndMinutes);
   }
 
   // Disease selection button
@@ -542,7 +599,9 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
         onPressed: () async {
           final result = await Navigator.push<Map<String, dynamic>>(
             context,
-            MaterialPageRoute(builder: (context) => ChoiceDiseasePage(species: petSpecies)),
+            MaterialPageRoute(
+              builder: (context) => ChoiceDiseasePage(species: petSpecies),
+            ),
           );
 
           if (result != null && mounted) {
@@ -557,9 +616,7 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12),
           textStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
@@ -607,10 +664,7 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
             Expanded(
               child: Text(
                 'Vui lòng chọn bệnh cần tiêm vắc xin',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.orange,
-                ),
+                style: TextStyle(fontSize: 15, color: Colors.orange),
               ),
             ),
           ],
@@ -657,14 +711,18 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
 
           try {
             try {
-              selectedDate = DateFormat('dd/MM/yyyy').parse(_dateOfScheduleController.text);
+              selectedDate = DateFormat(
+                'dd/MM/yyyy',
+              ).parse(_dateOfScheduleController.text);
             } catch (e) {
               _showSnackBar('Định dạng ngày không hợp lệ', isError: true);
               throw 'Định dạng ngày không hợp lệ';
             }
 
             try {
-              selectedTime = DateFormat('HH:mm').parse(_timeOfScheduleController.text);
+              selectedTime = DateFormat(
+                'HH:mm',
+              ).parse(_timeOfScheduleController.text);
             } catch (e) {
               _showSnackBar('Định dạng giờ không hợp lệ', isError: true);
               throw 'Định dạng giờ không hợp lệ';
@@ -680,20 +738,25 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
             );
 
             // Format as ISO 8601 with milliseconds and Z timezone
-            final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(combinedDateTime);
+            final formattedDate = DateFormat(
+              "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            ).format(combinedDateTime);
 
-            final result = await sl<PostAppointmentVaccinationUseCase>().call(params: PostAppointmentVaccinationModel(
+            final result = await sl<PostAppointmentVaccinationUseCase>().call(
+              params: PostAppointmentVaccinationModel(
                 customerId: _customerId!,
                 petId: widget.petId,
                 appointmentDate: formattedDate,
                 serviceType: widget.serviceType,
                 location: widget.location,
-                address: _addressController.text, // Sử dụng địa chỉ từ người dùng nhập
+                address:
+                    _addressController
+                        .text, // Sử dụng địa chỉ từ người dùng nhập
                 diseaseId: _selectedDiseaseId!,
-            ));
+              ),
+            );
 
             return result;
-
           } catch (e) {
             debugPrint('Error creating vaccination schedule: $e');
             _showSnackBar('Đã xảy ra lỗi: $e', isError: true);
@@ -711,7 +774,6 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
         },
       ),
     );
-
   }
 
   // Phương thức lấy customerId từ SharedPreferences
@@ -720,7 +782,9 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         _customerId = prefs.getInt('customerId');
-        _userAddress = prefs.getString('address'); // Lấy địa chỉ người dùng hiện tại
+        _userAddress = prefs.getString(
+          'address',
+        ); // Lấy địa chỉ người dùng hiện tại
 
         // Đọc địa chỉ gốc từ SharedPreferences (nếu đã lưu trước đó)
         _originalAddress = prefs.getString(_originalAddressKey);
@@ -741,7 +805,9 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
       });
 
       if (_customerId == null) {
-        debugPrint('Warning: customerId không tìm thấy trong SharedPreferences');
+        debugPrint(
+          'Warning: customerId không tìm thấy trong SharedPreferences',
+        );
       } else {
         debugPrint('Loaded customerId: $_customerId');
       }
@@ -751,7 +817,12 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
   }
 
   // Hàm hiển thị thông báo ở phía trên màn hình
-  void _showSnackBar(String message, {bool isError = false, IconData? icon, Color? color}) {
+  void _showSnackBar(
+    String message, {
+    bool isError = false,
+    IconData? icon,
+    Color? color,
+  }) {
     // Hủy bỏ thông báo hiện tại (nếu có)
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -760,45 +831,52 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
     OverlayEntry? overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).viewPadding.top + 10,
-        left: 10,
-        right: 10,
-        child: Material(
-          elevation: 4.0,
-          borderRadius: BorderRadius.circular(8),
-          color: isError ? Colors.red : color ?? Colors.green,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, color: Colors.white, size: 20),
-                  SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: Text(
-                    message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+      builder:
+          (context) => Positioned(
+            top: MediaQuery.of(context).viewPadding.top + 10,
+            left: 10,
+            right: 10,
+            child: Material(
+              elevation: 4.0,
+              borderRadius: BorderRadius.circular(8),
+              color: isError ? Colors.red : color ?? Colors.green,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
                 ),
-                InkWell(
-                  onTap: () {
-                    overlayEntry?.remove();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Đóng',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                child: Row(
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, color: Colors.white, size: 20),
+                      SizedBox(width: 8),
+                    ],
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                )
-              ],
+                    InkWell(
+                      onTap: () {
+                        overlayEntry?.remove();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Đóng',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
     );
 
     // Hiển thị overlay
@@ -813,7 +891,9 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
   // Stylized address field
   Widget _buildAddressField(BuildContext context) {
     // Đặt địa chỉ vào controller nếu có và chưa có giá trị
-    if (_userAddress != null && _userAddress!.isNotEmpty && _addressController.text.isEmpty) {
+    if (_userAddress != null &&
+        _userAddress!.isNotEmpty &&
+        _addressController.text.isEmpty) {
       _addressController.text = _userAddress!;
     }
 
@@ -824,23 +904,34 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
           decoration: BoxDecoration(
             color: _isEditingAddress ? Colors.white : Colors.grey[100],
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _isEditingAddress ? Theme.of(context).primaryColor : Colors.grey[300]!),
+            border: Border.all(
+              color:
+                  _isEditingAddress
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey[300]!,
+            ),
           ),
           child: TextFormField(
             controller: _addressController,
             decoration: InputDecoration(
-              hintText: _isEditingAddress ? 'Nhập địa chỉ mới' : 'Đang tải địa chỉ...',
+              hintText:
+                  _isEditingAddress
+                      ? 'Nhập địa chỉ mới'
+                      : 'Đang tải địa chỉ...',
               hintStyle: TextStyle(color: Colors.grey[500]),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               border: InputBorder.none,
               filled: true,
               fillColor: Colors.transparent,
-              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).primaryColor),
+              prefixIcon: Icon(
+                Icons.location_on,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-            ),
+            style: TextStyle(color: Colors.black87, fontSize: 15),
             maxLines: 2,
             readOnly: !_isEditingAddress,
             enabled: _isEditingAddress,
@@ -857,7 +948,8 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                 // Nút "Nhà bạn" - Để lấy lại địa chỉ gốc đã lưu khi mở form
                 GestureDetector(
                   onTap: () {
-                    if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+                    if (_originalAddress != null &&
+                        _originalAddress!.isNotEmpty) {
                       setState(() {
                         _addressController.text = _originalAddress!;
                         // Không cập nhật _userAddress để không ảnh hưởng đến giá trị hiện tại
@@ -880,16 +972,14 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                     decoration: BoxDecoration(
                       color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.home,
-                          color: Colors.green,
-                          size: 16,
-                        ),
+                        Icon(Icons.home, color: Colors.green, size: 16),
                         SizedBox(width: 4),
                         Text(
                           'Nhà bạn',
@@ -916,7 +1006,11 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
                     decoration: BoxDecoration(
                       color: Colors.blue.shade50,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -979,7 +1073,8 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
 
                     try {
                       // Lưu địa chỉ mới vào SharedPreferences
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
                       await prefs.setString('address', _addressController.text);
                       _showSnackBar(
                         'Đã cập nhật địa chỉ thành công',
@@ -1005,7 +1100,6 @@ class _AppointmentVaccinationHomePageState extends State<AppointmentVaccinationH
       ],
     );
   }
-
 }
 
 class TimeOfDayRange {

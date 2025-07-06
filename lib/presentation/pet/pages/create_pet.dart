@@ -29,7 +29,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
   final TextEditingController _colorController = TextEditingController();
   final TextEditingController _nationalityController = TextEditingController();
   bool _isSterilizedValue = false;
-  int? _customerId;  // Sử dụng biến đơn giản
+  int? _customerId; // Sử dụng biến đơn giản
 
   String? _selectedGender;
   String? _selectedSpecies;
@@ -42,7 +42,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
   @override
   void initState() {
     super.initState();
-    _loadCustomerId();  // Gọi phương thức lấy customerId khi widget khởi tạo
+    _loadCustomerId(); // Gọi phương thức lấy customerId khi widget khởi tạo
   }
 
   // Phương thức đơn giản để lấy và cập nhật customerId
@@ -56,7 +56,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
       });
 
       if (customerId == null) {
-        debugPrint('Warning: customerId không tìm thấy trong SharedPreferences');
+        debugPrint(
+          'Warning: customerId không tìm thấy trong SharedPreferences',
+        );
       } else {
         debugPrint('Loaded customerId: $customerId');
       }
@@ -66,7 +68,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() {
         image = File(pickedFile.path);
@@ -109,16 +113,17 @@ class _CreatePetPageState extends State<CreatePetPage> {
       ),
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-          ),
+          decoration: BoxDecoration(color: Colors.grey[50]),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 // Header với phần chọn ảnh - đã đổi sang màu nền trắng
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24,
+                    horizontal: 20,
+                  ),
                   margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -187,7 +192,10 @@ class _CreatePetPageState extends State<CreatePetPage> {
                       const SizedBox(height: 24),
 
                       // Section: Chi tiết thêm
-                      _buildSectionTitle('Chi tiết thú cưng', Icons.description),
+                      _buildSectionTitle(
+                        'Chi tiết thú cưng',
+                        Icons.description,
+                      ),
                       _buildCard([
                         _buildDateOfBirthField(),
                         const SizedBox(height: 16),
@@ -236,11 +244,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       padding: const EdgeInsets.only(bottom: 10, left: 5),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 20, color: AppColors.primary),
           const SizedBox(width: 8),
           Text(
             title,
@@ -295,13 +299,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         ],
       );
     } else {
-      return Column(
-        children: [
-          first,
-          const SizedBox(height: 16),
-          second,
-        ],
-      );
+      return Column(children: [first, const SizedBox(height: 16), second]);
     }
   }
 
@@ -311,9 +309,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Tên thú cưng *',
         hintText: 'Nhập tên thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -326,7 +322,8 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -334,9 +331,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: 'Loài thú cưng *',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -386,10 +381,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       children: [
         Icon(icon, color: color, size: 16), // Reduced icon size from 20 to 16
         const SizedBox(width: 6), // Reduced spacing from 10 to 6
-        Text(
-          text,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
+        Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -400,9 +392,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Giống thú cưng *',
         hintText: 'Nhập giống thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -423,9 +413,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: 'Giới tính *',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -473,9 +461,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Ngày sinh *',
         hintText: 'Nhập ngày sinh thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -500,9 +486,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
           builder: (context, child) {
             return Theme(
               data: ThemeData.light().copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: AppColors.primary,
-                ),
+                colorScheme: ColorScheme.light(primary: AppColors.primary),
                 dialogTheme: DialogThemeData(backgroundColor: Colors.white),
               ),
               child: child!,
@@ -511,7 +495,8 @@ class _CreatePetPageState extends State<CreatePetPage> {
         );
         if (pickedDate != null) {
           // format date dd/mm/yyyy
-          String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+          String formattedDate =
+              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
           _dateOfBirthController.text = formattedDate;
         }
       },
@@ -525,9 +510,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Nơi ở *',
         hintText: 'Nhập nơi ở thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -540,7 +523,8 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -550,9 +534,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Nơi sinh *',
         hintText: 'Nhập nơi sinh thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -565,20 +547,23 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
   Widget _buildImagePicker() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,  // Thay đổi từ start sang center
+      crossAxisAlignment:
+          CrossAxisAlignment.center, // Thay đổi từ start sang center
       children: [
         const Text(
           'Hình ảnh thú cưng',
           style: TextStyle(fontSize: 16, color: Colors.black87),
         ),
-        const SizedBox(height: 10),  // Thêm khoảng cách giữa text và vòng tròn
-        Center(  // Bọc InkWell trong Center để đảm bảo căn giữa
+        const SizedBox(height: 10), // Thêm khoảng cách giữa text và vòng tròn
+        Center(
+          // Bọc InkWell trong Center để đảm bảo căn giữa
           child: InkWell(
             onTap: _pickImage,
             child: Container(
@@ -588,19 +573,26 @@ class _CreatePetPageState extends State<CreatePetPage> {
                 border: Border.all(color: Colors.grey),
                 shape: BoxShape.circle,
               ),
-              clipBehavior: Clip.antiAlias,  // Đảm bảo ảnh được cắt theo hình tròn
-              child: image != null
-                  ? Image.file(image!, fit: BoxFit.cover)
-                  : const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),  // Thêm padding cho text
-                        child: Text(
-                          'Chạm để chọn ảnh',
-                          style: TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
-                          textAlign: TextAlign.center,  // Đảm bảo text được căn giữa
+              clipBehavior:
+                  Clip.antiAlias, // Đảm bảo ảnh được cắt theo hình tròn
+              child:
+                  image != null
+                      ? Image.file(image!, fit: BoxFit.cover)
+                      : const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0), // Thêm padding cho text
+                          child: Text(
+                            'Chạm để chọn ảnh',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            textAlign:
+                                TextAlign.center, // Đảm bảo text được căn giữa
+                          ),
                         ),
                       ),
-                    ),
             ),
           ),
         ),
@@ -614,9 +606,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Cân nặng (Kg) *',
         hintText: 'Nhập cân nặng thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -625,7 +615,10 @@ class _CreatePetPageState extends State<CreatePetPage> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: AppColors.primary),
         ),
-        prefixIcon: Icon(Icons.monitor_weight_outlined, color: AppColors.primary),
+        prefixIcon: Icon(
+          Icons.monitor_weight_outlined,
+          color: AppColors.primary,
+        ),
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
@@ -639,9 +632,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Màu sắc *',
         hintText: 'Nhập màu sắc thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -654,7 +645,8 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -664,9 +656,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
       decoration: InputDecoration(
         labelText: 'Quốc tịch *',
         hintText: 'Nhập quốc tịch thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -679,7 +669,8 @@ class _CreatePetPageState extends State<CreatePetPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -699,10 +690,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
           Expanded(
             child: Text(
               'Đã thiến/triệt sản',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
           Switch(
@@ -732,89 +720,127 @@ class _CreatePetPageState extends State<CreatePetPage> {
           ),
           elevation: 2,
         ),
-        onPressed: _isLoading ? null : () async {
-          // Thiết lập trạng thái loading
-          setState(() {
-            _isLoading = true;
-          });
+        onPressed:
+            _isLoading
+                ? null
+                : () async {
+                  // Thiết lập trạng thái loading
+                  setState(() {
+                    _isLoading = true;
+                  });
 
-          try {
-            // Kiểm tra dữ liệu trước khi gửi request
-            if (_customerId == null) {
-              DisplayMessage.errorMessage('Không thể xác định thông tin người dùng', context);
-              return;
-            }
+                  try {
+                    // Kiểm tra dữ liệu trước khi gửi request
+                    if (_customerId == null) {
+                      DisplayMessage.errorMessage(
+                        'Không thể xác định thông tin người dùng',
+                        context,
+                      );
+                      return;
+                    }
 
-            // Kiểm tra các trường bắt buộc
-            if (_nameController.text.isEmpty ||
-                _selectedSpecies == null ||
-                _breedController.text.isEmpty ||
-                _selectedGender == null ||
-                _dateOfBirthController.text.isEmpty ||
-                _placeToLiveController.text.isEmpty ||
-                _placeOfBirthController.text.isEmpty ||
-                _weightController.text.isEmpty ||
-                _colorController.text.isEmpty ||
-                _nationalityController.text.isEmpty) {
-              DisplayMessage.errorMessage('Vui lòng điền đầy đủ thông tin bắt buộc', context);
-              return;
-            }
+                    // Kiểm tra các trường bắt buộc
+                    if (_nameController.text.isEmpty ||
+                        _selectedSpecies == null ||
+                        _breedController.text.isEmpty ||
+                        _selectedGender == null ||
+                        _dateOfBirthController.text.isEmpty ||
+                        _placeToLiveController.text.isEmpty ||
+                        _placeOfBirthController.text.isEmpty ||
+                        _weightController.text.isEmpty ||
+                        _colorController.text.isEmpty ||
+                        _nationalityController.text.isEmpty) {
+                      DisplayMessage.errorMessage(
+                        'Vui lòng điền đầy đủ thông tin bắt buộc',
+                        context,
+                      );
+                      return;
+                    }
 
-            // Tạo tham số cho API call
-            final params = CreatePetReqParams(
-              customerId: _customerId!,
-              name: _nameController.text.trim().capitalizeFirstLetter(),
-              species: _selectedSpecies! == "Chó" ? "Dog" : "Cat",
-              breed: _breedController.text.trim().capitalizeFirstLetter(),
-              gender: _selectedGender!,
-              dateOfBirth: _dateOfBirthController.text.trim(),
-              placeToLive: _placeToLiveController.text.trim().capitalizeFirstLetter(),
-              placeOfBirth: _placeOfBirthController.text.trim().capitalizeFirstLetter(),
-              image: image?.path,
-              weight: _weightController.text.trim(),
-              color: _colorController.text.trim().capitalizeFirstLetter(),
-              nationality: _nationalityController.text.trim().capitalizeFirstLetter(),
-              isSterilized: _isSterilizedValue,
-            );
+                    // Tạo tham số cho API call
+                    final params = CreatePetReqParams(
+                      customerId: _customerId!,
+                      name: _nameController.text.trim().capitalizeFirstLetter(),
+                      species: _selectedSpecies! == "Chó" ? "Dog" : "Cat",
+                      breed:
+                          _breedController.text.trim().capitalizeFirstLetter(),
+                      gender: _selectedGender!,
+                      dateOfBirth: _dateOfBirthController.text.trim(),
+                      placeToLive:
+                          _placeToLiveController.text
+                              .trim()
+                              .capitalizeFirstLetter(),
+                      placeOfBirth:
+                          _placeOfBirthController.text
+                              .trim()
+                              .capitalizeFirstLetter(),
+                      image: image?.path,
+                      weight: _weightController.text.trim(),
+                      color:
+                          _colorController.text.trim().capitalizeFirstLetter(),
+                      nationality:
+                          _nationalityController.text
+                              .trim()
+                              .capitalizeFirstLetter(),
+                      isSterilized: _isSterilizedValue,
+                    );
 
-            debugPrint('Sending request with params: $params');
+                    debugPrint('Sending request with params: $params');
 
-            // Gọi API
-            final result = await sl<CreatePetUseCase>().call(params: params);
+                    // Gọi API
+                    final result = await sl<CreatePetUseCase>().call(
+                      params: params,
+                    );
 
-            // Kiểm tra xem widget còn mounted không trước khi sử dụng context
-            if (!mounted) return;
+                    // Kiểm tra xem widget còn mounted không trước khi sử dụng context
+                    if (!mounted) return;
 
-            // Xử lý kết quả
-            result.fold(
-              (failure) {
-                debugPrint('Error creating pet: $failure');
-                DisplayMessage.errorMessage('Không thể tạo thú cưng: $failure', context);
-              },
-              (success) {
-                debugPrint('Pet created successfully');
-                DisplayMessage.successMessage('Đã tạo thú cưng thành công', context);
-                AppNavigator.pushAndRemove(context, MainBottomNavigatorPage());
-              }
-            );
-          } catch (e) {
-            debugPrint('Exception during API call: $e');
-            // Kiểm tra mounted trước khi sử dụng context
-            if (mounted) {
-              DisplayMessage.errorMessage('Lỗi khi gửi yêu cầu: $e', context);
-            }
-          } finally {
-            // Vô hiệu hóa trạng thái loading
-            if (mounted) {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          }
-        },
-        child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text('Hoàn thành', style: TextStyle(fontSize: 16, color: Colors.white)),
+                    // Xử lý kết quả
+                    result.fold(
+                      (failure) {
+                        debugPrint('Error creating pet: $failure');
+                        DisplayMessage.errorMessage(
+                          'Không thể tạo thú cưng: $failure',
+                          context,
+                        );
+                      },
+                      (success) {
+                        debugPrint('Pet created successfully');
+                        DisplayMessage.successMessage(
+                          'Đã tạo thú cưng thành công',
+                          context,
+                        );
+                        AppNavigator.pushAndRemove(
+                          context,
+                          MainBottomNavigatorPage(),
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    debugPrint('Exception during API call: $e');
+                    // Kiểm tra mounted trước khi sử dụng context
+                    if (mounted) {
+                      DisplayMessage.errorMessage(
+                        'Lỗi khi gửi yêu cầu: $e',
+                        context,
+                      );
+                    }
+                  } finally {
+                    // Vô hiệu hóa trạng thái loading
+                    if (mounted) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                  }
+                },
+        child:
+            _isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
+                  'Hoàn thành',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
       ),
     );
   }

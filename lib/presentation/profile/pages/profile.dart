@@ -35,19 +35,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _initializeData() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     setState(() {
       accountId = sharedPreferences.getInt('accountId');
-      userNickname = sharedPreferences.getString('userName') ?? 'Người dùng VaxPet';
+      userNickname =
+          sharedPreferences.getString('userName') ?? 'Người dùng VaxPet';
       profileImagePath = sharedPreferences.getString('profileImage');
       userEmail = sharedPreferences.getString('email') ?? 'user@example.com';
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         // Tắt padding top của SafeArea để loại bỏ khoảng trắng trên cùng
@@ -63,7 +63,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 _buildProfileHeader(context),
                 // Phần menu tùy chọn
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -83,21 +86,30 @@ class _ProfilePageState extends State<ProfilePage> {
                           context,
                           'Thông tin cá nhân',
                           Icons.person_outline,
-                          () => AppNavigator.push(context, CustomerProfilePage(accountId: accountId)),
+                          () => AppNavigator.push(
+                            context,
+                            CustomerProfilePage(accountId: accountId),
+                          ),
                         ),
                         const Divider(height: 1),
                         _buildMenuItem(
                           context,
                           'Hạng thành viên',
                           Icons.card_membership,
-                          () => AppNavigator.push(context, const MembershipPage()),
+                          () => AppNavigator.push(
+                            context,
+                            const MembershipPage(),
+                          ),
                         ),
                         const Divider(height: 1),
                         _buildMenuItem(
                           context,
                           'Lịch sử mua hàng',
                           Icons.shopping_bag_outlined,
-                          () => AppNavigator.push(context, const BuyHistoryPage()),
+                          () => AppNavigator.push(
+                            context,
+                            const BuyHistoryPage(),
+                          ),
                         ),
                       ]),
 
@@ -119,14 +131,20 @@ class _ProfilePageState extends State<ProfilePage> {
                           context,
                           'Địa chỉ VaxPet',
                           Icons.location_on_outlined,
-                          () => AppNavigator.push(context, const AddressVaxPetPage()),
+                          () => AppNavigator.push(
+                            context,
+                            const AddressVaxPetPage(),
+                          ),
                         ),
                         const Divider(height: 1),
                         _buildMenuItem(
                           context,
                           'Đổi mật khẩu',
                           Icons.lock_outline,
-                          () => AppNavigator.push(context, const ResetPasswordPage()),
+                          () => AppNavigator.push(
+                            context,
+                            const ResetPasswordPage(),
+                          ),
                         ),
                         const Divider(height: 1),
                         _buildMenuItem(
@@ -169,17 +187,15 @@ class _ProfilePageState extends State<ProfilePage> {
       width: double.infinity,
       // Sử dụng layout linh hoạt thay vì chiều cao cố định
       padding: EdgeInsets.symmetric(
-        vertical: isSmallScreen ? screenSize.height * 0.02 : screenSize.height * 0.03,
+        vertical:
+            isSmallScreen ? screenSize.height * 0.02 : screenSize.height * 0.03,
         horizontal: 16,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            AppColors.primary,
-            AppColors.primary.withValues(alpha: 0.8),
-          ],
+          colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20),
@@ -200,36 +216,34 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             // Avatar - kích thước tùy thuộc vào màn hình
             CircleAvatar(
-              radius: isSmallScreen ? 38 : 42, // Giảm kích thước avatar một chút
+              radius:
+                  isSmallScreen ? 38 : 42, // Giảm kích thước avatar một chút
               backgroundColor: Colors.white,
               child: CircleAvatar(
                 radius: isSmallScreen ? 35 : 39,
                 backgroundColor: Colors.grey.shade200,
                 child: ClipOval(
-                  child: profileImagePath != null && profileImagePath!.isNotEmpty
-                      ? Image.file(
-                    File(profileImagePath!),
-                    width: isSmallScreen ? 70 : 78,
-                    height: isSmallScreen ? 70 : 78,
-                    fit: BoxFit.cover,
-                  )
-                      : Icon(
-                    Icons.person,
-                    size: isSmallScreen ? 38 : 44,
-                    color: AppColors.primary,
-                  ),
+                  child:
+                      profileImagePath != null && profileImagePath!.isNotEmpty
+                          ? Image.file(
+                            File(profileImagePath!),
+                            width: isSmallScreen ? 70 : 78,
+                            height: isSmallScreen ? 70 : 78,
+                            fit: BoxFit.cover,
+                          )
+                          : Icon(
+                            Icons.person,
+                            size: isSmallScreen ? 38 : 44,
+                            color: AppColors.primary,
+                          ),
                 ),
               ),
             ),
             SizedBox(height: isSmallScreen ? 10 : 14), // Giảm khoảng cách
-
             // Tên người dùng
             const Text(
               'Xin chào,',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 14),
             ),
             const SizedBox(height: 4),
             Text(
@@ -241,7 +255,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            SizedBox(height: isSmallScreen ? 5 : 6), // Giảm khoảng cách nếu màn hình nhỏ
+            SizedBox(
+              height: isSmallScreen ? 5 : 6,
+            ), // Giảm khoảng cách nếu màn hình nhỏ
             // Email container - sử dụng kích thước linh hoạt
             Container(
               margin: EdgeInsets.only(bottom: isSmallScreen ? 10 : 12),
@@ -281,11 +297,7 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 24,
-            ),
+            Icon(icon, color: AppColors.primary, size: 24),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
@@ -296,11 +308,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[500],
-              size: 24,
-            ),
+            Icon(Icons.chevron_right, color: Colors.grey[500], size: 24),
           ],
         ),
       ),
@@ -316,9 +324,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: Colors.grey.shade200),
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 

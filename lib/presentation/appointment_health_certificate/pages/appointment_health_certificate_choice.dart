@@ -8,7 +8,12 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
   final String petName;
   final int petId;
   final String petSpecies;
-  const AppointmentHealthCertificateChoicePage({super.key, required this.petName, required this.petId, required this.petSpecies});
+  const AppointmentHealthCertificateChoicePage({
+    super.key,
+    required this.petName,
+    required this.petId,
+    required this.petSpecies,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +39,7 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Back button ở góc trái trên cùng
-              Container(
-                alignment: Alignment.topLeft,
-                child: BackButtonBasic(),
-              ),
+              Container(alignment: Alignment.topLeft, child: BackButtonBasic()),
 
               SizedBox(height: screenHeight * 0.04),
 
@@ -68,7 +70,8 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
                     _buildServiceOption(
                       context: context,
                       title: 'Thực hiện tại trung tâm',
-                      description: 'Đặt lịch cấp giấy chứng nhận sức khỏe tại trung tâm của chúng tôi',
+                      description:
+                          'Đặt lịch cấp giấy chứng nhận sức khỏe tại trung tâm của chúng tôi',
                       icon: Icons.local_hospital_rounded,
                       color: Colors.green[700]!,
                       isTablet: isTablet,
@@ -102,7 +105,11 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline, color: Colors.blue[700], size: 18),
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.blue[700],
+                          size: 18,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'Lưu ý',
@@ -117,10 +124,7 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       'Lịch hẹn sẽ được xác nhận sau khi đặt thành công. Bạn có thể xem và quản lý lịch hẹn trong mục "Sổ ghi chép".',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue[800],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.blue[800]),
                     ),
                   ],
                 ),
@@ -142,7 +146,6 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
     required bool isTablet,
     required VoidCallback onTap,
   }) {
-
     return SizedBox(
       width: double.infinity,
       height: isTablet ? 130 : 110,
@@ -168,13 +171,7 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      size: 30,
-                      color: color,
-                    ),
-                  ),
+                  child: Center(child: Icon(icon, size: 30, color: color)),
                 ),
 
                 SizedBox(width: 16),
@@ -208,11 +205,7 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
                 ),
 
                 // Arrow icon
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.black45,
-                ),
+                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black45),
               ],
             ),
           ),

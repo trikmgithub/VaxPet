@@ -5,7 +5,7 @@ enum AppointmentVaccinationNoteDetailEditStatus {
   loading,
   loadingDiseases,
   success,
-  failure
+  failure,
 }
 
 class AppointmentVaccinationNoteDetailEditState extends Equatable {
@@ -68,27 +68,28 @@ class AppointmentVaccinationNoteDetailEditState extends Equatable {
   }
 
   bool get canSubmit =>
-    appointmentId != null &&
-    customerId != null &&
-    petId != null &&
-    appointmentDate != null &&
-    appointmentDate!.isNotEmpty &&
-    (location == 1 || address.isNotEmpty) && // Chỉ validate address nếu location = 2
-    diseaseId != null;
+      appointmentId != null &&
+      customerId != null &&
+      petId != null &&
+      appointmentDate != null &&
+      appointmentDate!.isNotEmpty &&
+      (location == 1 ||
+          address.isNotEmpty) && // Chỉ validate address nếu location = 2
+      diseaseId != null;
 
   @override
   List<Object?> get props => [
-        status,
-        appointmentDate,
-        serviceType,
-        location,
-        address,
-        diseaseId,
-        diseases,
-        errorMessage,
-        appointmentId,
-        customerId,
-        petId,
-        isFormValid,
-      ];
+    status,
+    appointmentDate,
+    serviceType,
+    location,
+    address,
+    diseaseId,
+    diseases,
+    errorMessage,
+    appointmentId,
+    customerId,
+    petId,
+    isFormValid,
+  ];
 }

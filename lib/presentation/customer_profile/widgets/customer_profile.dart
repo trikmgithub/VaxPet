@@ -53,9 +53,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       ),
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-          ),
+          decoration: BoxDecoration(color: Colors.grey[50]),
           child: RefreshIndicator(
             onRefresh: _refreshProfile,
             color: AppColors.primary,
@@ -66,7 +64,10 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 24,
+                      horizontal: 20,
+                    ),
                     margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -82,9 +83,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildImagePicker(),
-                      ],
+                      children: [_buildImagePicker()],
                     ),
                   ),
                   Padding(
@@ -95,13 +94,13 @@ class _CustomerProfileState extends State<CustomerProfile> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         // Section: Chi tiết thêm
-                        _buildSectionTitle('Thông tin tài khoản', Icons.description),
+                        _buildSectionTitle(
+                          'Thông tin tài khoản',
+                          Icons.description,
+                        ),
 
-                        _buildCard([
-                          _buildEmailField(),
-                        ]),
+                        _buildCard([_buildEmailField()]),
 
                         const SizedBox(height: 16),
 
@@ -124,21 +123,18 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
                         // Section: Thông tin nơi ở
                         _buildSectionTitle('Thông tin nơi ở', Icons.home),
-                        _buildCard([
-                          _buildAddressField(),
-                        ]),
-
+                        _buildCard([_buildAddressField()]),
                       ],
                     ),
                   ),
                   _buildButtonEdit(context),
                   const SizedBox(height: 50),
-                ]
+                ],
               ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
   }
 
@@ -172,11 +168,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       padding: const EdgeInsets.only(bottom: 10, left: 5),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 20, color: AppColors.primary),
           const SizedBox(width: 8),
           Text(
             title,
@@ -193,26 +185,37 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
   Widget _buildImagePicker() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,  // Thay đổi từ start sang center
+      crossAxisAlignment:
+          CrossAxisAlignment.center, // Thay đổi từ start sang center
       children: [
         const Text(
           'Hình ảnh của bạn',
-          style: TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        const SizedBox(height: 10),  // Thêm khoảng cách giữa text và vòng tròn
+        const SizedBox(height: 10), // Thêm khoảng cách giữa text và vòng tròn
         CircleAvatar(
-          radius: 50,  // Kích thước vòng tròn
-          backgroundColor: Colors.grey.shade300,  // Màu nền của vòng tròn
-          child: _customerProfile.image != null && _customerProfile.image!.isNotEmpty
-              ? ClipOval(
-                  child: Image.network(
-                    _customerProfile.image!,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : Icon(Icons.person, size: 50, color: Colors.grey.shade600),  // Biểu tượng người dùng nếu không có ảnh
+          radius: 50, // Kích thước vòng tròn
+          backgroundColor: Colors.grey.shade300, // Màu nền của vòng tròn
+          child:
+              _customerProfile.image != null &&
+                      _customerProfile.image!.isNotEmpty
+                  ? ClipOval(
+                    child: Image.network(
+                      _customerProfile.image!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                  : Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Colors.grey.shade600,
+                  ), // Biểu tượng người dùng nếu không có ảnh
         ),
       ],
     );
@@ -224,9 +227,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.email?.trim(),
       decoration: InputDecoration(
         labelText: 'Email',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -248,9 +249,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.fullName?.trim(),
       decoration: InputDecoration(
         labelText: 'Họ và tên',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -272,9 +271,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.userName?.trim(),
       decoration: InputDecoration(
         labelText: 'Tên hiển thị',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -296,9 +293,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.gender?.trim(),
       decoration: InputDecoration(
         labelText: 'Giới tính',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -320,9 +315,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.dateOfBirth?.trim(),
       decoration: InputDecoration(
         labelText: 'Ngày sinh',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -344,9 +337,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.phoneNumber?.trim(),
       decoration: InputDecoration(
         labelText: 'Số điện thoại',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -368,9 +359,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
       initialValue: _customerProfile.address?.trim(),
       decoration: InputDecoration(
         labelText: 'Địa chỉ',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -392,12 +381,15 @@ class _CustomerProfileState extends State<CustomerProfile> {
       height: 48,
       child: ElevatedButton(
         onPressed: () {
-          AppNavigator.push(context, CustomerProfileEditPage(
-            accountId: _customerProfile.accountId,
-            customerProfile: _customerProfile,
-            email: _customerProfile.email?.trim(),
-            customerId: _customerProfile.customerId,
-          ));
+          AppNavigator.push(
+            context,
+            CustomerProfileEditPage(
+              accountId: _customerProfile.accountId,
+              customerProfile: _customerProfile,
+              email: _customerProfile.email?.trim(),
+              customerId: _customerProfile.customerId,
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -419,7 +411,4 @@ class _CustomerProfileState extends State<CustomerProfile> {
       ),
     );
   }
-
-
-
 }

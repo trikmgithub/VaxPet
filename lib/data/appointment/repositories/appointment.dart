@@ -23,13 +23,12 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
     var returnedData = await sl<AppointmentService>()
         .getAppointmentByCustomerAndStatus(customerId, status);
 
-    return returnedData.fold(
-            (error) => Left(Exception(error.toString())),
-            (data) {
-          var appointmentDetail = data;
-          return Right(appointmentDetail);
-        }
-    );
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      var appointmentDetail = data;
+      return Right(appointmentDetail);
+    });
   }
 
   @override
@@ -38,100 +37,125 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
       appointmentId,
     );
 
-    return returnedData.fold(
-            (error) => Left(Exception(error.toString())),
-            (data) {
-          var appointmentDetail = data;
-          return Right(appointmentDetail);
-        }
-    );
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      var appointmentDetail = data;
+      return Right(appointmentDetail);
+    });
   }
 
   @override
-  Future<Either> getFutureAppointmentByCusId(int customerId, int pageNumber, int pageSize) async {
+  Future<Either> getFutureAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  ) async {
     var returnedData = await sl<AppointmentService>()
-        .getFutureAppointmentByCusId(
-        customerId, pageNumber, pageSize
-    );
+        .getFutureAppointmentByCusId(customerId, pageNumber, pageSize);
 
-    return returnedData.fold(
-          (error) => Left(Exception(error.toString())),
-          (data) {
-        if (data['data'] == null) {
-          return Right(<FutureAppointmentEntity>[]); // Explicit empty list with type
-        }
-
-        final response = data['data'];
-        final responseData = response['pageData'];
-        final List<FutureAppointmentEntity> appointmentDetail = List.from(responseData)
-            .map<FutureAppointmentEntity>((item) => FutureAppointmentMapper.toEntity(
-            FutureAppointmentModel.fromJson(item)))
-            .toList();
-        return Right(appointmentDetail);
-      },
-    );
-  }
-
-  @override
-  Future<Either> getPastAppointmentByCusId(int customerId, int pageNumber, int pageSize) async {
-    var returnedData = await sl<AppointmentService>().getPastAppointmentByCusId(
-      customerId, pageNumber, pageSize
-    );
-
-    return returnedData.fold(
-          (error) => Left(Exception(error.toString())),
-          (data) {
-        if (data['data'] == null) {
-          return Right(<PastAppointmentEntity>[]); // Explicit empty list with type
-        }
-
-        final response = data['data'];
-        final responseData = response['pageData'];
-        final List<PastAppointmentEntity> appointmentDetail = List.from(responseData)
-            .map<PastAppointmentEntity>((item) => PastAppointmentMapper.toEntity(
-            PastAppointmentModel.fromJson(item)))
-            .toList();
-        return Right(appointmentDetail);
-      },
-    );
-  }
-
-  @override
-  Future<Either> getTodayAppointmentByCusId(int customerId, int pageNumber, int pageSize) async {
-    var returnedData = await sl<AppointmentService>()
-        .getTodayAppointmentByCusId(
-        customerId, pageNumber, pageSize
-    );
-
-    return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
-      (data) {
-        if (data['data'] == null) {
-          return Right(<TodayAppointmentEntity>[]); // Explicit empty list with type
-        }
-
-        final response = data['data'];
-        final responseData = response['pageData'];
-        final List<TodayAppointmentEntity> appointmentDetail = List.from(responseData)
-            .map<TodayAppointmentEntity>((item) => TodayAppointmentMapper.toEntity(
-                TodayAppointmentModel.fromJson(item)))
-            .toList();
-        return Right(appointmentDetail);
-      },
-    );
-  }
-
-  @override
-  Future<Either> putAppointmentById(UpdateAppointmentModel appointmentUpdate) async {
-    var returnedData = await sl<AppointmentService>().putAppointmentById(
-      appointmentUpdate
-    );
-
-    return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
-      (data) {
-        return Right(data);
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      if (data['data'] == null) {
+        return Right(
+          <FutureAppointmentEntity>[],
+        ); // Explicit empty list with type
       }
+
+      final response = data['data'];
+      final responseData = response['pageData'];
+      final List<FutureAppointmentEntity> appointmentDetail =
+          List.from(responseData)
+              .map<FutureAppointmentEntity>(
+                (item) => FutureAppointmentMapper.toEntity(
+                  FutureAppointmentModel.fromJson(item),
+                ),
+              )
+              .toList();
+      return Right(appointmentDetail);
+    });
+  }
+
+  @override
+  Future<Either> getPastAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  ) async {
+    var returnedData = await sl<AppointmentService>().getPastAppointmentByCusId(
+      customerId,
+      pageNumber,
+      pageSize,
     );
+
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      if (data['data'] == null) {
+        return Right(
+          <PastAppointmentEntity>[],
+        ); // Explicit empty list with type
+      }
+
+      final response = data['data'];
+      final responseData = response['pageData'];
+      final List<PastAppointmentEntity> appointmentDetail =
+          List.from(responseData)
+              .map<PastAppointmentEntity>(
+                (item) => PastAppointmentMapper.toEntity(
+                  PastAppointmentModel.fromJson(item),
+                ),
+              )
+              .toList();
+      return Right(appointmentDetail);
+    });
+  }
+
+  @override
+  Future<Either> getTodayAppointmentByCusId(
+    int customerId,
+    int pageNumber,
+    int pageSize,
+  ) async {
+    var returnedData = await sl<AppointmentService>()
+        .getTodayAppointmentByCusId(customerId, pageNumber, pageSize);
+
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      if (data['data'] == null) {
+        return Right(
+          <TodayAppointmentEntity>[],
+        ); // Explicit empty list with type
+      }
+
+      final response = data['data'];
+      final responseData = response['pageData'];
+      final List<TodayAppointmentEntity> appointmentDetail =
+          List.from(responseData)
+              .map<TodayAppointmentEntity>(
+                (item) => TodayAppointmentMapper.toEntity(
+                  TodayAppointmentModel.fromJson(item),
+                ),
+              )
+              .toList();
+      return Right(appointmentDetail);
+    });
+  }
+
+  @override
+  Future<Either> putAppointmentById(
+    UpdateAppointmentModel appointmentUpdate,
+  ) async {
+    var returnedData = await sl<AppointmentService>().putAppointmentById(
+      appointmentUpdate,
+    );
+
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      return Right(data);
+    });
   }
 }

@@ -1,7 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:dartz/dartz.dart';
 
-enum AppointmentVaccinationNoteDetailStatus { initial, loading, success, failure }
+enum AppointmentVaccinationNoteDetailStatus {
+  initial,
+  loading,
+  success,
+  failure,
+}
 
 class AppointmentVaccinationNoteDetailState extends Equatable {
   final AppointmentVaccinationNoteDetailStatus status;

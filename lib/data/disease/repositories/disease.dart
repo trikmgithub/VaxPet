@@ -11,13 +11,16 @@ class DiseaseRepositoryImpl extends DiseaseRepository {
   Future<Either> getDiseaseBySpecies(String species) async {
     var returnedData = await sl<DiseaseService>().getDiseaseBySpecies(species);
 
-    return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
-      (data) {
-        var diseases = List.from(data['data']).map((item) => DiseaseMapper.toEntity(DiseaseModel.fromJson(item))).toList();
-        return Right(diseases);
-      },
-    );
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      var diseases =
+          List.from(data['data'])
+              .map(
+                (item) => DiseaseMapper.toEntity(DiseaseModel.fromJson(item)),
+              )
+              .toList();
+      return Right(diseases);
+    });
   }
-  
 }

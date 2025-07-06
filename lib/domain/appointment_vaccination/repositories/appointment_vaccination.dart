@@ -4,5 +4,7 @@ import '../../../data/appointment_vaccination/models/post_appointment_vaccinatio
 abstract class AppointmentVaccinationRepository {
   //Get
   //Post
-  Future<Either> postAppointmentVaccination(PostAppointmentVaccinationModel params);
+  Future<Either> postAppointmentVaccination(
+    PostAppointmentVaccinationModel params,
+  );
 }

@@ -9,5 +9,4 @@ class DeletePetUseCase extends UseCase<Either, int> {
   Future<Either> call({int? params}) {
     return sl<PetRepository>().deletePet(params!);
   }
-
 }

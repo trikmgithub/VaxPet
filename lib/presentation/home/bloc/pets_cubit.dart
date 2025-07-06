@@ -20,7 +20,7 @@ class PetsCubit extends Cubit<PetsState> {
         },
         (data) {
           emit(PetsLoaded(pets: data));
-        }
+        },
       );
     } catch (e) {
       emit(PetsError(e.toString()));
@@ -38,7 +38,7 @@ class PetsCubit extends Cubit<PetsState> {
         },
         (data) {
           emit(PetsLoaded(pets: data));
-        }
+        },
       );
     } catch (e) {
       emit(PetsError(e.toString()));

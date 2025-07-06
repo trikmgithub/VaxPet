@@ -23,16 +23,21 @@ class AppointmentMicrochipHomePage extends StatefulWidget {
   });
 
   @override
-  State<AppointmentMicrochipHomePage> createState() => _AppointmentMicrochipHomePageState();
+  State<AppointmentMicrochipHomePage> createState() =>
+      _AppointmentMicrochipHomePageState();
 }
 
-class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomePage> {
-  final TextEditingController _dateOfScheduleController = TextEditingController();
-  final TextEditingController _timeOfScheduleController = TextEditingController();
+class _AppointmentMicrochipHomePageState
+    extends State<AppointmentMicrochipHomePage> {
+  final TextEditingController _dateOfScheduleController =
+      TextEditingController();
+  final TextEditingController _timeOfScheduleController =
+      TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   int? _customerId;
   String? _userAddress;
-  String? _originalAddress; // Lưu trữ địa chỉ gốc từ SharedPreferences khi trang được mở
+  String?
+  _originalAddress; // Lưu trữ địa chỉ gốc từ SharedPreferences khi trang được mở
   bool _isEditingAddress = false;
 
   // Key để lưu địa chỉ gốc trong SharedPreferences
@@ -239,7 +244,11 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, color: Colors.blue[700], size: 18),
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.blue[700],
+                            size: 18,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'Lưu ý',
@@ -254,10 +263,7 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                       SizedBox(height: 8),
                       Text(
                         'Bạn sẽ được Bác sĩ tư vấn loại Microchip sau!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue[800],
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.blue[800]),
                       ),
                     ],
                   ),
@@ -298,7 +304,10 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
           hintText: 'Chọn ngày mong muốn',
           hintStyle: TextStyle(color: Colors.grey[500]),
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+          suffixIcon: Icon(
+            Icons.calendar_today,
+            color: Theme.of(context).primaryColor,
+          ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.datetime,
@@ -329,7 +338,8 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
           );
 
           if (pickedDate != null) {
-            String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+            String formattedDate =
+                "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
             _dateOfScheduleController.text = formattedDate;
             selectedDate = pickedDate;
 
@@ -359,7 +369,10 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
           hintText: 'Chọn giờ mong muốn',
           hintStyle: TextStyle(color: Colors.grey[500]),
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Icon(Icons.access_time, color: Theme.of(context).primaryColor),
+          suffixIcon: Icon(
+            Icons.access_time,
+            color: Theme.of(context).primaryColor,
+          ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.datetime,
@@ -371,8 +384,8 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
             try {
               final timeParts = _timeOfScheduleController.text.split(':');
               initialTime = TimeOfDay(
-                  hour: int.parse(timeParts[0]),
-                  minute: int.parse(timeParts[1])
+                hour: int.parse(timeParts[0]),
+                minute: int.parse(timeParts[1]),
               );
             } catch (_) {}
           }
@@ -393,20 +406,26 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
               ),
               dayPeriodColor: Colors.blue.shade50,
               dayPeriodTextColor: Colors.blue.shade700,
-              hourMinuteColor: WidgetStateColor.resolveWith((states) =>
-              states.contains(WidgetState.selected)
-                  ? Theme.of(context).primaryColor
-                  : Colors.blue.shade50),
-              hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
-              states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.blue.shade700),
+              hourMinuteColor: WidgetStateColor.resolveWith(
+                (states) =>
+                    states.contains(WidgetState.selected)
+                        ? Theme.of(context).primaryColor
+                        : Colors.blue.shade50,
+              ),
+              hourMinuteTextColor: WidgetStateColor.resolveWith(
+                (states) =>
+                    states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.blue.shade700,
+              ),
               dialBackgroundColor: Colors.grey.shade100,
               dialHandColor: Theme.of(context).primaryColor,
-              dialTextColor: WidgetStateColor.resolveWith((states) =>
-              states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.black87),
+              dialTextColor: WidgetStateColor.resolveWith(
+                (states) =>
+                    states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black87,
+              ),
               entryModeIconColor: Theme.of(context).primaryColor,
             ),
             colorScheme: ColorScheme.light(
@@ -420,7 +439,8 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                 foregroundColor: Theme.of(context).primaryColor,
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-            ), dialogTheme: DialogThemeData(backgroundColor: Colors.white),
+            ),
+            dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           );
 
           TimeOfDay? pickedTime = await showTimePicker(
@@ -435,7 +455,9 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
               return Theme(
                 data: theme,
                 child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(alwaysUse24HourFormat: true),
                   child: child!,
                 ),
               );
@@ -451,15 +473,18 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
               // Show time confirmation with appropriate color
               final bool isMorningTime = pickedTime.hour < 12;
               _showSnackBar(
-                  'Đã chọn giờ hẹn: $hour:$minute',
-                  isError: false,
-                  icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
-                  color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
+                'Đã chọn giờ hẹn: $hour:$minute',
+                isError: false,
+                icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
+                color:
+                    isMorningTime
+                        ? Colors.amber.shade700
+                        : Colors.indigo.shade700,
               );
             } else {
               _showSnackBar(
-                  'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
-                  isError: true
+                'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
+                isError: true,
               );
             }
           }
@@ -471,7 +496,9 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
   // Stylized address field
   Widget _buildAddressField(BuildContext context) {
     // Đặt địa chỉ vào controller nếu có và chưa có giá trị
-    if (_userAddress != null && _userAddress!.isNotEmpty && _addressController.text.isEmpty) {
+    if (_userAddress != null &&
+        _userAddress!.isNotEmpty &&
+        _addressController.text.isEmpty) {
       _addressController.text = _userAddress!;
     }
 
@@ -482,23 +509,34 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
           decoration: BoxDecoration(
             color: _isEditingAddress ? Colors.white : Colors.grey[100],
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _isEditingAddress ? Theme.of(context).primaryColor : Colors.grey[300]!),
+            border: Border.all(
+              color:
+                  _isEditingAddress
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey[300]!,
+            ),
           ),
           child: TextFormField(
             controller: _addressController,
             decoration: InputDecoration(
-              hintText: _isEditingAddress ? 'Nhập địa chỉ mới' : 'Đang tải địa chỉ...',
+              hintText:
+                  _isEditingAddress
+                      ? 'Nhập địa chỉ mới'
+                      : 'Đang tải địa chỉ...',
               hintStyle: TextStyle(color: Colors.grey[500]),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               border: InputBorder.none,
               filled: true,
               fillColor: Colors.transparent,
-              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).primaryColor),
+              prefixIcon: Icon(
+                Icons.location_on,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-            ),
+            style: TextStyle(color: Colors.black87, fontSize: 15),
             maxLines: 2,
             readOnly: !_isEditingAddress,
             enabled: _isEditingAddress,
@@ -520,7 +558,8 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                 // Nút "Nhà bạn" - Để lấy lại địa chỉ gốc đã lưu khi mở form
                 GestureDetector(
                   onTap: () {
-                    if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+                    if (_originalAddress != null &&
+                        _originalAddress!.isNotEmpty) {
                       setState(() {
                         _addressController.text = _originalAddress!;
                         _userAddress = _originalAddress!;
@@ -543,16 +582,14 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                     decoration: BoxDecoration(
                       color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.home,
-                          color: Colors.green,
-                          size: 16,
-                        ),
+                        Icon(Icons.home, color: Colors.green, size: 16),
                         SizedBox(width: 4),
                         Text(
                           'Nhà bạn',
@@ -579,7 +616,11 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
                     decoration: BoxDecoration(
                       color: Colors.blue.shade50,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -643,7 +684,8 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
 
                     try {
                       // Lưu địa chỉ mới vào SharedPreferences
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
                       await prefs.setString('address', _addressController.text);
                       _showSnackBar(
                         'Đã cập nhật địa chỉ thành công',
@@ -681,12 +723,15 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
     final timeInMinutes = time.hour * 60 + time.minute;
     final morningStartMinutes = morningStart.hour * 60 + morningStart.minute;
     final morningEndMinutes = morningEnd.hour * 60 + morningEnd.minute;
-    final afternoonStartMinutes = afternoonStart.hour * 60 + afternoonStart.minute;
+    final afternoonStartMinutes =
+        afternoonStart.hour * 60 + afternoonStart.minute;
     final afternoonEndMinutes = afternoonEnd.hour * 60 + afternoonEnd.minute;
 
     // Check if time is in morning range (8:00-12:00) or afternoon range (13:00-17:00)
-    return (timeInMinutes >= morningStartMinutes && timeInMinutes <= morningEndMinutes) ||
-        (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
+    return (timeInMinutes >= morningStartMinutes &&
+            timeInMinutes <= morningEndMinutes) ||
+        (timeInMinutes >= afternoonStartMinutes &&
+            timeInMinutes <= afternoonEndMinutes);
   }
 
   // Submit button with improved design
@@ -721,14 +766,18 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
 
           try {
             try {
-              selectedDate = DateFormat('dd/MM/yyyy').parse(_dateOfScheduleController.text);
+              selectedDate = DateFormat(
+                'dd/MM/yyyy',
+              ).parse(_dateOfScheduleController.text);
             } catch (e) {
               _showSnackBar('Định dạng ngày không hợp lệ', isError: true);
               throw 'Định dạng ngày không hợp lệ';
             }
 
             try {
-              selectedTime = DateFormat('HH:mm').parse(_timeOfScheduleController.text);
+              selectedTime = DateFormat(
+                'HH:mm',
+              ).parse(_timeOfScheduleController.text);
             } catch (e) {
               _showSnackBar('Định dạng giờ không hợp lệ', isError: true);
               throw 'Định dạng giờ không hợp lệ';
@@ -744,19 +793,22 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
             );
 
             // Format as ISO 8601 with milliseconds and Z timezone
-            final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(combinedDateTime);
+            final formattedDate = DateFormat(
+              "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            ).format(combinedDateTime);
 
-            final result = await sl<PostAppointmentMicrochipUseCase>().call(params: PostAppointmentMicrochipModel(
+            final result = await sl<PostAppointmentMicrochipUseCase>().call(
+              params: PostAppointmentMicrochipModel(
                 customerId: _customerId!,
                 petId: widget.petId,
                 appointmentDate: formattedDate,
                 serviceType: widget.serviceType,
                 location: widget.location,
-                address: _userAddress! // Sử dụng địa chỉ người dùng nhập
-            ));
+                address: _userAddress!, // Sử dụng địa chỉ người dùng nhập
+              ),
+            );
 
             return result;
-
           } catch (e) {
             _showSnackBar('Đã xảy ra lỗi: $e', isError: true);
             rethrow;
@@ -773,7 +825,6 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
         },
       ),
     );
-
   }
 
   // Phương thức lấy customerId từ SharedPreferences
@@ -782,7 +833,9 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         _customerId = prefs.getInt('customerId');
-        _userAddress = prefs.getString('address'); // Lấy địa chỉ người dùng hiện tại
+        _userAddress = prefs.getString(
+          'address',
+        ); // Lấy địa chỉ người dùng hiện tại
 
         // Đọc địa chỉ gốc từ SharedPreferences (nếu đã lưu trước đó)
         _originalAddress = prefs.getString(_originalAddressKey);
@@ -804,7 +857,9 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
       });
 
       if (_customerId == null) {
-        debugPrint('Warning: customerId không tìm thấy trong SharedPreferences');
+        debugPrint(
+          'Warning: customerId không tìm thấy trong SharedPreferences',
+        );
       } else {
         debugPrint('Loaded customerId: $_customerId');
       }
@@ -814,7 +869,12 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
   }
 
   // Hàm hiển thị thông báo ở phía trên màn hình
-  void _showSnackBar(String message, {bool isError = false, IconData? icon, Color? color}) {
+  void _showSnackBar(
+    String message, {
+    bool isError = false,
+    IconData? icon,
+    Color? color,
+  }) {
     // Hủy bỏ thông báo hiện tại (nếu có)
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -823,45 +883,52 @@ class _AppointmentMicrochipHomePageState extends State<AppointmentMicrochipHomeP
     OverlayEntry? overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).viewPadding.top + 10,
-        left: 10,
-        right: 10,
-        child: Material(
-          elevation: 4.0,
-          borderRadius: BorderRadius.circular(8),
-          color: isError ? Colors.red : color ?? Colors.green,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, color: Colors.white, size: 20),
-                  SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: Text(
-                    message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+      builder:
+          (context) => Positioned(
+            top: MediaQuery.of(context).viewPadding.top + 10,
+            left: 10,
+            right: 10,
+            child: Material(
+              elevation: 4.0,
+              borderRadius: BorderRadius.circular(8),
+              color: isError ? Colors.red : color ?? Colors.green,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
                 ),
-                InkWell(
-                  onTap: () {
-                    overlayEntry?.remove();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Đóng',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                child: Row(
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, color: Colors.white, size: 20),
+                      SizedBox(width: 8),
+                    ],
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                )
-              ],
+                    InkWell(
+                      onTap: () {
+                        overlayEntry?.remove();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Đóng',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
     );
 
     // Hiển thị overlay

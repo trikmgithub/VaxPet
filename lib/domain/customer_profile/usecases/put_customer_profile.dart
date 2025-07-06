@@ -10,5 +10,4 @@ class PutCustomerProfileUseCase extends UseCase<Either, CustomerProfileModel> {
   Future<Either> call({CustomerProfileModel? params}) async {
     return await sl<CustomerProfileRepository>().putCustomerProfile(params!);
   }
-
 }

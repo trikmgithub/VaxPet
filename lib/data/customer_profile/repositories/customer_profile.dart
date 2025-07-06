@@ -13,27 +13,28 @@ class CustomerProfileRepositoryImpl extends CustomerProfileRepository {
       accountId,
     );
 
-    return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
-      (data) {
-        var customerDetail = CustomerProfileMapper.toEntity(CustomerProfileModel.fromJson(data['data']));
-        return Right(customerDetail);
-      }
-    );
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      var customerDetail = CustomerProfileMapper.toEntity(
+        CustomerProfileModel.fromJson(data['data']),
+      );
+      return Right(customerDetail);
+    });
   }
 
   @override
-  Future<Either> putCustomerProfile(CustomerProfileModel customerProfile) async {
+  Future<Either> putCustomerProfile(
+    CustomerProfileModel customerProfile,
+  ) async {
     var returnedData = await sl<CustomerProfileService>().putCustomerProfile(
       customerProfile,
     );
 
-    return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
-      (data) {
-        return Right(data);
-      }
-    );
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      return Right(data);
+    });
   }
-  
 }

@@ -10,5 +10,4 @@ class RegisterUseCase extends UseCase<Either, RegisterReqParams> {
   Future<Either> call({RegisterReqParams? params}) async {
     return await sl<AuthRepository>().register(params!);
   }
-
 }

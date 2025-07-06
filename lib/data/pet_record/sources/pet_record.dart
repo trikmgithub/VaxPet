@@ -22,5 +22,4 @@ class PetRecordServiceImpl extends PetRecordService {
       return Left(Exception('An unexpected error occurred'));
     }
   }
-
 }

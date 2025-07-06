@@ -22,7 +22,7 @@ class RegisterPage extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 360;
     final horizontalPadding = screenSize.width * 0.06; // 6% của width màn hình
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: BasicAppbar(
@@ -64,7 +64,10 @@ class RegisterPage extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primary.withValues(alpha: 0.1), Colors.transparent],
+              colors: [
+                AppColors.primary.withValues(alpha: 0.1),
+                Colors.transparent,
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -97,9 +100,7 @@ class RegisterPage extends StatelessWidget {
     return Card(
       elevation: 8,
       shadowColor: Colors.black.withValues(alpha: 0.1),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: EdgeInsets.all(screenSize.width * 0.06),
         child: Column(
@@ -211,7 +212,10 @@ class RegisterPage extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: EdgeInsets.symmetric(
                 horizontal: screenSize.width * 0.04,
@@ -248,7 +252,10 @@ class RegisterPage extends StatelessWidget {
           }
 
           if (_passwordController.text.isEmpty) {
-            DisplayMessage.errorMessage('Vui lòng nhập mật khẩu của bạn', context);
+            DisplayMessage.errorMessage(
+              'Vui lòng nhập mật khẩu của bạn',
+              context,
+            );
             throw 'Mật khẩu không được để trống';
           }
 
@@ -264,12 +271,14 @@ class RegisterPage extends StatelessWidget {
         onSuccess: () {
           AppNavigator.pushReplacement(
             context,
-            VerifyEmailPage(email: _emailController.text)
+            VerifyEmailPage(email: _emailController.text),
           );
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Đăng ký thành công! Vui lòng xác thực email của bạn.'),
+              content: const Text(
+                'Đăng ký thành công! Vui lòng xác thực email của bạn.',
+              ),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(

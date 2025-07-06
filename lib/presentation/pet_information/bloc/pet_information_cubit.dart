@@ -20,7 +20,7 @@ class PetInformationCubit extends Cubit<PetInformationState> {
         },
         (data) {
           emit(PetInformationLoaded(pet: data));
-        }
+        },
       );
     } catch (e) {
       emit(PetInformationError(e.toString()));

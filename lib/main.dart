@@ -20,9 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      )
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent),
     );
     return BlocProvider(
       create: (context) => SplashCubit()..appStarted(),
@@ -40,7 +38,10 @@ class MyApp extends StatelessWidget {
           Locale('en', ''), // English
           Locale('vi', 'VN'), // Vietnamese
         ],
-        locale: const Locale('vi', 'VN'), // Set Vietnamese as the default locale
+        locale: const Locale(
+          'vi',
+          'VN',
+        ), // Set Vietnamese as the default locale
       ),
     );
   }

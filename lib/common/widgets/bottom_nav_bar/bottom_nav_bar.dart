@@ -7,14 +7,18 @@ class BottomNavBar extends StatelessWidget {
   final List<BottomNavigationBarItem> items;
   final int currentIndex;
 
-  const BottomNavBar({super.key, required this.items, required this.currentIndex});
+  const BottomNavBar({
+    super.key,
+    required this.items,
+    required this.currentIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: items,
       currentIndex: currentIndex,
-      onTap: (index){
+      onTap: (index) {
         context.read<BottomNavBarBloc>().add(NavigateTo(index: index));
       },
     );

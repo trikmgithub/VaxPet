@@ -18,7 +18,8 @@ class MainBottomNavigatorPage extends StatefulWidget {
   const MainBottomNavigatorPage({super.key});
 
   @override
-  State<MainBottomNavigatorPage> createState() => _MainBottomNavigatorPageState();
+  State<MainBottomNavigatorPage> createState() =>
+      _MainBottomNavigatorPageState();
 }
 
 class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
@@ -29,33 +30,44 @@ class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
   }
 
   Future<void> _initializeCustomerId() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     final int? accountId = sharedPreferences.getInt('accountId');
     final String? email = sharedPreferences.getString('email');
     final int? customerId = sharedPreferences.getInt('customerId');
 
     if (accountId != null) {
       try {
-        final result = await sl.get<GetCustomerIdUseCase>().call(params: accountId);
+        final result = await sl.get<GetCustomerIdUseCase>().call(
+          params: accountId,
+        );
 
-        result.fold(
-          (error) => debugPrint('Error getting customerId: $error'),
-          (data) async {
-            if (data['data']['address'] == null && data['data']['address'] == '') {
-              await sharedPreferences.setString('address', data['data']['address'] ?? '');
-              if (mounted) {
-                AppNavigator.push(context, CustomerProfileEditPage(
+        result.fold((error) => debugPrint('Error getting customerId: $error'), (
+          data,
+        ) async {
+          if (data['data']['address'] == null &&
+              data['data']['address'] == '') {
+            await sharedPreferences.setString(
+              'address',
+              data['data']['address'] ?? '',
+            );
+            if (mounted) {
+              AppNavigator.push(
+                context,
+                CustomerProfileEditPage(
                   accountId: accountId,
                   email: email,
                   customerId: customerId,
-                ));
-              }
+                ),
+              );
             }
-            else {
-              await sharedPreferences.setString('address', data['data']['address']);
-            }
+          } else {
+            await sharedPreferences.setString(
+              'address',
+              data['data']['address'],
+            );
           }
-        );
+        });
       } catch (e) {
         debugPrint('Error processing accountId: $e');
       }
@@ -67,8 +79,8 @@ class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
     // Danh sách các trang theo tab
     final List<Widget> pages = [
       const HomePage(), // Tab 1: Trang hồ sơ thú cưng
-      const AppointmentAllNotificationPage(),   // Tab 2: Trang lịch sử tiêm chủng
-      const ProfilePage()     // Tab 3: Trang tài khoản
+      const AppointmentAllNotificationPage(), // Tab 2: Trang lịch sử tiêm chủng
+      const ProfilePage(), // Tab 3: Trang tài khoản
     ];
 
     return BlocProvider(
@@ -78,10 +90,7 @@ class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
           builder: (context, state) {
             // Đơn giản hóa logic - state luôn là NavigationChanged từ khởi tạo
             final index = (state as NavigationChanged).index;
-            return IndexedStack(
-              index: index,
-              children: pages,
-            );
+            return IndexedStack(index: index, children: pages);
           },
         ),
         bottomNavigationBar: BlocBuilder<BottomNavBarBloc, BottomNavBarState>(
@@ -97,10 +106,7 @@ class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
               selectedItemColor: AppColors.primary,
               unselectedItemColor: Colors.grey,
               items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.pets),
-                  label: 'Hồ sơ',
-                ),
+                BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Hồ sơ'),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_today),
                   label: 'Lịch hẹn',

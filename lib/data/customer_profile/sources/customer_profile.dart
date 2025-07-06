@@ -29,10 +29,12 @@ class CustomerProfileServiceImpl extends CustomerProfileService {
   }
 
   @override
-  Future<Either> putCustomerProfile(CustomerProfileModel customerProfile) async {
+  Future<Either> putCustomerProfile(
+    CustomerProfileModel customerProfile,
+  ) async {
     try {
-      final url = '${ApiUrl.putUpdateCustomerByCustomerId}/${customerProfile
-          .customerId}';
+      final url =
+          '${ApiUrl.putUpdateCustomerByCustomerId}/${customerProfile.customerId}';
 
       final Map<String, dynamic> formMap = {
         'customerId': customerProfile.customerId.toString(),
@@ -66,5 +68,4 @@ class CustomerProfileServiceImpl extends CustomerProfileService {
       return Left('Lỗi không xác định: $e');
     }
   }
-  
 }

@@ -26,7 +26,6 @@ class CustomerProfileEntity {
     this.dateOfBirth,
     this.gender,
     this.address,
-    this.currentPoints
+    this.currentPoints,
   });
-
 }

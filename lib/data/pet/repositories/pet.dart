@@ -14,48 +14,44 @@ class PetRepositoryImpl extends PetRepository {
     var returnedData = await sl<PetService>().getPets(accountId);
 
     return returnedData.fold(
-        (error) {
-          return Left(error.toString());
-        },
-        (data) {
-          try {
-            if (data is List) {
-              final List<PetEntity> petsList = [];
+      (error) {
+        return Left(error.toString());
+      },
+      (data) {
+        try {
+          if (data is List) {
+            final List<PetEntity> petsList = [];
 
-              for (var item in data) {
-                if (item is Map<String, dynamic> &&
-                    item.containsKey('data') &&
-                    item['success'] == true) {
+            for (var item in data) {
+              if (item is Map<String, dynamic> &&
+                  item.containsKey('data') &&
+                  item['success'] == true) {
+                var petData = item['data'];
 
-                  var petData = item['data'];
+                var petModel = PetParams.fromJson(petData);
+                var petEntity = PetsMapper.toEntity(petModel);
 
-                  var petModel = PetParams.fromJson(petData);
-                  var petEntity = PetsMapper.toEntity(petModel);
-
-                  petsList.add(petEntity);
-                }
+                petsList.add(petEntity);
               }
-
-              return Right(petsList);
-            } else {
-              return Left('Invalid data format');
             }
-          } catch (e) {
-            return Left('Error processing pet data: $e');
+
+            return Right(petsList);
+          } else {
+            return Left('Invalid data format');
           }
-        },
+        } catch (e) {
+          return Left('Error processing pet data: $e');
+        }
+      },
     );
   }
 
   @override
   Future<Either> createPet(CreatePetReqParams pet) async {
     var returnedData = await sl<PetService>().createPet(pet);
-    return returnedData.fold(
-      (error) => Left(error.toString()),
-      (data) {
-        return Right(data);
-      },
-    );
+    return returnedData.fold((error) => Left(error.toString()), (data) {
+      return Right(data);
+    });
   }
 
   @override
@@ -70,33 +66,30 @@ class PetRepositoryImpl extends PetRepository {
   @override
   Future<Either> getPetById(int petId) async {
     var returnedData = await sl<PetService>().getPetById(petId);
-    return returnedData.fold(
-      (error) => Left(error.toString()),
-      (data) {
-        try {
-          if (data is Map<dynamic, dynamic> && data.containsKey('data') && data['success'] == true) {
-            var petData = data['data'];
-            var petModel = PetParams.fromJson(petData);
-            var petEntity = PetsMapper.toEntity(petModel);
-            return Right(petEntity);
-          } else {
-            return Left('Invalid data format');
-          }
-        } catch (e) {
-          return Left('Error processing pet data: $e');
+    return returnedData.fold((error) => Left(error.toString()), (data) {
+      try {
+        if (data is Map<dynamic, dynamic> &&
+            data.containsKey('data') &&
+            data['success'] == true) {
+          var petData = data['data'];
+          var petModel = PetParams.fromJson(petData);
+          var petEntity = PetsMapper.toEntity(petModel);
+          return Right(petEntity);
+        } else {
+          return Left('Invalid data format');
         }
-      },
-    );
+      } catch (e) {
+        return Left('Error processing pet data: $e');
+      }
+    });
   }
 
   @override
   Future<Either> updatePet(PetEntity pet) async {
     var returnedData = await sl<PetService>().updatePet(pet);
     return returnedData.fold(
-          (error) => Left(error.toString()),
-          (data) => Right(data),
+      (error) => Left(error.toString()),
+      (data) => Right(data),
     );
   }
-
-
 }

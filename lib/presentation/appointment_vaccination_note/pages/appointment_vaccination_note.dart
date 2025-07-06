@@ -33,13 +33,9 @@ class AppointmentVaccinationNotePage extends StatelessWidget {
       body: BlocProvider(
         create: (context) => AppointmentVaccinationNoteCubit(),
         child: Column(
-          children: [
-            Expanded(
-              child: AppointmentVaccinationNote(petId: petId),
-            ),
-          ]
+          children: [Expanded(child: AppointmentVaccinationNote(petId: petId))],
         ),
-      )
+      ),
     );
   }
 }

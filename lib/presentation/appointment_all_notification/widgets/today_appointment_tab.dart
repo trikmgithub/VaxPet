@@ -36,7 +36,8 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
 
   void _onScroll() {
     // Kiểm tra xem người dùng đã cuộn đến cuối danh sách chưa
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       // Nếu đã gần cuối danh sách (còn 200px), tải thêm dữ liệu
       _appointmentCubit.loadMoreAppointments();
     }
@@ -79,10 +80,7 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
       height: 50.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.white,
-          width: 2,
-        ),
+        border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
           BoxShadow(
             color: themeColor.withValues(alpha: 0.2),
@@ -91,32 +89,34 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
             offset: const Offset(0, 2),
           ),
         ],
-        image: petImage.isNotEmpty
-            ? DecorationImage(
-                image: NetworkImage(petImage),
-                fit: BoxFit.cover,
-              )
-            : null,
+        image:
+            petImage.isNotEmpty
+                ? DecorationImage(
+                  image: NetworkImage(petImage),
+                  fit: BoxFit.cover,
+                )
+                : null,
       ),
-      child: petImage.isEmpty
-          ? Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.grey[100]!, Colors.grey[200]!],
+      child:
+          petImage.isEmpty
+              ? Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.grey[100]!, Colors.grey[200]!],
+                  ),
                 ),
-              ),
-              child: Center(
-                child: Icon(
-                  _getCuteSpeciesIcon(petSpecies),
-                  size: 24,
-                  color: themeColor.withValues(alpha: 0.7),
+                child: Center(
+                  child: Icon(
+                    _getCuteSpeciesIcon(petSpecies),
+                    size: 24,
+                    color: themeColor.withValues(alpha: 0.7),
+                  ),
                 ),
-              ),
-            )
-          : null,
+              )
+              : null,
     );
   }
 
@@ -133,7 +133,8 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is TodayAppointmentError) {
             return Center(child: Text('Error: ${state.message}'));
-          } else if (state is TodayAppointmentLoaded || state is TodayAppointmentLoadingMore) {
+          } else if (state is TodayAppointmentLoaded ||
+              state is TodayAppointmentLoadingMore) {
             // Lấy appointments từ state
             List<TodayAppointmentEntity> appointments = [];
             bool isLoadingMore = false;
@@ -159,10 +160,10 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
   }
 
   Widget _buildAppointmentList(
-      List<TodayAppointmentEntity> appointments, {
-        bool isLoadingMore = false,
-        required Future<void> Function() onRefresh,
-      }) {
+    List<TodayAppointmentEntity> appointments, {
+    bool isLoadingMore = false,
+    required Future<void> Function() onRefresh,
+  }) {
     if (appointments.isEmpty) {
       return RefreshIndicator(
         onRefresh: onRefresh,
@@ -171,19 +172,12 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
             const SizedBox(height: 120),
-            const Icon(
-              Icons.event_busy,
-              size: 80,
-              color: Colors.grey,
-            ),
+            const Icon(Icons.event_busy, size: 80, color: Colors.grey),
             const SizedBox(height: 20),
             const Center(
               child: Text(
                 'Không có lịch hẹn nào trong ngày hôm nay',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ),
           ],
@@ -221,7 +215,10 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
                 children: [
                   Row(
                     children: [
-                      _buildPetAvatar(appointment.petImage, appointment.petSpecies),
+                      _buildPetAvatar(
+                        appointment.petImage,
+                        appointment.petSpecies,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -248,18 +245,27 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
                   // Tách ngày và giờ hẹn
                   ..._buildDateTimeInfo(appointment.appointmentDate),
                   const SizedBox(height: 8),
-                  _buildInfoRow(Icons.qr_code, 'Mã lịch hẹn', appointment.appointmentCode),
+                  _buildInfoRow(
+                    Icons.qr_code,
+                    'Mã lịch hẹn',
+                    appointment.appointmentCode,
+                  ),
                   const SizedBox(height: 8),
                   _buildInfoRow(
                     Icons.medical_services,
                     'Loại dịch vụ',
-                    _getServiceTypeText(appointment.serviceType) ?? 'Unknown Service',
+                    _getServiceTypeText(appointment.serviceType) ??
+                        'Unknown Service',
                   ),
                   const SizedBox(height: 8),
                   _buildInfoRow(
                     Icons.location_on,
                     'Địa điểm',
-                    _getLocationText(appointment.locationType, appointment.address) ?? 'Unknown Location',
+                    _getLocationText(
+                          appointment.locationType,
+                          appointment.address,
+                        ) ??
+                        'Unknown Location',
                   ),
                 ],
               ),
@@ -314,10 +320,7 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
       children: [
         Icon(icon, size: 16, color: Colors.grey),
         const SizedBox(width: 8),
-        Text(
-          '$label: ',
-          style: const TextStyle(color: Colors.grey),
-        ),
+        Text('$label: ', style: const TextStyle(color: Colors.grey)),
         Expanded(
           child: Text(
             value,
@@ -355,10 +358,7 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
       // Nếu có định dạng giờ HH:mm:ss, chỉ lấy HH:mm
       timePart = timePart.split(':').take(2).join(':');
 
-      return {
-        'date': datePart,
-        'time': timePart,
-      };
+      return {'date': datePart, 'time': timePart};
     }
 
     return {

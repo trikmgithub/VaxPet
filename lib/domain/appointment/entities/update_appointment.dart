@@ -18,5 +18,4 @@ class UpdateAppointmentEntity {
     this.address,
     this.diseaseId,
   });
-
 }

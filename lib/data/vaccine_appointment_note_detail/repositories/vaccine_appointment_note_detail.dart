@@ -4,20 +4,18 @@ import '../../../domain/vaccine_appointment_note_detail/repositories/vaccine_app
 import '../../../service_locator.dart';
 import '../sources/vaccine_appointment_note_detail.dart';
 
-class VaccineAppointmentNoteDetailRepositoryImpl extends VaccineAppointmentNoteDetailRepository {
+class VaccineAppointmentNoteDetailRepositoryImpl
+    extends VaccineAppointmentNoteDetailRepository {
   @override
   Future<Either> getVaccineAppointmentNoteDetail(int appointmentId) async {
-    var returnedData = await sl<VaccineAppointmentNoteDetailService>().getVaccineAppointmentNoteDetail(
-      appointmentId,
-    );
+    var returnedData = await sl<VaccineAppointmentNoteDetailService>()
+        .getVaccineAppointmentNoteDetail(appointmentId);
 
-    return returnedData.fold(
-            (error) => Left(Exception(error.toString())),
-            (data) {
-          var appointmentDetail = data;
-          return Right(appointmentDetail);
-        }
-    );
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+      data,
+    ) {
+      var appointmentDetail = data;
+      return Right(appointmentDetail);
+    });
   }
-  
 }

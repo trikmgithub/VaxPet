@@ -9,7 +9,15 @@ class BoxText extends StatelessWidget {
   final double? widthWords;
   final double? sizeTitle;
   final double? heightTitle;
-  const BoxText({super.key, required this.title, required this.icon, this.onTap, this.widthWords, this.sizeTitle, this.heightTitle});
+  const BoxText({
+    super.key,
+    required this.title,
+    required this.icon,
+    this.onTap,
+    this.widthWords,
+    this.sizeTitle,
+    this.heightTitle,
+  });
 
   @override
   Widget build(BuildContext context) {

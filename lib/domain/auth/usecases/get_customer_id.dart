@@ -9,5 +9,4 @@ class GetCustomerIdUseCase extends UseCase<Either, int> {
   Future<Either> call({int? params}) {
     return sl<AuthRepository>().getCustomerId(params!);
   }
-
 }

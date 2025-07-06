@@ -17,10 +17,17 @@ class CustomerProfileEditPage extends StatefulWidget {
   final String? email;
   final int? customerId;
   final CustomerProfileEntity? customerProfile;
-  const CustomerProfileEditPage({super.key, this.accountId, this.customerProfile, this.email, this.customerId});
+  const CustomerProfileEditPage({
+    super.key,
+    this.accountId,
+    this.customerProfile,
+    this.email,
+    this.customerId,
+  });
 
   @override
-  State<CustomerProfileEditPage> createState() => _CustomerProfileEditPageState();
+  State<CustomerProfileEditPage> createState() =>
+      _CustomerProfileEditPageState();
 }
 
 class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
@@ -64,32 +71,51 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     _wardFocusNode = FocusNode();
     _houseNameFocusNode = FocusNode();
     _emailController = TextEditingController(text: widget.email);
-    _nameController = TextEditingController(text: widget.customerProfile?.fullName ?? '');
-    _userNameController = TextEditingController(text: widget.customerProfile?.userName ?? '');
+    _nameController = TextEditingController(
+      text: widget.customerProfile?.fullName ?? '',
+    );
+    _userNameController = TextEditingController(
+      text: widget.customerProfile?.userName ?? '',
+    );
     if (widget.customerProfile?.gender != null) {
-     _selectedGender = widget.customerProfile?.gender;
+      _selectedGender = widget.customerProfile?.gender;
     }
     if (widget.customerProfile?.image != null) {
       image = File(widget.customerProfile!.image!);
     }
-    _dateOfBirthController = TextEditingController(text: widget.customerProfile?.dateOfBirth ?? '');
-    _phoneNumberController = TextEditingController(text: widget.customerProfile?.phoneNumber ?? '');
-    _cityController = TextEditingController(text: widget.customerProfile?.address?.split(', ').last ?? '');
-    _districtController = TextEditingController(text: widget.customerProfile?.address?.split(', ').elementAt(1) ?? '');
-    _wardController = TextEditingController(text: widget.customerProfile?.address?.split(', ').elementAt(2) ?? '');
-    _houseNameController = TextEditingController(text: widget.customerProfile?.address?.split(', ').first ?? '');
+    _dateOfBirthController = TextEditingController(
+      text: widget.customerProfile?.dateOfBirth ?? '',
+    );
+    _phoneNumberController = TextEditingController(
+      text: widget.customerProfile?.phoneNumber ?? '',
+    );
+    _cityController = TextEditingController(
+      text: widget.customerProfile?.address?.split(', ').last ?? '',
+    );
+    _districtController = TextEditingController(
+      text: widget.customerProfile?.address?.split(', ').elementAt(1) ?? '',
+    );
+    _wardController = TextEditingController(
+      text: widget.customerProfile?.address?.split(', ').elementAt(2) ?? '',
+    );
+    _houseNameController = TextEditingController(
+      text: widget.customerProfile?.address?.split(', ').first ?? '',
+    );
   }
 
   Future<void> _initializeHideBackButton() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     setState(() {
-      hideBackButton = sharedPreferences.getString('address') != '' ? false : true;
+      hideBackButton =
+          sharedPreferences.getString('address') != '' ? false : true;
     });
-
   }
 
   Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() {
         image = File(pickedFile.path);
@@ -104,13 +130,16 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       final Directory cacheDir = await getApplicationCacheDirectory();
 
       // Tạo thư mục profile_images nếu chưa có
-      final Directory profileImagesDir = Directory('${cacheDir.path}/profile_images');
+      final Directory profileImagesDir = Directory(
+        '${cacheDir.path}/profile_images',
+      );
       if (!await profileImagesDir.exists()) {
         await profileImagesDir.create(recursive: true);
       }
 
       // Tạo tên file unique với timestamp
-      final String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageFile.path)}';
+      final String fileName =
+          'profile_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageFile.path)}';
       final String cachedImagePath = '${profileImagesDir.path}/$fileName';
 
       // Copy file vào cache directory
@@ -167,16 +196,17 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       ),
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-          ),
+          decoration: BoxDecoration(color: Colors.grey[50]),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 // Header với phần chọn ảnh - đã đổi sang màu nền trắng
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24,
+                    horizontal: 20,
+                  ),
                   margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -228,12 +258,12 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       // Section: Chi tiết thêm
-                      _buildSectionTitle('Thông tin tài khoản', Icons.description),
-                      _buildCard([
-                        _buildEmailField(),
-                      ]),
+                      _buildSectionTitle(
+                        'Thông tin tài khoản',
+                        Icons.description,
+                      ),
+                      _buildCard([_buildEmailField()]),
                       const SizedBox(height: 16),
 
                       // Section: Thông tin cơ bản
@@ -289,11 +319,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       padding: const EdgeInsets.only(bottom: 10, left: 5),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 20, color: AppColors.primary),
           const SizedBox(width: 8),
           Text(
             title,
@@ -332,7 +358,6 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     );
   }
 
-
   Widget _buildNameField() {
     return TextFormField(
       controller: _nameController,
@@ -340,9 +365,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Họ và tên *',
         hintText: 'Nhập họ và tên',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -355,7 +378,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -366,9 +390,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Tên hiển thị *',
         hintText: 'Nhập tên hiển thị',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -381,7 +403,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -391,10 +414,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       children: [
         Icon(icon, color: color, size: 16), // Reduced icon size from 20 to 16
         const SizedBox(width: 6), // Reduced spacing from 10 to 6
-        Text(
-          text,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
+        Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -403,9 +423,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: 'Giới tính *',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -453,9 +471,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Ngày sinh *',
         hintText: 'Nhập ngày sinh thú cưng của bạn',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -480,9 +496,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
           builder: (context, child) {
             return Theme(
               data: ThemeData.light().copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: AppColors.primary,
-                ),
+                colorScheme: ColorScheme.light(primary: AppColors.primary),
                 dialogTheme: DialogThemeData(backgroundColor: Colors.white),
               ),
               child: child!,
@@ -491,7 +505,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         );
         if (pickedDate != null) {
           // format date dd/mm/yyyy
-          String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+          String formattedDate =
+              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
           _dateOfBirthController.text = formattedDate;
         }
       },
@@ -506,9 +521,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Tỉnh / Thành phố *',
         hintText: 'Nhập tỉnh hoặc thành phố',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -521,7 +534,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -532,9 +546,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Quận / Huyện *',
         hintText: 'Nhập quận hoặc huyện',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -547,7 +559,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -558,9 +571,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Phường / Xã *',
         hintText: 'Nhập phường hoặc xã',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -573,7 +584,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
@@ -584,9 +596,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Số nhà *',
         hintText: 'Nhập số nhà',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -599,26 +609,28 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         filled: true,
         fillColor: Colors.grey.shade50,
       ),
-      textCapitalization: TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
+      textCapitalization:
+          TextCapitalization.sentences, // Tự động viết hoa chữ cái đầu mỗi từ
     );
   }
 
   Widget _buildImagePicker() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,  // Thay đổi từ start sang center
+      crossAxisAlignment:
+          CrossAxisAlignment.center, // Thay đổi từ start sang center
       children: [
         const Text(
           'Hình ảnh của bạn',
           style: TextStyle(fontSize: 16, color: Colors.black87),
         ),
-        const SizedBox(height: 10),  // Thêm khoảng cách giữa text và vòng tròn
-        Center(  // Bọc InkWell trong Center để đảm bảo căn giữa
+        const SizedBox(height: 10), // Thêm khoảng cách giữa text và vòng tròn
+        Center(
+          // Bọc InkWell trong Center để đảm bảo căn giữa
           child: _buildImage(),
         ),
       ],
     );
   }
-
 
   Widget _buildImage() {
     return InkWell(
@@ -630,27 +642,26 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
           border: Border.all(color: Colors.grey),
           shape: BoxShape.circle,
         ),
-        clipBehavior: Clip.antiAlias,  // Đảm bảo ảnh được cắt theo hình tròn
-        child: image != null
-            ? (image!.path.startsWith('http')
-                ? Image.network(
-                    image!.path,
-                    fit: BoxFit.cover,
-                  )
-                : Image.file(
-                    image!,
-                    fit: BoxFit.cover,
-                  ))
-            : const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),  // Thêm padding cho text
-                  child: Text(
-                    'Chạm để chọn ảnh',
-                    style: TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
-                    textAlign: TextAlign.center,  // Đảm bảo text được căn giữa
+        clipBehavior: Clip.antiAlias, // Đảm bảo ảnh được cắt theo hình tròn
+        child:
+            image != null
+                ? (image!.path.startsWith('http')
+                    ? Image.network(image!.path, fit: BoxFit.cover)
+                    : Image.file(image!, fit: BoxFit.cover))
+                : const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0), // Thêm padding cho text
+                    child: Text(
+                      'Chạm để chọn ảnh',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center, // Đảm bảo text được căn giữa
+                    ),
                   ),
                 ),
-              ),
       ),
     );
   }
@@ -662,9 +673,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       decoration: InputDecoration(
         labelText: 'Số điện thoại *',
         hintText: 'Nhập số điện thoại',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -686,9 +695,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       readOnly: true,
       controller: _emailController,
       decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -719,10 +726,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         Expanded(
           child: Text(
             'Tôi cam kết thông tin trên là chính xác',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.black87),
           ),
         ),
       ],
@@ -731,132 +735,186 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
 
   Widget _buildSubmitButton() {
     return ElevatedButton(
-      onPressed: _isLoading ? null : () async {
-        if (_nameController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền họ và tên', context);
-          FocusScope.of(context).requestFocus(_nameFocusNode);
-          return;
-        }
-        if (_userNameController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền tên hiển thị', context);
-          FocusScope.of(context).requestFocus(_userNameFocusNode);
-          return;
-        }
-        if (_phoneNumberController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền số điện thoại', context);
-          FocusScope.of(context).requestFocus(_phoneNumberFocusNode);
-          return;
-        }
-        if (_dateOfBirthController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền ngày sinh', context);
-          FocusScope.of(context).requestFocus(_dateOfBirthFocusNode);
-          return;
-        }
-        if (_selectedGender == null || _selectedGender!.isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng chọn giới tính', context);
-          return;
-        }
-        if (_cityController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền tỉnh/thành phố', context);
-          FocusScope.of(context).requestFocus(_cityFocusNode);
-          return;
-        }
-        if (_districtController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền quận/huyện', context);
-          FocusScope.of(context).requestFocus(_districtFocusNode);
-          return;
-        }
-        if (_wardController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền phường/xã', context);
-          FocusScope.of(context).requestFocus(_wardFocusNode);
-          return;
-        }
-        if (_houseNameController.text.trim().isEmpty) {
-          DisplayMessage.errorMessage('Vui lòng điền số nhà', context);
-          FocusScope.of(context).requestFocus(_houseNameFocusNode);
-          return;
-        }
-        if (!_isCommitmentChecked) {
-          DisplayMessage.errorMessage('Vui lòng xác nhận cam kết thông tin', context);
-          return;
-        }
+      onPressed:
+          _isLoading
+              ? null
+              : () async {
+                if (_nameController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền họ và tên',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_nameFocusNode);
+                  return;
+                }
+                if (_userNameController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền tên hiển thị',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_userNameFocusNode);
+                  return;
+                }
+                if (_phoneNumberController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền số điện thoại',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_phoneNumberFocusNode);
+                  return;
+                }
+                if (_dateOfBirthController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền ngày sinh',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_dateOfBirthFocusNode);
+                  return;
+                }
+                if (_selectedGender == null || _selectedGender!.isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng chọn giới tính',
+                    context,
+                  );
+                  return;
+                }
+                if (_cityController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền tỉnh/thành phố',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_cityFocusNode);
+                  return;
+                }
+                if (_districtController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền quận/huyện',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_districtFocusNode);
+                  return;
+                }
+                if (_wardController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng điền phường/xã',
+                    context,
+                  );
+                  FocusScope.of(context).requestFocus(_wardFocusNode);
+                  return;
+                }
+                if (_houseNameController.text.trim().isEmpty) {
+                  DisplayMessage.errorMessage('Vui lòng điền số nhà', context);
+                  FocusScope.of(context).requestFocus(_houseNameFocusNode);
+                  return;
+                }
+                if (!_isCommitmentChecked) {
+                  DisplayMessage.errorMessage(
+                    'Vui lòng xác nhận cam kết thông tin',
+                    context,
+                  );
+                  return;
+                }
 
-        setState(() {
-          _isLoading = true;
-        });
+                setState(() {
+                  _isLoading = true;
+                });
 
-        try {
-          await sl<PutCustomerProfileUseCase>().call(
-            params: CustomerProfileModel(
-              customerId: widget.customerId,
-              fullName: _nameController.text.trim(),
-              userName: _userNameController.text.trim(),
-              image: (image != null && !image!.path.startsWith('http')) ? image!.path : null,
-              phoneNumber: _phoneNumberController.text.trim(),
-              dateOfBirth: _dateOfBirthController.text.trim(),
-              gender: _selectedGender,
-              address: '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}',
-            ),
-          );
+                try {
+                  await sl<PutCustomerProfileUseCase>().call(
+                    params: CustomerProfileModel(
+                      customerId: widget.customerId,
+                      fullName: _nameController.text.trim(),
+                      userName: _userNameController.text.trim(),
+                      image:
+                          (image != null && !image!.path.startsWith('http'))
+                              ? image!.path
+                              : null,
+                      phoneNumber: _phoneNumberController.text.trim(),
+                      dateOfBirth: _dateOfBirthController.text.trim(),
+                      gender: _selectedGender,
+                      address:
+                          '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}',
+                    ),
+                  );
 
-          if (mounted) {
-            final SharedPreferences prefs = await SharedPreferences.getInstance();
-            final address = '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}';
-            await prefs.setString('address', address);
+                  if (mounted) {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    final address =
+                        '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}';
+                    await prefs.setString('address', address);
 
-            if (image != null && !image!.path.startsWith('http')) {
-              final String? cachedImagePath = await _saveImageToCache(image!);
-              if (cachedImagePath != null) {
-                await prefs.setString('profileImage', cachedImagePath);
-              }
-            }
+                    if (image != null && !image!.path.startsWith('http')) {
+                      final String? cachedImagePath = await _saveImageToCache(
+                        image!,
+                      );
+                      if (cachedImagePath != null) {
+                        await prefs.setString('profileImage', cachedImagePath);
+                      }
+                    }
 
-            await prefs.setString('fullName', _nameController.text.trim());
-            await prefs.setString('userName', _userNameController.text.trim());
-            await prefs.setString('phoneNumber', _phoneNumberController.text.trim());
-            await prefs.setString('dateOfBirth', _dateOfBirthController.text.trim());
-            if (_selectedGender != null) {
-              await prefs.setString('gender', _selectedGender!);
-            }
+                    await prefs.setString(
+                      'fullName',
+                      _nameController.text.trim(),
+                    );
+                    await prefs.setString(
+                      'userName',
+                      _userNameController.text.trim(),
+                    );
+                    await prefs.setString(
+                      'phoneNumber',
+                      _phoneNumberController.text.trim(),
+                    );
+                    await prefs.setString(
+                      'dateOfBirth',
+                      _dateOfBirthController.text.trim(),
+                    );
+                    if (_selectedGender != null) {
+                      await prefs.setString('gender', _selectedGender!);
+                    }
 
-            // Check mounted again before using BuildContext after async operations
-            if (mounted) {
-              DisplayMessage.successMessage('Cập nhật thông tin thành công', context);
-              Navigator.of(context).pop();
-            }
-          }
-        } catch (error) {
-          if (mounted) {
-            DisplayMessage.errorMessage(error.toString(), context);
-          }
-        } finally {
-          if (mounted) {
-            setState(() {
-              _isLoading = false;
-            });
-          }
-        }
-      },
+                    // Check mounted again before using BuildContext after async operations
+                    if (mounted) {
+                      DisplayMessage.successMessage(
+                        'Cập nhật thông tin thành công',
+                        context,
+                      );
+                      Navigator.of(context).pop();
+                    }
+                  }
+                } catch (error) {
+                  if (mounted) {
+                    DisplayMessage.errorMessage(error.toString(), context);
+                  }
+                } finally {
+                  if (mounted) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+                }
+              },
       style: ElevatedButton.styleFrom(
         backgroundColor: _isLoading ? Colors.grey : AppColors.primary,
         minimumSize: const Size(double.infinity, 60),
       ),
-      child: _isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 2,
+      child:
+          _isLoading
+              ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 2,
+                ),
+              )
+              : const Text(
+                'Cập nhật',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            )
-          : const Text(
-              'Cập nhật',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
     );
   }
 }

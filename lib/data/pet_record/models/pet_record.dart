@@ -15,9 +15,10 @@ class PetRecordModel {
     return PetRecordModel(
       diseaseId: (json['diseaseId'] as num).toInt(),
       diseaseName: json['diseaseName'] as String,
-      doses: (json['doses'] as List)
-          .map((dose) => VaccineDoseModel.fromJson(dose))
-          .toList(),
+      doses:
+          (json['doses'] as List)
+              .map((dose) => VaccineDoseModel.fromJson(dose))
+              .toList(),
     );
   }
 
@@ -69,9 +70,10 @@ class VaccineDoseModel {
     return VaccineDoseModel(
       vaccineProfileId: (json['vaccineProfileId'] as num).toInt(),
       petId: (json['petId'] as num).toInt(),
-      appointmentDetailId: json['appointmentDetailId'] != null
-          ? (json['appointmentDetailId'] as num).toInt()
-          : null,
+      appointmentDetailId:
+          json['appointmentDetailId'] != null
+              ? (json['appointmentDetailId'] as num).toInt()
+              : null,
       vaccinationScheduleId: (json['vaccinationScheduleId'] as num).toInt(),
       diseaseId: (json['diseaseId'] as num).toInt(),
       preferedDate: json['preferedDate'] as String,
@@ -82,9 +84,10 @@ class VaccineDoseModel {
       isActive: json['isActive'] as bool?,
       isCompleted: json['isCompleted'] as bool,
       createdAt: json['createdAt'] as String,
-      appointmentDetail: json['appointmentDetail'] != null
-          ? AppointmentDetailModel.fromJson(json['appointmentDetail'])
-          : null,
+      appointmentDetail:
+          json['appointmentDetail'] != null
+              ? AppointmentDetailModel.fromJson(json['appointmentDetail'])
+              : null,
       disease: DiseaseModel.fromJson(json['disease']),
     );
   }
@@ -183,11 +186,7 @@ class VetModel {
   final String? name;
   final String? specialization;
 
-  VetModel({
-    required this.vetCode,
-    this.name,
-    this.specialization,
-  });
+  VetModel({required this.vetCode, this.name, this.specialization});
 
   factory VetModel.fromJson(Map<String, dynamic> json) {
     return VetModel(
@@ -289,19 +288,13 @@ class VaccineModel {
 class DiseaseModel {
   final String diseaseName;
 
-  DiseaseModel({
-    required this.diseaseName,
-  });
+  DiseaseModel({required this.diseaseName});
 
   factory DiseaseModel.fromJson(Map<String, dynamic> json) {
-    return DiseaseModel(
-      diseaseName: json['diseaseName'] as String,
-    );
+    return DiseaseModel(diseaseName: json['diseaseName'] as String);
   }
 
   DiseaseEntity toEntity() {
-    return DiseaseEntity(
-      diseaseName: diseaseName,
-    );
+    return DiseaseEntity(diseaseName: diseaseName);
   }
 }

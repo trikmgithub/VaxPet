@@ -28,7 +28,7 @@ class TodayAppointmentModel {
     required this.petName,
     required this.petSpecies,
     required this.petGender,
-    required this.petImage
+    required this.petImage,
   });
 
   factory TodayAppointmentModel.fromJson(Map<dynamic, dynamic> json) {
@@ -52,5 +52,4 @@ class TodayAppointmentModel {
       petImage: pet['image'] ?? '',
     );
   }
-
 }

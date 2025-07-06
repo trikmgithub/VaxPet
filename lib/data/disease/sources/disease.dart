@@ -17,12 +17,12 @@ class DiseaseServiceImpl extends DiseaseService {
         '${ApiUrl.getDiseaseBySpecies}/$species',
       );
       return Right(response.data);
-
     } on DioException catch (e) {
       // Xử lý lỗi một cách chi tiết hơn
       if (e.response != null) {
         // Nếu server trả về response với data
-        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
+        if (e.response!.data is Map &&
+            e.response!.data.containsKey('message')) {
           // Trả về thông báo lỗi từ API
           return Left(e.response!.data['message']);
         } else {
@@ -36,5 +36,4 @@ class DiseaseServiceImpl extends DiseaseService {
       return Left('Lỗi không xác định: $e');
     }
   }
-  
 }

@@ -28,7 +28,6 @@ class PastAppointmentEntity {
     required this.petName,
     required this.petSpecies,
     required this.petGender,
-    required this.petImage
+    required this.petImage,
   });
-
 }

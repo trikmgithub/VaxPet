@@ -14,7 +14,8 @@ class RegisterSigninPage extends StatefulWidget {
   State<RegisterSigninPage> createState() => _RegisterSigninPageState();
 }
 
-class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTickerProviderStateMixin {
+class _RegisterSigninPageState extends State<RegisterSigninPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
   late Animation<Offset> _slideAnimation;
@@ -62,10 +63,12 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
     final isLargeScreen = screenSize.width >= 600;
 
     // Responsive sizing
-    final buttonWidth = isSmallScreen ? 130.0 : (isMediumScreen ? 150.0 : 180.0);
+    final buttonWidth =
+        isSmallScreen ? 130.0 : (isMediumScreen ? 150.0 : 180.0);
     final buttonHeight = isSmallScreen ? 46.0 : 50.0;
     final topPadding = isSmallScreen ? 16.0 : (isMediumScreen ? 20.0 : 24.0);
-    final horizontalPadding = isSmallScreen ? 16.0 : (isMediumScreen ? 24.0 : 32.0);
+    final horizontalPadding =
+        isSmallScreen ? 16.0 : (isMediumScreen ? 24.0 : 32.0);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -76,11 +79,7 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Color(0xFFF5F9FF),
-              Color(0xFFEDF5FF),
-            ],
+            colors: [Colors.white, Color(0xFFF5F9FF), Color(0xFFEDF5FF)],
           ),
         ),
         child: Stack(
@@ -148,16 +147,31 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    _buttonRegister(context, buttonWidth, buttonHeight, isSmallScreen),
+                                    _buttonRegister(
+                                      context,
+                                      buttonWidth,
+                                      buttonHeight,
+                                      isSmallScreen,
+                                    ),
                                     SizedBox(width: 20),
-                                    _buttonSignin(context, buttonWidth, buttonHeight, isSmallScreen),
+                                    _buttonSignin(
+                                      context,
+                                      buttonWidth,
+                                      buttonHeight,
+                                      isSmallScreen,
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
 
                             // Add extra space at bottom to ensure content doesn't overlap with cat-dog image
-                            SizedBox(height: isLargeScreen ? 100 : (isMediumScreen ? 160 : 180)),
+                            SizedBox(
+                              height:
+                                  isLargeScreen
+                                      ? 100
+                                      : (isMediumScreen ? 160 : 180),
+                            ),
                           ],
                         ),
                       ),
@@ -175,9 +189,7 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
   Widget _logoVaxPet(bool isLargeScreen) {
     return Container(
       alignment: Alignment.center,
-      child: SvgPicture.asset(
-        AppVectors.logoVaxPet,
-      ),
+      child: SvgPicture.asset(AppVectors.logoVaxPet),
     );
   }
 
@@ -209,7 +221,12 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
     );
   }
 
-  Widget _buttonRegister(BuildContext context, double width, double height, bool isSmallScreen) {
+  Widget _buttonRegister(
+    BuildContext context,
+    double width,
+    double height,
+    bool isSmallScreen,
+  ) {
     return SizedBox(
       width: width,
       height: height,
@@ -238,7 +255,12 @@ class _RegisterSigninPageState extends State<RegisterSigninPage> with SingleTick
     );
   }
 
-  Widget _buttonSignin(BuildContext context, double width, double height, bool isSmallScreen) {
+  Widget _buttonSignin(
+    BuildContext context,
+    double width,
+    double height,
+    bool isSmallScreen,
+  ) {
     return SizedBox(
       width: width,
       height: height,

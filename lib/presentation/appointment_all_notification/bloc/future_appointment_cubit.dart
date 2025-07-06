@@ -48,8 +48,8 @@ class FutureAppointmentCubit extends Cubit<FutureAppointmentState> {
       );
 
       returnedData.fold(
-            (error) => emit(FutureAppointmentError(message: error.toString())),
-            (appointments) {
+        (error) => emit(FutureAppointmentError(message: error.toString())),
+        (appointments) {
           _allAppointments = appointments;
 
           // Nếu số lượng kết quả nhỏ hơn page size, đã hết dữ liệu
@@ -57,11 +57,13 @@ class FutureAppointmentCubit extends Cubit<FutureAppointmentState> {
             _hasMoreData = false;
           }
 
-          emit(FutureAppointmentLoaded(
-            appointments: _allAppointments,
-            hasMoreData: _hasMoreData,
-            currentPage: _currentPage,
-          ));
+          emit(
+            FutureAppointmentLoaded(
+              appointments: _allAppointments,
+              hasMoreData: _hasMoreData,
+              currentPage: _currentPage,
+            ),
+          );
         },
       );
     } catch (e) {
@@ -77,10 +79,12 @@ class FutureAppointmentCubit extends Cubit<FutureAppointmentState> {
     }
 
     try {
-      emit(FutureAppointmentLoadingMore(
-        appointments: _allAppointments,
-        currentPage: _currentPage,
-      ));
+      emit(
+        FutureAppointmentLoadingMore(
+          appointments: _allAppointments,
+          currentPage: _currentPage,
+        ),
+      );
 
       // Tăng số trang lên 1
       _currentPage++;
@@ -104,16 +108,19 @@ class FutureAppointmentCubit extends Cubit<FutureAppointmentState> {
       );
 
       returnedData.fold(
-            (error) => emit(FutureAppointmentError(message: error.toString())),
-            (newAppointments) {
+        (error) => emit(FutureAppointmentError(message: error.toString())),
+        (newAppointments) {
           // Nếu không có dữ liệu mới, đã hết dữ liệu
           if (newAppointments.isEmpty) {
             _hasMoreData = false;
-            emit(FutureAppointmentLoaded(
-              appointments: _allAppointments,
-              hasMoreData: _hasMoreData,
-              currentPage: _currentPage - 1, // Giảm trang lại vì không có dữ liệu
-            ));
+            emit(
+              FutureAppointmentLoaded(
+                appointments: _allAppointments,
+                hasMoreData: _hasMoreData,
+                currentPage:
+                    _currentPage - 1, // Giảm trang lại vì không có dữ liệu
+              ),
+            );
             return;
           }
 
@@ -125,11 +132,13 @@ class FutureAppointmentCubit extends Cubit<FutureAppointmentState> {
             _hasMoreData = false;
           }
 
-          emit(FutureAppointmentLoaded(
-            appointments: _allAppointments,
-            hasMoreData: _hasMoreData,
-            currentPage: _currentPage,
-          ));
+          emit(
+            FutureAppointmentLoaded(
+              appointments: _allAppointments,
+              hasMoreData: _hasMoreData,
+              currentPage: _currentPage,
+            ),
+          );
         },
       );
     } catch (e) {

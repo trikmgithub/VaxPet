@@ -10,5 +10,4 @@ class CreatePetUseCase extends UseCase<Either, CreatePetReqParams> {
   Future<Either> call({CreatePetReqParams? params}) {
     return sl<PetRepository>().createPet(params!);
   }
-
 }

@@ -34,5 +34,4 @@ class PetEntity {
     this.nationality,
     this.isSterilized,
   });
-
 }

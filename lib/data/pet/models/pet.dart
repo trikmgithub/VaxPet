@@ -36,7 +36,7 @@ class PetParams {
   });
 
   factory PetParams.fromJson(Map<String, dynamic> json) {
-    return PetParams (
+    return PetParams(
       petId: json["petId"],
       customerId: json["customerId"],
       petCode: json["petCode"],
@@ -55,5 +55,4 @@ class PetParams {
       isSterilized: json["isSterilized"],
     );
   }
-
 }

@@ -10,5 +10,4 @@ class PutPetUseCase extends UseCase<Either, PetEntity> {
   Future<Either> call({PetEntity? params}) {
     return sl<PetRepository>().updatePet(params!);
   }
-
 }

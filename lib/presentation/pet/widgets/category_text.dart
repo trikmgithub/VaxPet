@@ -6,18 +6,17 @@ class CategoryText extends StatelessWidget {
   final double? sizeTitle;
   final TextAlign? textAlign;
 
-  const CategoryText(
-      {super.key,
-      required this.title,
-      this.sizeTitle = 20,
-      this.textAlign});
+  const CategoryText({
+    super.key,
+    required this.title,
+    this.sizeTitle = 20,
+    this.textAlign,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        top: 12,
-      ),
+      padding: EdgeInsets.only(top: 12),
       child: Text(
         title,
         textAlign: textAlign,

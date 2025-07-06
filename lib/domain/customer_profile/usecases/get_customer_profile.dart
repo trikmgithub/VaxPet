@@ -9,5 +9,4 @@ class GetCustomerProfileUseCase extends UseCase<Either, int> {
   Future<Either> call({int? params}) async {
     return await sl<CustomerProfileRepository>().getCustomerProfile(params!);
   }
-
 }

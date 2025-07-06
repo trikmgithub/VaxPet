@@ -43,7 +43,8 @@ class _AppointmentVaccinationNoteDetailEditPageState
 
   void _initializeForm() {
     final appointment = widget.appointmentData['appointment'];
-    final diseaseData = widget.appointmentData['appointmentHasDiseaseResponseDTO'];
+    final diseaseData =
+        widget.appointmentData['appointmentHasDiseaseResponseDTO'];
 
     // Initialize form fields
     _addressController.text = appointment['address'] ?? '';
@@ -59,16 +60,18 @@ class _AppointmentVaccinationNoteDetailEditPageState
     }
 
     // Initialize cubit with current data
-    context.read<AppointmentVaccinationNoteDetailEditCubit>().initializeWithData(
-      appointmentId: appointment['appointmentId'],
-      customerId: appointment['customerResponseDTO']['customerId'],
-      petId: appointment['petResponseDTO']['petId'],
-      appointmentDate: appointment['appointmentDate'],
-      serviceType: appointment['serviceType'],
-      location: appointment['location'],
-      address: appointment['address'] ?? '',
-      diseaseId: diseaseData['disease']['diseaseId'],
-    );
+    context
+        .read<AppointmentVaccinationNoteDetailEditCubit>()
+        .initializeWithData(
+          appointmentId: appointment['appointmentId'],
+          customerId: appointment['customerResponseDTO']['customerId'],
+          petId: appointment['petResponseDTO']['petId'],
+          appointmentDate: appointment['appointmentDate'],
+          serviceType: appointment['serviceType'],
+          location: appointment['location'],
+          address: appointment['address'] ?? '',
+          diseaseId: diseaseData['disease']['diseaseId'],
+        );
 
     // KHÔNG tự động fetch diseases khi khởi tạo
     // Chỉ fetch khi người dùng nhấn nút "Thay đổi bệnh cần tiêm"
@@ -119,7 +122,8 @@ class _AppointmentVaccinationNoteDetailEditPageState
     );
 
     if (picked != null) {
-      String formattedDate = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      String formattedDate =
+          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       setState(() {
         _selectedDate = picked;
         _dateController.text = formattedDate;
@@ -134,7 +138,8 @@ class _AppointmentVaccinationNoteDetailEditPageState
   }
 
   Future<void> _selectTime() async {
-    TimeOfDay initialTime = _selectedTime ?? const TimeOfDay(hour: 8, minute: 0);
+    TimeOfDay initialTime =
+        _selectedTime ?? const TimeOfDay(hour: 8, minute: 0);
 
     if (!_isTimeInAllowedRanges(initialTime)) {
       initialTime = const TimeOfDay(hour: 8, minute: 0);
@@ -151,20 +156,26 @@ class _AppointmentVaccinationNoteDetailEditPageState
         ),
         dayPeriodColor: Colors.blue.shade50,
         dayPeriodTextColor: Colors.blue.shade700,
-        hourMinuteColor: WidgetStateColor.resolveWith((states) =>
-        states.contains(WidgetState.selected)
-            ? Theme.of(context).primaryColor
-            : Colors.blue.shade50),
-        hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
-        states.contains(WidgetState.selected)
-            ? Colors.white
-            : Colors.blue.shade700),
+        hourMinuteColor: WidgetStateColor.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected)
+                  ? Theme.of(context).primaryColor
+                  : Colors.blue.shade50,
+        ),
+        hourMinuteTextColor: WidgetStateColor.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected)
+                  ? Colors.white
+                  : Colors.blue.shade700,
+        ),
         dialBackgroundColor: Colors.grey.shade100,
         dialHandColor: Theme.of(context).primaryColor,
-        dialTextColor: WidgetStateColor.resolveWith((states) =>
-        states.contains(WidgetState.selected)
-            ? Colors.white
-            : Colors.black87),
+        dialTextColor: WidgetStateColor.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected)
+                  ? Colors.white
+                  : Colors.black87,
+        ),
         entryModeIconColor: Theme.of(context).primaryColor,
       ),
       colorScheme: ColorScheme.light(
@@ -216,12 +227,12 @@ class _AppointmentVaccinationNoteDetailEditPageState
           'Đã chọn giờ hẹn: ${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
           isError: false,
           icon: isMorningTime ? Icons.sunny : Icons.wb_twilight,
-          color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700
+          color: isMorningTime ? Colors.amber.shade700 : Colors.indigo.shade700,
         );
       } else {
         _showSnackBar(
           'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
-          isError: true
+          isError: true,
         );
       }
     }
@@ -236,11 +247,14 @@ class _AppointmentVaccinationNoteDetailEditPageState
     final timeInMinutes = time.hour * 60 + time.minute;
     final morningStartMinutes = morningStart.hour * 60 + morningStart.minute;
     final morningEndMinutes = morningEnd.hour * 60 + morningEnd.minute;
-    final afternoonStartMinutes = afternoonStart.hour * 60 + afternoonStart.minute;
+    final afternoonStartMinutes =
+        afternoonStart.hour * 60 + afternoonStart.minute;
     final afternoonEndMinutes = afternoonEnd.hour * 60 + afternoonEnd.minute;
 
-    return (timeInMinutes >= morningStartMinutes && timeInMinutes <= morningEndMinutes) ||
-           (timeInMinutes >= afternoonStartMinutes && timeInMinutes <= afternoonEndMinutes);
+    return (timeInMinutes >= morningStartMinutes &&
+            timeInMinutes <= morningEndMinutes) ||
+        (timeInMinutes >= afternoonStartMinutes &&
+            timeInMinutes <= afternoonEndMinutes);
   }
 
   void _updateDateTime() {
@@ -337,17 +351,23 @@ class _AppointmentVaccinationNoteDetailEditPageState
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: BlocConsumer<AppointmentVaccinationNoteDetailEditCubit,
-                        AppointmentVaccinationNoteDetailEditState>(
+                    child: BlocConsumer<
+                      AppointmentVaccinationNoteDetailEditCubit,
+                      AppointmentVaccinationNoteDetailEditState
+                    >(
                       listener: (context, state) {
-                        if (state.status == AppointmentVaccinationNoteDetailEditStatus.success) {
+                        if (state.status ==
+                            AppointmentVaccinationNoteDetailEditStatus
+                                .success) {
                           _showSnackBar(
                             'Cập nhật lịch hẹn thành công!',
                             isError: false,
                             icon: Icons.check_circle,
                           );
                           Navigator.of(context).pop(true);
-                        } else if (state.status == AppointmentVaccinationNoteDetailEditStatus.failure) {
+                        } else if (state.status ==
+                            AppointmentVaccinationNoteDetailEditStatus
+                                .failure) {
                           _showSnackBar(
                             state.errorMessage ?? 'Có lỗi xảy ra',
                             isError: true,
@@ -376,7 +396,9 @@ class _AppointmentVaccinationNoteDetailEditPageState
                               _buildDateField(context),
                               const SizedBox(height: 20),
 
-                              _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
+                              _buildFormLabel(
+                                'Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):',
+                              ),
                               const SizedBox(height: 8),
                               _buildTimeField(context),
                               const SizedBox(height: 20),
@@ -459,40 +481,42 @@ class _AppointmentVaccinationNoteDetailEditPageState
               color: petImage != null ? Colors.transparent : Colors.blue[100],
               shape: BoxShape.circle,
             ),
-            child: petImage != null
-                ? ClipOval(
-                    child: Image.network(
-                      petImage,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.pets,
-                          color: Theme.of(context).primaryColor,
-                          size: 28,
-                        );
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                            strokeWidth: 2,
+            child:
+                petImage != null
+                    ? ClipOval(
+                      child: Image.network(
+                        petImage,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.pets,
                             color: Theme.of(context).primaryColor,
-                          ),
-                        );
-                      },
+                            size: 28,
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value:
+                                  loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                              strokeWidth: 2,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    : Icon(
+                      Icons.pets,
+                      color: Theme.of(context).primaryColor,
+                      size: 28,
                     ),
-                  )
-                : Icon(
-                    Icons.pets,
-                    color: Theme.of(context).primaryColor,
-                    size: 28,
-                  ),
           ),
           SizedBox(width: 16),
           Expanded(
@@ -501,18 +525,12 @@ class _AppointmentVaccinationNoteDetailEditPageState
               children: [
                 Text(
                   petName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 4),
                 Text(
                   petSpecies.toLowerCase() == 'dog' ? 'Chó' : 'Mèo',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
               ],
             ),
@@ -548,7 +566,10 @@ class _AppointmentVaccinationNoteDetailEditPageState
           hintText: 'Chọn ngày mong muốn',
           hintStyle: TextStyle(color: Colors.grey[500]),
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+          suffixIcon: Icon(
+            Icons.calendar_today,
+            color: Theme.of(context).primaryColor,
+          ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.datetime,
@@ -580,7 +601,10 @@ class _AppointmentVaccinationNoteDetailEditPageState
           hintText: 'Chọn giờ mong muốn',
           hintStyle: TextStyle(color: Colors.grey[500]),
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Icon(Icons.access_time, color: Theme.of(context).primaryColor),
+          suffixIcon: Icon(
+            Icons.access_time,
+            color: Theme.of(context).primaryColor,
+          ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.datetime,
@@ -598,7 +622,6 @@ class _AppointmentVaccinationNoteDetailEditPageState
     );
   }
 
-
   Widget _buildLocationField(AppointmentVaccinationNoteDetailEditState state) {
     return Container(
       decoration: BoxDecoration(
@@ -611,7 +634,10 @@ class _AppointmentVaccinationNoteDetailEditPageState
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
           border: InputBorder.none,
-          prefixIcon: Icon(Icons.location_on, color: Theme.of(context).primaryColor),
+          prefixIcon: Icon(
+            Icons.location_on,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
         items: const [
           DropdownMenuItem(value: 1, child: Text('Trung tâm')),
@@ -631,7 +657,9 @@ class _AppointmentVaccinationNoteDetailEditPageState
   // Stylized address field exactly like in vaccination home
   Widget _buildAddressField() {
     // Set address to controller if available and controller is empty
-    if (_userAddress != null && _userAddress!.isNotEmpty && _addressController.text.isEmpty) {
+    if (_userAddress != null &&
+        _userAddress!.isNotEmpty &&
+        _addressController.text.isEmpty) {
       _addressController.text = _userAddress!;
     }
 
@@ -642,23 +670,32 @@ class _AppointmentVaccinationNoteDetailEditPageState
           decoration: BoxDecoration(
             color: _isEditingAddress ? Colors.white : Colors.grey[100],
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _isEditingAddress ? Theme.of(context).primaryColor : Colors.grey[300]!),
+            border: Border.all(
+              color:
+                  _isEditingAddress
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey[300]!,
+            ),
           ),
           child: TextFormField(
             controller: _addressController,
             decoration: InputDecoration(
-              hintText: _isEditingAddress ? 'Nhập địa chỉ mới' : 'Địa chỉ hiện tại',
+              hintText:
+                  _isEditingAddress ? 'Nhập địa chỉ mới' : 'Địa chỉ hiện tại',
               hintStyle: TextStyle(color: Colors.grey[500]),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               border: InputBorder.none,
               filled: true,
               fillColor: Colors.transparent,
-              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).primaryColor),
+              prefixIcon: Icon(
+                Icons.location_on,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-            ),
+            style: TextStyle(color: Colors.black87, fontSize: 15),
             maxLines: 2,
             readOnly: !_isEditingAddress,
             enabled: _isEditingAddress,
@@ -687,25 +724,29 @@ class _AppointmentVaccinationNoteDetailEditPageState
                 final isMediumScreen = screenWidth < 500;
 
                 // Responsive button sizing with three tiers
-                final buttonPadding = isSmallScreen
-                    ? EdgeInsets.symmetric(horizontal: 8, vertical: 4)
-                    : isMediumScreen
+                final buttonPadding =
+                    isSmallScreen
+                        ? EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                        : isMediumScreen
                         ? EdgeInsets.symmetric(horizontal: 10, vertical: 5)
                         : EdgeInsets.symmetric(horizontal: 12, vertical: 6);
 
-                final buttonFontSize = isSmallScreen
-                    ? 12.0
-                    : isMediumScreen
+                final buttonFontSize =
+                    isSmallScreen
+                        ? 12.0
+                        : isMediumScreen
                         ? 13.0
                         : 14.0;
-                final iconSize = isSmallScreen
-                    ? 14.0
-                    : isMediumScreen
+                final iconSize =
+                    isSmallScreen
+                        ? 14.0
+                        : isMediumScreen
                         ? 15.0
                         : 16.0;
-                final spacingBetween = isSmallScreen
-                    ? 4.0
-                    : isMediumScreen
+                final spacingBetween =
+                    isSmallScreen
+                        ? 4.0
+                        : isMediumScreen
                         ? 6.0
                         : 8.0;
 
@@ -717,7 +758,8 @@ class _AppointmentVaccinationNoteDetailEditPageState
                     // Nút "Địa chỉ gốc" - Để lấy lại địa chỉ gốc đã lưu khi mở form
                     GestureDetector(
                       onTap: () {
-                        if (_originalAddress != null && _originalAddress!.isNotEmpty) {
+                        if (_originalAddress != null &&
+                            _originalAddress!.isNotEmpty) {
                           setState(() {
                             _addressController.text = _originalAddress!;
                           });
@@ -742,7 +784,9 @@ class _AppointmentVaccinationNoteDetailEditPageState
                         decoration: BoxDecoration(
                           color: Colors.green.shade50,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.green.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -797,7 +841,9 @@ class _AppointmentVaccinationNoteDetailEditPageState
                         decoration: BoxDecoration(
                           color: Colors.purple.shade50,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.purple.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.purple.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -835,7 +881,11 @@ class _AppointmentVaccinationNoteDetailEditPageState
                         decoration: BoxDecoration(
                           color: Colors.blue.shade50,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -928,7 +978,10 @@ class _AppointmentVaccinationNoteDetailEditPageState
   }
 
   // Disease selection button
-  Widget _buildDiseaseSelectionButton(BuildContext context, AppointmentVaccinationNoteDetailEditState state) {
+  Widget _buildDiseaseSelectionButton(
+    BuildContext context,
+    AppointmentVaccinationNoteDetailEditState state,
+  ) {
     final appointment = widget.appointmentData['appointment'];
     final petData = appointment['petResponseDTO'];
     final petSpecies = petData['species'];
@@ -936,61 +989,77 @@ class _AppointmentVaccinationNoteDetailEditPageState
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: state.status == AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
-            ? null
-            : () async {
-                // Capture the context before async operation
-                final editCubit = context.read<AppointmentVaccinationNoteDetailEditCubit>();
+        onPressed:
+            state.status ==
+                    AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
+                ? null
+                : () async {
+                  // Capture the context before async operation
+                  final editCubit =
+                      context.read<AppointmentVaccinationNoteDetailEditCubit>();
 
-                final result = await Navigator.push<Map<String, dynamic>>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChoiceDiseasePage(species: petSpecies.toLowerCase() == 'dog' ? 'Chó' : 'Mèo'),
-                  ),
-                );
-
-                if (result != null && mounted) {
-                  // Lưu tên bệnh được chọn vào biến state
-                  setState(() {
-                    _selectedDiseaseName = result['diseaseName'];
-                  });
-
-                  // Use the captured cubit reference instead of accessing context
-                  editCubit.updateDiseaseId(result['diseaseId']);
-                  _showSnackBar(
-                    'Đã thay đổi bệnh: ${result['diseaseName']}',
-                    isError: false,
-                    icon: Icons.vaccines,
+                  final result = await Navigator.push<Map<String, dynamic>>(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ChoiceDiseasePage(
+                            species:
+                                petSpecies.toLowerCase() == 'dog'
+                                    ? 'Chó'
+                                    : 'Mèo',
+                          ),
+                    ),
                   );
-                }
-              },
-        icon: state.status == AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-              )
-            : Icon(Icons.edit),
+
+                  if (result != null && mounted) {
+                    // Lưu tên bệnh được chọn vào biến state
+                    setState(() {
+                      _selectedDiseaseName = result['diseaseName'];
+                    });
+
+                    // Use the captured cubit reference instead of accessing context
+                    editCubit.updateDiseaseId(result['diseaseId']);
+                    _showSnackBar(
+                      'Đã thay đổi bệnh: ${result['diseaseName']}',
+                      isError: false,
+                      icon: Icons.vaccines,
+                    );
+                  }
+                },
+        icon:
+            state.status ==
+                    AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
+                ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                : Icon(Icons.edit),
         label: Text(
-          state.status == AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
+          state.status ==
+                  AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
               ? 'Đang tải...'
-              : 'Thay đổi bệnh cần tiêm'
+              : 'Thay đổi bệnh cần tiêm',
         ),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12),
           textStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
   }
 
   // Disease selection result display
-  Widget _buildDiseaseSelectionResult(AppointmentVaccinationNoteDetailEditState state) {
+  Widget _buildDiseaseSelectionResult(
+    AppointmentVaccinationNoteDetailEditState state,
+  ) {
     // Lấy tên bệnh từ appointmentData ban đầu
-    final diseaseData = widget.appointmentData['appointmentHasDiseaseResponseDTO'];
+    final diseaseData =
+        widget.appointmentData['appointmentHasDiseaseResponseDTO'];
     final originalDiseaseName = diseaseData['disease']['name'] ?? '';
     final originalDiseaseId = diseaseData['disease']['diseaseId'];
 
@@ -1022,7 +1091,9 @@ class _AppointmentVaccinationNoteDetailEditPageState
     // Luôn hiển thị thông tin bệnh nếu có diseaseId (từ state hoặc dữ liệu gốc)
     final currentDiseaseId = state.diseaseId ?? originalDiseaseId;
 
-    if (currentDiseaseId != null && displayDiseaseName != null && displayDiseaseName.isNotEmpty) {
+    if (currentDiseaseId != null &&
+        displayDiseaseName != null &&
+        displayDiseaseName.isNotEmpty) {
       return Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -1034,7 +1105,7 @@ class _AppointmentVaccinationNoteDetailEditPageState
           children: [
             Icon(
               isNewDisease ? Icons.check_circle_outline : Icons.check_circle,
-              color: Colors.green
+              color: Colors.green,
             ),
             SizedBox(width: 8),
             Expanded(
@@ -1084,10 +1155,7 @@ class _AppointmentVaccinationNoteDetailEditPageState
             Expanded(
               child: Text(
                 'Vui lòng chọn bệnh cần tiêm vắc xin',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.orange,
-                ),
+                style: TextStyle(fontSize: 15, color: Colors.orange),
               ),
             ),
           ],
@@ -1124,10 +1192,7 @@ class _AppointmentVaccinationNoteDetailEditPageState
           SizedBox(height: 8),
           Text(
             'Bạn sẽ được Bác sĩ tư vấn loại Vắc xin tương ứng với bệnh bạn chọn sau!',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.blue[800],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.blue[800]),
           ),
         ],
       ),
@@ -1142,83 +1207,102 @@ class _AppointmentVaccinationNoteDetailEditPageState
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: state.status == AppointmentVaccinationNoteDetailEditStatus.loading
-                ? null
-                : () async {
-                    try {
-                      if (!(_formKey.currentState?.validate() ?? false)) {
-                        _showSnackBar('Vui lòng điền đầy đủ thông tin', isError: true);
-                        return;
-                      }
-
-                      // Lấy diseaseId từ state hiện tại hoặc từ dữ liệu ban đầu với proper type conversion
-                      int? currentDiseaseId = state.diseaseId;
-                      if (currentDiseaseId == null) {
-                        final originalDiseaseId = widget.appointmentData['appointmentHasDiseaseResponseDTO']['disease']['diseaseId'];
-                        // Convert to int if it's a string or other type
-                        if (originalDiseaseId is int) {
-                          currentDiseaseId = originalDiseaseId;
-                        } else if (originalDiseaseId is String) {
-                          currentDiseaseId = int.tryParse(originalDiseaseId);
-                        } else if (originalDiseaseId != null) {
-                          currentDiseaseId = int.tryParse(originalDiseaseId.toString());
+            onPressed:
+                state.status ==
+                        AppointmentVaccinationNoteDetailEditStatus.loading
+                    ? null
+                    : () async {
+                      try {
+                        if (!(_formKey.currentState?.validate() ?? false)) {
+                          _showSnackBar(
+                            'Vui lòng điền đầy đủ thông tin',
+                            isError: true,
+                          );
+                          return;
                         }
+
+                        // Lấy diseaseId từ state hiện tại hoặc từ dữ liệu ban đầu với proper type conversion
+                        int? currentDiseaseId = state.diseaseId;
+                        if (currentDiseaseId == null) {
+                          final originalDiseaseId =
+                              widget
+                                  .appointmentData['appointmentHasDiseaseResponseDTO']['disease']['diseaseId'];
+                          // Convert to int if it's a string or other type
+                          if (originalDiseaseId is int) {
+                            currentDiseaseId = originalDiseaseId;
+                          } else if (originalDiseaseId is String) {
+                            currentDiseaseId = int.tryParse(originalDiseaseId);
+                          } else if (originalDiseaseId != null) {
+                            currentDiseaseId = int.tryParse(
+                              originalDiseaseId.toString(),
+                            );
+                          }
+                        }
+
+                        // Validate required fields - kiểm tra diseaseId có hợp lệ không
+                        if (currentDiseaseId == null) {
+                          _showSnackBar(
+                            'Vui lòng chọn bệnh cần tiêm vắc xin',
+                            isError: true,
+                          );
+                          return;
+                        }
+
+                        // Call the update method
+                        await context
+                            .read<AppointmentVaccinationNoteDetailEditCubit>()
+                            .updateAppointment();
+                      } catch (e) {
+                        debugPrint('Error updating appointment: $e');
+                        _showSnackBar(e.toString(), isError: true);
                       }
-
-                      // Validate required fields - kiểm tra diseaseId có hợp lệ không
-                      if (currentDiseaseId == null) {
-                        _showSnackBar('Vui lòng chọn bệnh cần tiêm vắc xin', isError: true);
-                        return;
-                      }
-
-                      // Call the update method
-                      await context
-                          .read<AppointmentVaccinationNoteDetailEditCubit>()
-                          .updateAppointment();
-
-                    } catch (e) {
-                      debugPrint('Error updating appointment: $e');
-                      _showSnackBar(e.toString(), isError: true);
-                    }
-                  },
+                    },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
               foregroundColor: Colors.white,
               disabledBackgroundColor: Colors.grey[400],
-              elevation: state.status == AppointmentVaccinationNoteDetailEditStatus.loading ? 0 : 2,
+              elevation:
+                  state.status ==
+                          AppointmentVaccinationNoteDetailEditStatus.loading
+                      ? 0
+                      : 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: state.status == AppointmentVaccinationNoteDetailEditStatus.loading
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            child:
+                state.status ==
+                        AppointmentVaccinationNoteDetailEditStatus.loading
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Text(
-                        'Đang cập nhật...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        SizedBox(width: 12),
+                        Text(
+                          'Đang cập nhật...',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
+                      ],
+                    )
+                    : Text(
+                      'Cập nhật lịch hẹn',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ],
-                  )
-                : Text(
-                    'Cập nhật lịch hẹn',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
           ),
         );
       },
@@ -1226,7 +1310,12 @@ class _AppointmentVaccinationNoteDetailEditPageState
   }
 
   // Hàm hiển thị thông báo ở phía trên màn hình giống như vaccination home
-  void _showSnackBar(String message, {bool isError = false, IconData? icon, Color? color}) {
+  void _showSnackBar(
+    String message, {
+    bool isError = false,
+    IconData? icon,
+    Color? color,
+  }) {
     // Hủy bỏ thông báo hiện tại (nếu có)
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -1235,45 +1324,52 @@ class _AppointmentVaccinationNoteDetailEditPageState
     OverlayEntry? overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).viewPadding.top + 10,
-        left: 10,
-        right: 10,
-        child: Material(
-          elevation: 4.0,
-          borderRadius: BorderRadius.circular(8),
-          color: isError ? Colors.red : color ?? Colors.green,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, color: Colors.white, size: 20),
-                  SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: Text(
-                    message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+      builder:
+          (context) => Positioned(
+            top: MediaQuery.of(context).viewPadding.top + 10,
+            left: 10,
+            right: 10,
+            child: Material(
+              elevation: 4.0,
+              borderRadius: BorderRadius.circular(8),
+              color: isError ? Colors.red : color ?? Colors.green,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
                 ),
-                InkWell(
-                  onTap: () {
-                    overlayEntry?.remove();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Đóng',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                child: Row(
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, color: Colors.white, size: 20),
+                      SizedBox(width: 8),
+                    ],
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                )
-              ],
+                    InkWell(
+                      onTap: () {
+                        overlayEntry?.remove();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Đóng',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
     );
 
     // Hiển thị overlay

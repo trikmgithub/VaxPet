@@ -6,8 +6,10 @@ import '../../../domain/disease/usecases/get_disease_by_species.dart';
 import '../../../service_locator.dart';
 import 'appointment_vaccination_note_detail_edit_state.dart';
 
-class AppointmentVaccinationNoteDetailEditCubit extends Cubit<AppointmentVaccinationNoteDetailEditState> {
-  AppointmentVaccinationNoteDetailEditCubit() : super(const AppointmentVaccinationNoteDetailEditState());
+class AppointmentVaccinationNoteDetailEditCubit
+    extends Cubit<AppointmentVaccinationNoteDetailEditState> {
+  AppointmentVaccinationNoteDetailEditCubit()
+    : super(const AppointmentVaccinationNoteDetailEditState());
 
   void initializeWithData({
     required int appointmentId,
@@ -19,63 +21,79 @@ class AppointmentVaccinationNoteDetailEditCubit extends Cubit<AppointmentVaccina
     required String address,
     required int diseaseId,
   }) {
-    emit(state.copyWith(
-      appointmentId: appointmentId,
-      customerId: customerId,
-      petId: petId,
-      appointmentDate: appointmentDate,
-      serviceType: serviceType,
-      location: location,
-      address: address,
-      diseaseId: diseaseId,
-      isFormValid: _validateForm(
+    emit(
+      state.copyWith(
+        appointmentId: appointmentId,
+        customerId: customerId,
+        petId: petId,
         appointmentDate: appointmentDate,
+        serviceType: serviceType,
+        location: location,
         address: address,
         diseaseId: diseaseId,
+        isFormValid: _validateForm(
+          appointmentDate: appointmentDate,
+          address: address,
+          diseaseId: diseaseId,
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> fetchDiseasesBySpecies(String species) async {
-    emit(state.copyWith(status: AppointmentVaccinationNoteDetailEditStatus.loadingDiseases));
+    emit(
+      state.copyWith(
+        status: AppointmentVaccinationNoteDetailEditStatus.loadingDiseases,
+      ),
+    );
 
     try {
-      final result = await sl<GetDiseaseBySpeciesUseCase>().call(params: species);
+      final result = await sl<GetDiseaseBySpeciesUseCase>().call(
+        params: species,
+      );
 
       result.fold(
         (failure) {
-          emit(state.copyWith(
-            status: AppointmentVaccinationNoteDetailEditStatus.failure,
-            errorMessage: 'Không thể tải danh sách bệnh',
-            diseases: [],
-          ));
+          emit(
+            state.copyWith(
+              status: AppointmentVaccinationNoteDetailEditStatus.failure,
+              errorMessage: 'Không thể tải danh sách bệnh',
+              diseases: [],
+            ),
+          );
         },
         (success) {
           final diseases = success['data'] as List? ?? [];
-          emit(state.copyWith(
-            status: AppointmentVaccinationNoteDetailEditStatus.initial,
-            diseases: diseases,
-          ));
+          emit(
+            state.copyWith(
+              status: AppointmentVaccinationNoteDetailEditStatus.initial,
+              diseases: diseases,
+            ),
+          );
         },
       );
     } catch (e) {
-      emit(state.copyWith(
-        status: AppointmentVaccinationNoteDetailEditStatus.failure,
-        errorMessage: 'Lỗi khi tải danh sách bệnh: ${e.toString()}',
-        diseases: [],
-      ));
+      emit(
+        state.copyWith(
+          status: AppointmentVaccinationNoteDetailEditStatus.failure,
+          errorMessage: 'Lỗi khi tải danh sách bệnh: ${e.toString()}',
+          diseases: [],
+        ),
+      );
     }
   }
 
   void updateAppointmentDate(String date) {
-    emit(state.copyWith(
-      appointmentDate: date,
-      isFormValid: _validateForm(
+    emit(
+      state.copyWith(
         appointmentDate: date,
-        address: state.address,
-        diseaseId: state.diseaseId,
+        isFormValid: _validateForm(
+          appointmentDate: date,
+          address: state.address,
+          diseaseId: state.diseaseId,
+        ),
       ),
-    ));
+    );
   }
 
   void updateServiceType(int serviceType) {
@@ -87,47 +105,58 @@ class AppointmentVaccinationNoteDetailEditCubit extends Cubit<AppointmentVaccina
   }
 
   void updateAddress(String address) {
-    emit(state.copyWith(
-      address: address,
-      isFormValid: _validateForm(
-        appointmentDate: state.appointmentDate,
+    emit(
+      state.copyWith(
         address: address,
-        diseaseId: state.diseaseId,
+        isFormValid: _validateForm(
+          appointmentDate: state.appointmentDate,
+          address: address,
+          diseaseId: state.diseaseId,
+        ),
       ),
-    ));
+    );
   }
 
   void updateDiseaseId(int diseaseId) {
-    emit(state.copyWith(
-      diseaseId: diseaseId,
-      isFormValid: _validateForm(
-        appointmentDate: state.appointmentDate,
-        address: state.address,
+    emit(
+      state.copyWith(
         diseaseId: diseaseId,
+        isFormValid: _validateForm(
+          appointmentDate: state.appointmentDate,
+          address: state.address,
+          diseaseId: diseaseId,
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> updateAppointment() async {
-
     if (!state.canSubmit) {
-      emit(state.copyWith(
-        status: AppointmentVaccinationNoteDetailEditStatus.failure,
-        errorMessage: 'Vui lòng điền đầy đủ thông tin bắt buộc',
-      ));
+      emit(
+        state.copyWith(
+          status: AppointmentVaccinationNoteDetailEditStatus.failure,
+          errorMessage: 'Vui lòng điền đầy đủ thông tin bắt buộc',
+        ),
+      );
       return;
     }
 
     // Validate address only if location is 2 (Tại nhà)
     if (state.location == 2 && (state.address.trim().isEmpty)) {
-      emit(state.copyWith(
-        status: AppointmentVaccinationNoteDetailEditStatus.failure,
-        errorMessage: 'Vui lòng nhập địa chỉ khi chọn dịch vụ tại nhà',
-      ));
+      emit(
+        state.copyWith(
+          status: AppointmentVaccinationNoteDetailEditStatus.failure,
+          errorMessage: 'Vui lòng nhập địa chỉ khi chọn dịch vụ tại nhà',
+        ),
+      );
       return;
     }
 
-    emit(state.copyWith(status: AppointmentVaccinationNoteDetailEditStatus.loading));
+    emit(
+      state.copyWith(
+        status: AppointmentVaccinationNoteDetailEditStatus.loading,
+      ),
+    );
 
     try {
       final updateModel = UpdateAppointmentModel(
@@ -137,34 +166,45 @@ class AppointmentVaccinationNoteDetailEditCubit extends Cubit<AppointmentVaccina
         appointmentDate: state.appointmentDate,
         serviceType: 1, // Luôn là 1 (tiêm chủng)
         location: state.location,
-        address: state.location == 1 ? null : state.address.trim(), // Trung tâm = null, Tại nhà = address
+        address:
+            state.location == 1
+                ? null
+                : state.address.trim(), // Trung tâm = null, Tại nhà = address
         diseaseId: state.diseaseId,
       );
 
       // Debug log JSON sẽ gửi đi
       debugPrint('JSON to send: ${updateModel.toJson()}');
 
-      final result = await sl<PutAppointmentByIdUseCase>().call(params: updateModel);
+      final result = await sl<PutAppointmentByIdUseCase>().call(
+        params: updateModel,
+      );
 
       result.fold(
         (failure) {
-          emit(state.copyWith(
-            status: AppointmentVaccinationNoteDetailEditStatus.failure,
-            errorMessage: _getErrorMessage(failure),
-          ));
+          emit(
+            state.copyWith(
+              status: AppointmentVaccinationNoteDetailEditStatus.failure,
+              errorMessage: _getErrorMessage(failure),
+            ),
+          );
         },
         (success) {
-          emit(state.copyWith(
-            status: AppointmentVaccinationNoteDetailEditStatus.success,
-            errorMessage: null,
-          ));
+          emit(
+            state.copyWith(
+              status: AppointmentVaccinationNoteDetailEditStatus.success,
+              errorMessage: null,
+            ),
+          );
         },
       );
     } catch (e) {
-      emit(state.copyWith(
-        status: AppointmentVaccinationNoteDetailEditStatus.failure,
-        errorMessage: 'Có lỗi xảy ra khi cập nhật: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          status: AppointmentVaccinationNoteDetailEditStatus.failure,
+          errorMessage: 'Có lỗi xảy ra khi cập nhật: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -177,9 +217,9 @@ class AppointmentVaccinationNoteDetailEditCubit extends Cubit<AppointmentVaccina
     final addressValid = state.location == 1 || address.isNotEmpty;
 
     return appointmentDate != null &&
-           appointmentDate.isNotEmpty &&
-           addressValid &&
-           diseaseId != null;
+        appointmentDate.isNotEmpty &&
+        addressValid &&
+        diseaseId != null;
   }
 
   String _getErrorMessage(dynamic failure) {
@@ -204,10 +244,12 @@ class AppointmentVaccinationNoteDetailEditCubit extends Cubit<AppointmentVaccina
 
   void clearError() {
     if (state.status == AppointmentVaccinationNoteDetailEditStatus.failure) {
-      emit(state.copyWith(
-        status: AppointmentVaccinationNoteDetailEditStatus.initial,
-        errorMessage: null,
-      ));
+      emit(
+        state.copyWith(
+          status: AppointmentVaccinationNoteDetailEditStatus.initial,
+          errorMessage: null,
+        ),
+      );
     }
   }
 

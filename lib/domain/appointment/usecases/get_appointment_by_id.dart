@@ -7,7 +7,9 @@ class GetAppointmentsByIdUseCase extends UseCase<Either, int> {
   @override
   Future<Either> call({int? params}) async {
     if (params == null) {
-      throw ArgumentError('Parameters cannot be null for GetAppointmentsByIdUseCase');
+      throw ArgumentError(
+        'Parameters cannot be null for GetAppointmentsByIdUseCase',
+      );
     }
     return await sl<AppointmentRepository>().getAppointmentById(params);
   }

@@ -9,5 +9,5 @@ class ReactiveButtonSuccessState extends ReactiveButtonState {}
 class ReactiveButtonFailureState extends ReactiveButtonState {
   final String errorMessage;
 
-  ReactiveButtonFailureState({ required this.errorMessage});
+  ReactiveButtonFailureState({required this.errorMessage});
 }

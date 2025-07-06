@@ -19,7 +19,7 @@ class EditPetCubit extends Cubit<EditPetState> {
         },
         (data) {
           emit(EditPetSuccess(pet: pet));
-        }
+        },
       );
     } catch (e) {
       emit(EditPetError(e.toString()));

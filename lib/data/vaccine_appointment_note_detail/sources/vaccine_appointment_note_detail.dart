@@ -9,7 +9,8 @@ abstract class VaccineAppointmentNoteDetailService {
   Future<Either> getVaccineAppointmentNoteDetail(int appointmentId);
 }
 
-class VaccineAppointmentNoteDetailServiceImpl extends VaccineAppointmentNoteDetailService {
+class VaccineAppointmentNoteDetailServiceImpl
+    extends VaccineAppointmentNoteDetailService {
   @override
   Future<Either> getVaccineAppointmentNoteDetail(int appointmentId) async {
     try {
@@ -24,5 +25,4 @@ class VaccineAppointmentNoteDetailServiceImpl extends VaccineAppointmentNoteDeta
       return Left('Lỗi không xác định: $e');
     }
   }
-  
 }

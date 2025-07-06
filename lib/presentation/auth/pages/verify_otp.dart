@@ -14,20 +14,22 @@ class VerifyOtpPage extends StatelessWidget {
 
   // Tạo 6 controllers cho 6 ô input OTP (static để tránh tạo lại khi widget rebuild)
   static final List<TextEditingController> _controllers = List.generate(
-      6, (index) => TextEditingController());
+    6,
+    (index) => TextEditingController(),
+  );
 
   // Tạo 6 focus nodes cho 6 ô input OTP (static để tránh tạo lại khi widget rebuild)
   static final List<FocusNode> _focusNodes = List.generate(
-      6, (index) => FocusNode());
+    6,
+    (index) => FocusNode(),
+  );
 
   const VerifyOtpPage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BasicAppbar(
-        hideBack: false,
-      ),
+      appBar: BasicAppbar(hideBack: false),
       body: SafeArea(
         minimum: const EdgeInsets.all(16),
         child: Column(
@@ -66,10 +68,7 @@ class VerifyOtpPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       child: Text(
         'Mã xác thực đã được gửi đến: $email',
-        style: const TextStyle(
-          fontSize: 14,
-          color: AppColors.textGray,
-        ),
+        style: const TextStyle(fontSize: 14, color: AppColors.textGray),
         textAlign: TextAlign.center,
       ),
     );

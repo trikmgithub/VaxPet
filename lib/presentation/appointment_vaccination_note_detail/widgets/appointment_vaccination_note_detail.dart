@@ -47,7 +47,10 @@ class AppointmentVaccinationDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppointmentVaccinationNoteDetailCubit, AppointmentVaccinationNoteDetailState>(
+    return BlocBuilder<
+      AppointmentVaccinationNoteDetailCubit,
+      AppointmentVaccinationNoteDetailState
+    >(
       builder: (context, state) {
         if (state.status == AppointmentVaccinationNoteDetailStatus.loading) {
           return Center(
@@ -55,29 +58,25 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'Đang tải thông tin...',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
               ],
             ),
           );
-        } else if (state.status == AppointmentVaccinationNoteDetailStatus.failure) {
+        } else if (state.status ==
+            AppointmentVaccinationNoteDetailStatus.failure) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red[300],
-                ),
+                Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
                 const SizedBox(height: 16),
                 Text(
                   'Có lỗi xảy ra',
@@ -90,10 +89,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   state.errorMessage ?? 'Không thể tải thông tin',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
@@ -109,7 +105,9 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               ],
             ),
           );
-        } else if (state.status == AppointmentVaccinationNoteDetailStatus.success && state.appointmentDetail != null) {
+        } else if (state.status ==
+                AppointmentVaccinationNoteDetailStatus.success &&
+            state.appointmentDetail != null) {
           return state.appointmentDetail!.fold(
             (failure) => Center(
               child: Column(
@@ -123,10 +121,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Text(
                     'Không thể tải chi tiết lịch hẹn',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -141,18 +136,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 64,
-                  color: Colors.grey[400],
-                ),
+                Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
                 const SizedBox(height: 16),
                 Text(
                   'Không có dữ liệu',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -168,18 +156,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.info_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.info_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               'Không có dữ liệu lịch hẹn',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -193,8 +174,10 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     final horizontalPadding = isTablet ? screenWidth * 0.1 : 16.0;
 
     // Access petResponseDTO safely with null checks
-    final petResponseDTO = data['appointment']['petResponseDTO'] as Map<String, dynamic>? ?? {};
-    final diseaseResponseDTO = data['appointmentHasDiseaseResponseDTO'] as Map<String, dynamic>? ?? {};
+    final petResponseDTO =
+        data['appointment']['petResponseDTO'] as Map<String, dynamic>? ?? {};
+    final diseaseResponseDTO =
+        data['appointmentHasDiseaseResponseDTO'] as Map<String, dynamic>? ?? {};
 
     final petName = petResponseDTO['name'] ?? 'Không xác định';
     final petSpecies = petResponseDTO['species'] ?? 'Không xác định';
@@ -219,11 +202,13 @@ class AppointmentVaccinationDetail extends StatelessWidget {
         nameDisease = diseaseResponseDTO['diseaseName'];
       }
       // Second try: nested disease object with name field
-      else if (diseaseResponseDTO['disease'] != null && diseaseResponseDTO['disease']['name'] != null) {
+      else if (diseaseResponseDTO['disease'] != null &&
+          diseaseResponseDTO['disease']['name'] != null) {
         nameDisease = diseaseResponseDTO['disease']['name'];
       }
       // Third try: other possible structure
-      else if (diseaseResponseDTO['disease'] != null && diseaseResponseDTO['disease']['diseaseName'] != null) {
+      else if (diseaseResponseDTO['disease'] != null &&
+          diseaseResponseDTO['disease']['diseaseName'] != null) {
         nameDisease = diseaseResponseDTO['disease']['diseaseName'];
       }
     }
@@ -231,12 +216,20 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: 16.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Status Badge and Header Card
-            _buildHeaderCard(context, appointmentStatus, appointmentCode, isTablet),
+            _buildHeaderCard(
+              context,
+              appointmentStatus,
+              appointmentCode,
+              isTablet,
+            ),
 
             const SizedBox(height: 20),
 
@@ -247,7 +240,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               petSpecies,
               petBreed,
               petImage,
-              isTablet
+              isTablet,
             ),
 
             const SizedBox(height: 20),
@@ -258,7 +251,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               appointmentDate,
               serviceType,
               nameDisease,
-              isTablet
+              isTablet,
             ),
 
             const SizedBox(height: 20),
@@ -284,7 +277,12 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderCard(BuildContext context, int appointmentStatus, String appointmentCode, bool isTablet) {
+  Widget _buildHeaderCard(
+    BuildContext context,
+    int appointmentStatus,
+    String appointmentCode,
+    bool isTablet,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(isTablet ? 24.0 : 20.0),
@@ -310,13 +308,17 @@ class AppointmentVaccinationDetail extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             decoration: BoxDecoration(
               color: appointmentStatus == 1 ? Colors.orange : Colors.green,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: (appointmentStatus == 1 ? Colors.orange : Colors.green).withValues(alpha: 0.3),
+                  color: (appointmentStatus == 1 ? Colors.orange : Colors.green)
+                      .withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -370,7 +372,13 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildAppointmentInfoCard(BuildContext context, String appointmentDate, int serviceType, String nameDisease, bool isTablet) {
+  Widget _buildAppointmentInfoCard(
+    BuildContext context,
+    String appointmentDate,
+    int serviceType,
+    String nameDisease,
+    bool isTablet,
+  ) {
     return _buildInfoCard(
       title: 'Thông tin lịch hẹn',
       icon: Icons.calendar_today,
@@ -405,7 +413,14 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildPetInfoCard(BuildContext context, String petName, String petSpecies, String petBreed, String? petImage, bool isTablet) {
+  Widget _buildPetInfoCard(
+    BuildContext context,
+    String petName,
+    String petSpecies,
+    String petBreed,
+    String? petImage,
+    bool isTablet,
+  ) {
     return _buildInfoCard(
       title: 'Thông tin thú cưng',
       icon: Icons.pets,
@@ -472,7 +487,12 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildLocationCard(BuildContext context, int location, String address, bool isTablet) {
+  Widget _buildLocationCard(
+    BuildContext context,
+    int location,
+    String address,
+    bool isTablet,
+  ) {
     return _buildInfoCard(
       title: 'Địa điểm',
       icon: Icons.location_on,
@@ -496,7 +516,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildAdditionalInfoCard(BuildContext context, String createdAt, bool isTablet) {
+  Widget _buildAdditionalInfoCard(
+    BuildContext context,
+    String createdAt,
+    bool isTablet,
+  ) {
     return _buildInfoCard(
       title: 'Thông tin khác',
       icon: Icons.info,
@@ -545,11 +569,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
                   color: iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: iconColor,
-                  size: isTablet ? 24 : 20,
-                ),
+                child: Icon(icon, color: iconColor, size: isTablet ? 24 : 20),
               ),
               const SizedBox(width: 12),
               Text(
@@ -579,13 +599,10 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
-        crossAxisAlignment: isAddress ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment:
+            isAddress ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            color: Colors.grey[600],
-            size: isTablet ? 22 : 20,
-          ),
+          Icon(icon, color: Colors.grey[600], size: isTablet ? 22 : 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -616,7 +633,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, dynamic data, bool isTablet) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    dynamic data,
+    bool isTablet,
+  ) {
     return Column(
       children: [
         Row(
@@ -628,24 +649,24 @@ class AppointmentVaccinationDetail extends StatelessWidget {
 
                   final result = await Navigator.of(context).push<bool>(
                     MaterialPageRoute(
-                      builder: (context) => BlocProvider.value(
-                        value: editCubit,
-                        child: AppointmentVaccinationNoteDetailEditPage(
-                          appointmentData: data,
-                        ),
-                      ),
+                      builder:
+                          (context) => BlocProvider.value(
+                            value: editCubit,
+                            child: AppointmentVaccinationNoteDetailEditPage(
+                              appointmentData: data,
+                            ),
+                          ),
                     ),
                   );
 
                   if (result == true && context.mounted) {
                     final appointmentId = data['appointment']['appointmentId'];
-                    context.read<AppointmentVaccinationNoteDetailCubit>().fetchAppointmentDetail(appointmentId);
+                    context
+                        .read<AppointmentVaccinationNoteDetailCubit>()
+                        .fetchAppointmentDetail(appointmentId);
                   }
                 },
-                icon: Icon(
-                  Icons.edit,
-                  size: isTablet ? 24 : 20,
-                ),
+                icon: Icon(Icons.edit, size: isTablet ? 24 : 20),
                 label: Text(
                   'Chỉnh sửa',
                   style: TextStyle(
@@ -673,10 +694,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
                 onPressed: () {
                   _showCancelDialog(context, data);
                 },
-                icon: Icon(
-                  Icons.cancel,
-                  size: isTablet ? 24 : 20,
-                ),
+                icon: Icon(Icons.cancel, size: isTablet ? 24 : 20),
                 label: Text(
                   'Hủy lịch hẹn',
                   style: TextStyle(
@@ -714,17 +732,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                color: Colors.orange,
-                size: 28,
-              ),
+              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
               const SizedBox(width: 12),
               const Text(
                 'Xác nhận hủy',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -737,10 +749,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Không',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 16),
               ),
             ),
             ElevatedButton(
@@ -749,7 +758,9 @@ class AppointmentVaccinationDetail extends StatelessWidget {
                 // TODO: Implement appointment cancellation logic
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Tính năng hủy lịch hẹn sẽ được cập nhật sớm'),
+                    content: Text(
+                      'Tính năng hủy lịch hẹn sẽ được cập nhật sớm',
+                    ),
                     backgroundColor: Colors.orange,
                   ),
                 );
@@ -763,10 +774,7 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               ),
               child: const Text(
                 'Có, hủy lịch',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ],

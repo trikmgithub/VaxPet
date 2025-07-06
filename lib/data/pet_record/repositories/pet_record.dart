@@ -9,19 +9,17 @@ class PetRecordRepositoryImpl extends PetRecordRepository {
   @override
   Future<Either> getPetRecord(int petId) async {
     var returnedData = await sl<PetRecordService>().getPetRecord(petId);
-    return returnedData.fold(
-      (error) => Left(error.toString()),
-      (data) {
-        try {
-          final List<dynamic> dataList = data['data'];
-          final petRecords = dataList
-              .map((json) => PetRecordModel.fromJson(json).toEntity())
-              .toList();
-          return Right(petRecords);
-        } catch (e) {
-          return Left('Error processing pet record data: $e');
-        }
-      },
-    );
+    return returnedData.fold((error) => Left(error.toString()), (data) {
+      try {
+        final List<dynamic> dataList = data['data'];
+        final petRecords =
+            dataList
+                .map((json) => PetRecordModel.fromJson(json).toEntity())
+                .toList();
+        return Right(petRecords);
+      } catch (e) {
+        return Left('Error processing pet record data: $e');
+      }
+    });
   }
 }

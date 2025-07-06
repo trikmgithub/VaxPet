@@ -3,11 +3,15 @@ import '../../../domain/vaccine_appointment_note_detail/usecases/get_vaccine_app
 import '../../../service_locator.dart';
 import 'appointment_vaccination_note_detail_state.dart';
 
-class AppointmentVaccinationNoteDetailCubit extends Cubit<AppointmentVaccinationNoteDetailState> {
-  AppointmentVaccinationNoteDetailCubit() : super(const AppointmentVaccinationNoteDetailState());
+class AppointmentVaccinationNoteDetailCubit
+    extends Cubit<AppointmentVaccinationNoteDetailState> {
+  AppointmentVaccinationNoteDetailCubit()
+    : super(const AppointmentVaccinationNoteDetailState());
 
   Future<void> fetchAppointmentDetail(int appointmentId) async {
-    emit(state.copyWith(status: AppointmentVaccinationNoteDetailStatus.loading));
+    emit(
+      state.copyWith(status: AppointmentVaccinationNoteDetailStatus.loading),
+    );
 
     try {
       final result = await sl<GetVaccineAppointmentNoteDetailUseCase>().call(

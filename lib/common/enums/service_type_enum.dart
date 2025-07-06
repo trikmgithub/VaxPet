@@ -1,5 +1,1 @@
-enum ServiceTypeEnum {
-  vaccination,
-  microchip,
-  healthCertificate
-}
+enum ServiceTypeEnum { vaccination, microchip, healthCertificate }

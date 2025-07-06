@@ -4,8 +4,8 @@ import 'bottom_nav_bar_event.dart';
 import 'bottom_nav_bar_state.dart';
 
 class BottomNavBarBloc extends Bloc<BottomNavBarEvent, BottomNavBarState> {
-  BottomNavBarBloc() : super(NavigationChanged(index: 0)){
-    on<NavigateTo>((event, emit){
+  BottomNavBarBloc() : super(NavigationChanged(index: 0)) {
+    on<NavigateTo>((event, emit) {
       emit(NavigationChanged(index: event.index));
     });
   }

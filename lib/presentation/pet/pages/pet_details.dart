@@ -15,7 +15,14 @@ class PetDetailsPage extends StatelessWidget {
   final String? petImage;
   final String petSpecies;
   final String? petBirthday;
-  const PetDetailsPage({super.key, required this.petId, required this.petName, this.petImage, required this.petSpecies, this.petBirthday});
+  const PetDetailsPage({
+    super.key,
+    required this.petId,
+    required this.petName,
+    this.petImage,
+    required this.petSpecies,
+    this.petBirthday,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +53,7 @@ class PetDetailsPage extends StatelessWidget {
                 ),
                 child: BackButtonBasic(),
               ),
-        
+
               // Pet Profile Section with avatar on top
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -66,25 +73,33 @@ class PetDetailsPage extends StatelessWidget {
                                 color: Colors.black26,
                                 blurRadius: 12,
                                 spreadRadius: 2,
-                                offset: Offset(0, 2)
-                              )
+                                offset: Offset(0, 2),
+                              ),
                             ],
                           ),
                           child: Hero(
                             tag: 'pet-$petId',
                             child: CircleAvatar(
-                              radius: isTablet ? screenWidth * 0.08 : screenWidth * 0.12,
+                              radius:
+                                  isTablet
+                                      ? screenWidth * 0.08
+                                      : screenWidth * 0.12,
                               backgroundColor: Colors.white,
-                              backgroundImage: petImage != null && petImage!.isNotEmpty
-                                  ? NetworkImage(petImage!)
-                                  : null,
-                              child: petImage == null || petImage!.isEmpty
-                                  ? Icon(
-                                      Icons.pets,
-                                      size: isTablet ? screenWidth * 0.08 : screenWidth * 0.10,
-                                      color: Colors.grey[600]
-                                    )
-                                  : null,
+                              backgroundImage:
+                                  petImage != null && petImage!.isNotEmpty
+                                      ? NetworkImage(petImage!)
+                                      : null,
+                              child:
+                                  petImage == null || petImage!.isEmpty
+                                      ? Icon(
+                                        Icons.pets,
+                                        size:
+                                            isTablet
+                                                ? screenWidth * 0.08
+                                                : screenWidth * 0.10,
+                                        color: Colors.grey[600],
+                                      )
+                                      : null,
                             ),
                           ),
                         ),
@@ -92,7 +107,10 @@ class PetDetailsPage extends StatelessWidget {
                         Text(
                           petName,
                           style: TextStyle(
-                            fontSize: isTablet ? screenWidth * 0.04 : screenWidth * 0.06,
+                            fontSize:
+                                isTablet
+                                    ? screenWidth * 0.04
+                                    : screenWidth * 0.06,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textBlack,
                           ),
@@ -102,7 +120,10 @@ class PetDetailsPage extends StatelessWidget {
                         Text(
                           petSpecies,
                           style: TextStyle(
-                            fontSize: isTablet ? screenWidth * 0.025 : screenWidth * 0.035,
+                            fontSize:
+                                isTablet
+                                    ? screenWidth * 0.025
+                                    : screenWidth * 0.035,
                             color: Colors.grey[700],
                             fontWeight: FontWeight.w500,
                           ),
@@ -112,124 +133,139 @@ class PetDetailsPage extends StatelessWidget {
                   ),
                 ),
               ),
-        
+
               // Services Card Section
               _buildSectionCard(
                 context,
                 title: 'Đặt dịch vụ',
-                child: _buildServiceGrid(
-                  context,
-                  [
-                    ServiceItem(
-                      title: 'Vắc xin',
-                      icon: Icons.vaccines,
-                      onTap: () {
-                        AppNavigator.push(context, AppointmentVaccinationChoicePage(
+                child: _buildServiceGrid(context, [
+                  ServiceItem(
+                    title: 'Vắc xin',
+                    icon: Icons.vaccines,
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        AppointmentVaccinationChoicePage(
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,
                           petImage: petImage,
-                        ));
-                      },
-                    ),
-                    ServiceItem(
-                      title: 'Microchip',
-                      icon: Icons.qr_code,
-                      onTap: () {
-                        AppNavigator.push(context, AppointmentMicrochipChoicePage(
+                        ),
+                      );
+                    },
+                  ),
+                  ServiceItem(
+                    title: 'Microchip',
+                    icon: Icons.qr_code,
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        AppointmentMicrochipChoicePage(
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,
-                        ));
-                      },
-                    ),
-                    ServiceItem(
-                      title: 'Chứng nhận sức khỏe',
-                      icon: Icons.book,
-                      onTap: () {
-                        AppNavigator.push(context, AppointmentHealthCertificateChoicePage(
+                        ),
+                      );
+                    },
+                  ),
+                  ServiceItem(
+                    title: 'Chứng nhận sức khỏe',
+                    icon: Icons.book,
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        AppointmentHealthCertificateChoicePage(
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,
-                        ));
-                      },
-                    ),
-                  ],
-                ),
+                        ),
+                      );
+                    },
+                  ),
+                ]),
               ),
-        
+
               SizedBox(height: screenHeight * 0.02),
-        
+
               // Pet Records Card Section
               _buildSectionCard(
                 context,
                 title: 'Sổ ghi chép',
-                child: _buildServiceGrid(
-                  context,
-                  [
-                    ServiceItem(
-                      title: 'Vắc xin',
-                      icon: Icons.vaccines,
-                      onTap: () {
-                        AppNavigator.push(context, AppointmentVaccinationNotePage(
+                child: _buildServiceGrid(context, [
+                  ServiceItem(
+                    title: 'Vắc xin',
+                    icon: Icons.vaccines,
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        AppointmentVaccinationNotePage(
                           petName: petName,
                           petId: petId,
                           petSpecies: petSpecies,
-                        ));
-                      },
-                    ),
-                    ServiceItem(
-                      title: 'Microchip',
-                      icon: Icons.qr_code,
-                      onTap: () {},
-                    ),
-                    ServiceItem(
-                      title: 'Chứng nhận sức khỏe',
-                      icon: Icons.book,
-                      onTap: () {},
-                    ),
-                    ServiceItem(
-                      title: 'Lịch gợi ý',
-                      icon: Icons.calendar_month,
-                      onTap: () {},
-                    ),
-                    ServiceItem(
-                      title: 'Cẩm nang',
-                      icon: Icons.tips_and_updates,
-                      onTap: () {},
-                    ),
-                  ],
-                ),
+                        ),
+                      );
+                    },
+                  ),
+                  ServiceItem(
+                    title: 'Microchip',
+                    icon: Icons.qr_code,
+                    onTap: () {},
+                  ),
+                  ServiceItem(
+                    title: 'Chứng nhận sức khỏe',
+                    icon: Icons.book,
+                    onTap: () {},
+                  ),
+                  ServiceItem(
+                    title: 'Lịch gợi ý',
+                    icon: Icons.calendar_month,
+                    onTap: () {},
+                  ),
+                  ServiceItem(
+                    title: 'Cẩm nang',
+                    icon: Icons.tips_and_updates,
+                    onTap: () {},
+                  ),
+                ]),
               ),
-        
+
               SizedBox(height: screenHeight * 0.02),
-        
+
               // Pet Info Card Section
               _buildSectionCard(
                 context,
                 title: 'Thông tin thú cưng',
-                child: _buildServiceGrid(
-                  context,
-                  [
-                    ServiceItem(
-                      title: 'Thông tin',
-                      icon: Icons.medical_information,
-                      onTap: () {
-                        // Navigate to pet information page
-                        AppNavigator.push(context, PetInformationPage(petId: petId));
-                      },
-                    ),
-                    ServiceItem(
-                      title: 'Hồ sơ tiêm chủng',
-                      icon: Icons.emergency_recording,
-                      onTap: () {
-                        AppNavigator.push(context, PetRecordPage(petId: petId, petName: petName, petSpecies: petSpecies, petImage: petImage, petBirthday: petBirthday));
-                      },
-                    ),
-                  ],
-                ),
+                child: _buildServiceGrid(context, [
+                  ServiceItem(
+                    title: 'Thông tin',
+                    icon: Icons.medical_information,
+                    onTap: () {
+                      // Navigate to pet information page
+                      AppNavigator.push(
+                        context,
+                        PetInformationPage(petId: petId),
+                      );
+                    },
+                  ),
+                  ServiceItem(
+                    title: 'Hồ sơ tiêm chủng',
+                    icon: Icons.emergency_recording,
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        PetRecordPage(
+                          petId: petId,
+                          petName: petName,
+                          petSpecies: petSpecies,
+                          petImage: petImage,
+                          petBirthday: petBirthday,
+                        ),
+                      );
+                    },
+                  ),
+                ]),
               ),
-        
+
               SizedBox(height: screenHeight * 0.05),
             ],
           ),
@@ -239,7 +275,11 @@ class PetDetailsPage extends StatelessWidget {
   }
 
   // Helper method to build section cards with a consistent design
-  Widget _buildSectionCard(BuildContext context, {required String title, required Widget child}) {
+  Widget _buildSectionCard(
+    BuildContext context, {
+    required String title,
+    required Widget child,
+  }) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -266,7 +306,7 @@ class PetDetailsPage extends StatelessWidget {
               screenWidth * 0.04,
               screenHeight * 0.02,
               screenWidth * 0.04,
-              screenHeight * 0.01
+              screenHeight * 0.01,
             ),
             child: Text(
               title,
@@ -278,10 +318,7 @@ class PetDetailsPage extends StatelessWidget {
             ),
           ),
           Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-          Padding(
-            padding: EdgeInsets.all(screenWidth * 0.03),
-            child: child,
-          ),
+          Padding(padding: EdgeInsets.all(screenWidth * 0.03), child: child),
         ],
       ),
     );
@@ -358,9 +395,5 @@ class ServiceItem {
   final IconData icon;
   final VoidCallback onTap;
 
-  ServiceItem({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
+  ServiceItem({required this.title, required this.icon, required this.onTap});
 }

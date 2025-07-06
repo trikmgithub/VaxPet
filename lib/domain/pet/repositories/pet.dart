@@ -16,5 +16,4 @@ abstract class PetRepository {
 
   //Delete
   Future<Either> deletePet(int petId);
-
 }

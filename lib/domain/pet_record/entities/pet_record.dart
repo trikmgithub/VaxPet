@@ -83,11 +83,7 @@ class VetEntity {
   final String? name;
   final String? specialization;
 
-  VetEntity({
-    required this.vetCode,
-    this.name,
-    this.specialization,
-  });
+  VetEntity({required this.vetCode, this.name, this.specialization});
 }
 
 class VaccineBatchEntity {
@@ -129,7 +125,5 @@ class VaccineEntity {
 class DiseaseEntity {
   final String diseaseName;
 
-  DiseaseEntity({
-    required this.diseaseName,
-  });
+  DiseaseEntity({required this.diseaseName});
 }

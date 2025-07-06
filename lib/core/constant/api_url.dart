@@ -1,6 +1,6 @@
 class ApiUrl {
-
-  static const baseURL = 'https://petvax-dva5eufae0brhdgf.eastasia-01.azurewebsites.net/';
+  static const baseURL =
+      'https://petvax-dva5eufae0brhdgf.eastasia-01.azurewebsites.net/';
   static const apiV = 'api/';
 
   // AUTH ENDPOINTS
@@ -11,9 +11,11 @@ class ApiUrl {
 
   // CUSTOMER ENDPOINTS
   //Get
-  static const getCustomerByAccountId = '${apiV}customer/get-customer-by-account-id';
+  static const getCustomerByAccountId =
+      '${apiV}customer/get-customer-by-account-id';
   //Put
-  static const putUpdateCustomerByCustomerId = '${apiV}customer/update-customer';
+  static const putUpdateCustomerByCustomerId =
+      '${apiV}customer/update-customer';
 
   // PET ENDPOINTS
   //Get
@@ -29,28 +31,38 @@ class ApiUrl {
 
   // APPOINTMENT ENDPOINTS
   //Get
-  static const getAppointmentByCustomerAndStatus = '${apiV}appointment/get-appointment-by-customer-and-status';
-  static const getAppointmentByPetAndStatus = '${apiV}appointment/get-appointment-by-pet-and-status';
+  static const getAppointmentByCustomerAndStatus =
+      '${apiV}appointment/get-appointment-by-customer-and-status';
+  static const getAppointmentByPetAndStatus =
+      '${apiV}appointment/get-appointment-by-pet-and-status';
   static const getAppointmentById = '${apiV}appointment/get-appointment-by-id';
-  static const getPastAppointmentByCusId = '${apiV}appointment/get-past-appointments-by-customer-id';
-  static const getTodayAppointmentByCusId = '${apiV}appointment/get-today-appointments-by-customer-id';
-  static const getFutureAppointmentByCusId = '${apiV}appointment/get-future-appointments-by-customer-id';
+  static const getPastAppointmentByCusId =
+      '${apiV}appointment/get-past-appointments-by-customer-id';
+  static const getTodayAppointmentByCusId =
+      '${apiV}appointment/get-today-appointments-by-customer-id';
+  static const getFutureAppointmentByCusId =
+      '${apiV}appointment/get-future-appointments-by-customer-id';
   //Post
-  static const createAppointmentVaccination = '${apiV}appointment/create-appointment-vaccination';
+  static const createAppointmentVaccination =
+      '${apiV}appointment/create-appointment-vaccination';
   //Put
   static const putUpdateAppointment = '${apiV}appointment/update-appointment';
   //Delete
 
   // APPOINTMENT FOR VACCINATION ENDPOINTS
   //Get
-  static const getAppointmentForVaccinationByPetIdAndStatus = '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-pet-id-and-status';
-  static const getAppointmentForVaccinationById = '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-id';
+  static const getAppointmentForVaccinationByPetIdAndStatus =
+      '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-pet-id-and-status';
+  static const getAppointmentForVaccinationById =
+      '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-id';
   //Post
-  static const postAppointmentForVaccination = '${apiV}AppointmentForVaccination/create-appointment-vaccination';
+  static const postAppointmentForVaccination =
+      '${apiV}AppointmentForVaccination/create-appointment-vaccination';
 
   // APPOINTMENT FOR MICROCHIP ENDPOINTS
   //Post
-  static const postAppointmentForMicrochip = '${apiV}AppointmentForMicrochip/create-appointment-microchip';
+  static const postAppointmentForMicrochip =
+      '${apiV}AppointmentForMicrochip/create-appointment-microchip';
 
   // DISEASE ENDPOINTS
   static const getDiseaseByPetId = '${apiV}disease/get-disease-by-pet-id';
@@ -62,5 +74,6 @@ class ApiUrl {
 
   // VACCINE PROFILES ENDPOINTS
   //Get
-  static const getVaccineProfileByPetId = '${apiV}vaccineProfiles/getVaccineProfileByPetId';
+  static const getVaccineProfileByPetId =
+      '${apiV}vaccineProfiles/getVaccineProfileByPetId';
 }

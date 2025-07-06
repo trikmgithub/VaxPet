@@ -25,9 +25,7 @@ class SplashPage extends StatelessWidget {
         },
         child: Container(
           alignment: Alignment.center,
-          child: SvgPicture.asset(
-            AppVectors.logoVaxPet,
-          ),
+          child: SvgPicture.asset(AppVectors.logoVaxPet),
         ),
       ),
     );

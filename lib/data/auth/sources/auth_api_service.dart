@@ -38,8 +38,8 @@ class AuthServiceImpl extends AuthService {
   Future<Either> signin(SigninReqParams params) async {
     try {
       var response = await sl<DioClient>().post(
-          ApiUrl.login,
-          data: params.toMap()
+        ApiUrl.login,
+        data: params.toMap(),
       );
       return Right(response.data);
     } on DioException catch (e) {
@@ -94,7 +94,6 @@ class AuthServiceImpl extends AuthService {
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
-
   }
 
   @override
@@ -108,7 +107,5 @@ class AuthServiceImpl extends AuthService {
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
-
   }
-
 }

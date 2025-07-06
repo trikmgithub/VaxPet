@@ -16,7 +16,7 @@ class CustomerProfileMapper {
       dateOfBirth: customer.dateOfBirth,
       gender: customer.gender,
       address: customer.address,
-      currentPoints: customer.currentPoints
+      currentPoints: customer.currentPoints,
     );
   }
 }
