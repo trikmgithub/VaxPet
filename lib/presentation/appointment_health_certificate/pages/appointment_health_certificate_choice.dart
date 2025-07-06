@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vaxpet/common/widgets/back_button/back_button.dart';
 import '../../../common/helper/navigation/app_navigation.dart';
 import '../../../core/configs/theme/app_colors.dart';
-import '../../appointment_microchip/pages/appointment_microchip_clinic.dart';
+import 'appointment_health_certificate_clinic.dart';
 
 class AppointmentHealthCertificateChoicePage extends StatelessWidget {
   final String petName;
@@ -78,7 +78,7 @@ class AppointmentHealthCertificateChoicePage extends StatelessWidget {
                       onTap: () {
                         AppNavigator.push(
                           context,
-                          AppointmentMicrochipClinicPage(
+                          AppointmentHealthCertificateClinicPage(
                             petName: petName,
                             petId: petId,
                             petSpecies: petSpecies,

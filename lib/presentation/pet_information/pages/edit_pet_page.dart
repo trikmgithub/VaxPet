@@ -75,12 +75,6 @@ class _EditPetPageState extends State<EditPetPage> {
     return gender; // Return as is if not recognized
   }
 
-  // Helper method to convert English gender back to original format if needed
-  String? _convertGenderForSaving(String? gender) {
-    // Keep it in English for consistency with the backend
-    return gender;
-  }
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -190,7 +184,7 @@ class _EditPetPageState extends State<EditPetPage> {
 
       return dateString; // Return original if can't parse
     } catch (e) {
-      return dateString ?? '';
+      return dateString;
     }
   }
 
@@ -384,7 +378,7 @@ class _EditPetForm extends StatelessWidget {
 
   Widget _buildLoadingOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.5),
+      color: Colors.black.withValues(alpha: 0.5),
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -560,7 +554,7 @@ class _EditPetForm extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -575,7 +569,7 @@ class _EditPetForm extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, size: 20, color: AppColors.primary),
@@ -706,7 +700,7 @@ class _EditPetForm extends StatelessWidget {
   }
 
   Widget _buildSubmitButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () => _submitForm(context),

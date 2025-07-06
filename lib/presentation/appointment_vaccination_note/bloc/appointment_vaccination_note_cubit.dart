@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vaxpet/domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
 import 'package:vaxpet/presentation/appointment_vaccination_note/bloc/appointment_vaccination_note_state.dart';
 import 'package:vaxpet/service_locator.dart';
@@ -10,6 +11,12 @@ class AppointmentVaccinationNoteCubit
     : super(const AppointmentVaccinationNoteState());
 
   static const int vaccinationType = 1; // Service type for vaccination
+
+  void _debugLog(String message) {
+    if (kDebugMode) {
+      print(message);
+    }
+  }
 
   // Status 1: Pending confirmation
   // Status 2-11: Confirmed (confirmed, checkedIn, injected, implanted, paid, applied, done, completed, cancelled, rejected)
@@ -38,29 +45,42 @@ class AppointmentVaccinationNoteCubit
 
           result.fold(
             (failure) {
-              print('Failed to fetch appointments for status $status: $failure');
+              _debugLog(
+                'Failed to fetch appointments for status $status: $failure',
+              );
             },
             (appointments) {
               if (appointments is List && appointments.isNotEmpty) {
                 // Filter chỉ lấy vaccination appointments
-                final vaccinationAppointments = appointments
-                    .where((appointment) =>
-                        appointment['serviceType'] == vaccinationType)
-                    .toList();
+                final vaccinationAppointments =
+                    appointments
+                        .where(
+                          (appointment) =>
+                              appointment['serviceType'] == vaccinationType,
+                        )
+                        .toList();
 
                 if (vaccinationAppointments.isNotEmpty) {
                   // Sort appointments by date (newest first)
                   vaccinationAppointments.sort((a, b) {
-                    final dateA = DateTime.tryParse(
-                        a['appointmentDate']?.toString() ?? '') ?? DateTime.now();
-                    final dateB = DateTime.tryParse(
-                        b['appointmentDate']?.toString() ?? '') ?? DateTime.now();
+                    final dateA =
+                        DateTime.tryParse(
+                          a['appointmentDate']?.toString() ?? '',
+                        ) ??
+                        DateTime.now();
+                    final dateB =
+                        DateTime.tryParse(
+                          b['appointmentDate']?.toString() ?? '',
+                        ) ??
+                        DateTime.now();
                     return dateB.compareTo(dateA);
                   });
 
                   // Lưu trữ theo appointmentStatus thực tế từ API, không phải status parameter
                   for (var appointment in vaccinationAppointments) {
-                    final actualStatus = appointment['appointment']?['appointmentStatus'] ?? status;
+                    final actualStatus =
+                        appointment['appointment']?['appointmentStatus'] ??
+                        status;
 
                     if (!appointmentsByStatus.containsKey(actualStatus)) {
                       appointmentsByStatus[actualStatus] = [];
@@ -78,16 +98,18 @@ class AppointmentVaccinationNoteCubit
             },
           );
         } catch (e) {
-          print('Error fetching status $status: $e');
+          _debugLog('Error fetching status $status: $e');
         }
       }
 
       // Sort all confirmed appointments by date (newest first)
       allConfirmedAppointments.sort((a, b) {
-        final dateA = DateTime.tryParse(
-            a['appointmentDate']?.toString() ?? '') ?? DateTime.now();
-        final dateB = DateTime.tryParse(
-            b['appointmentDate']?.toString() ?? '') ?? DateTime.now();
+        final dateA =
+            DateTime.tryParse(a['appointmentDate']?.toString() ?? '') ??
+            DateTime.now();
+        final dateB =
+            DateTime.tryParse(b['appointmentDate']?.toString() ?? '') ??
+            DateTime.now();
         return dateB.compareTo(dateA);
       });
 
@@ -97,20 +119,26 @@ class AppointmentVaccinationNoteCubit
       // Sort appointments within each status by date
       for (int status in appointmentsByStatus.keys) {
         appointmentsByStatus[status]!.sort((a, b) {
-          final dateA = DateTime.tryParse(
-              a['appointmentDate']?.toString() ?? '') ?? DateTime.now();
-          final dateB = DateTime.tryParse(
-              b['appointmentDate']?.toString() ?? '') ?? DateTime.now();
+          final dateA =
+              DateTime.tryParse(a['appointmentDate']?.toString() ?? '') ??
+              DateTime.now();
+          final dateB =
+              DateTime.tryParse(b['appointmentDate']?.toString() ?? '') ??
+              DateTime.now();
           return dateB.compareTo(dateA);
         });
       }
 
       // Debug: Print appointments by status
-      print('=== Debug: Appointments by Status ===');
+      _debugLog('=== Debug: Appointments by Status ===');
       for (int status in appointmentsByStatus.keys) {
-        print('Status $status: ${appointmentsByStatus[status]!.length} appointments');
+        _debugLog(
+          'Status $status: ${appointmentsByStatus[status]!.length} appointments',
+        );
         for (var appointment in appointmentsByStatus[status]!) {
-          print('  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})');
+          _debugLog(
+            '  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})',
+          );
         }
       }
 
@@ -143,13 +171,17 @@ class AppointmentVaccinationNoteCubit
 
   // Method to set status filter
   void setStatusFilter(int? statusFilter) {
-    print('=== Setting Status Filter ===');
-    print('Selected status: $statusFilter');
+    _debugLog('=== Setting Status Filter ===');
+    _debugLog('Selected status: $statusFilter');
     if (statusFilter != null) {
       final appointments = state.appointmentsByStatus[statusFilter] ?? [];
-      print('Appointments for status $statusFilter: ${appointments.length}');
+      _debugLog(
+        'Appointments for status $statusFilter: ${appointments.length}',
+      );
       for (var appointment in appointments) {
-        print('  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})');
+        _debugLog(
+          '  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})',
+        );
       }
     }
     emit(state.copyWith(selectedStatusFilter: statusFilter));
@@ -157,7 +189,7 @@ class AppointmentVaccinationNoteCubit
 
   // Method to clear filter
   void clearStatusFilter() {
-    print('=== Clearing Status Filter ===');
+    _debugLog('=== Clearing Status Filter ===');
     emit(state.copyWith(clearFilter: true));
   }
 

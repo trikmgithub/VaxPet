@@ -76,4 +76,9 @@ class ApiUrl {
   //Get
   static const getVaccineProfileByPetId =
       '${apiV}vaccineProfiles/getVaccineProfileByPetId';
+
+  // APPOINTMENT FOR HEALTH CERTIFICATE ENDPOINTS
+  //Post
+  static const postAppointmentForHealthCertificate =
+      '${apiV}AppointmentForHealthCondition/create-appointment-healthCondition';
 }

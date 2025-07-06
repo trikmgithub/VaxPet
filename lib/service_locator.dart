@@ -6,6 +6,8 @@ import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 import 'core/network/dio_client.dart';
 import 'data/appointment/repositories/appointment.dart';
 import 'data/appointment/sources/appointment.dart';
+import 'data/appointment_health_certificate/repositories/appointment_health_certificate.dart';
+import 'data/appointment_health_certificate/sources/appointment_health_certificate.dart';
 import 'data/appointment_microchip/repositories/appointment_microchip.dart';
 import 'data/appointment_microchip/sources/appointment_microchip.dart';
 import 'data/appointment_vaccination/repositories/appointment_vaccination.dart';
@@ -30,6 +32,8 @@ import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_past_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_today_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/put_appointment_by_id.dart';
+import 'domain/appointment_health_certificate/repositories/appointment_health_certificate.dart';
+import 'domain/appointment_health_certificate/usecases/post_appointment_health_certificate.dart';
 import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
 import 'domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import 'domain/appointment_vaccination/repositories/appointment_vaccination.dart';
@@ -86,6 +90,9 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<CustomerProfileService>(CustomerProfileServiceImpl());
   sl.registerSingleton<PetRecordService>(PetRecordServiceImpl());
+  sl.registerSingleton<AppointmentHealthCertificateService>(
+    AppointmentHealthCertificateServiceImpl(),
+  );
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -109,6 +116,9 @@ void setupServiceLocator() {
     CustomerProfileRepositoryImpl(),
   );
   sl.registerSingleton<PetRecordRepository>(PetRecordRepositoryImpl());
+  sl.registerSingleton<AppointmentHealthCertificateRepository>(
+    AppointmentHealthCertificateRepositoryImpl(),
+  );
 
   // User Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -153,4 +163,5 @@ void setupServiceLocator() {
   sl.registerSingleton<GetPetUseCase>(GetPetUseCase());
   sl.registerSingleton<PutPetUseCase>(PutPetUseCase());
   sl.registerSingleton<GetPetRecordUseCase>(GetPetRecordUseCase());
+  sl.registerSingleton<PostAppointmentHealthCertificateUseCase>(PostAppointmentHealthCertificateUseCase());
 }

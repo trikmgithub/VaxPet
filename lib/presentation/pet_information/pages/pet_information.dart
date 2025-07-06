@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/presentation/pet_information/bloc/pet_information_cubit.dart';
 import 'package:vaxpet/presentation/pet_information/bloc/pet_information_state.dart';
 import 'package:vaxpet/presentation/pet_information/pages/edit_pet_page.dart';
-import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/theme/app_colors.dart';
 
@@ -154,6 +153,7 @@ class PetInformationPage extends StatelessWidget {
 
   void _navigateToEditPet(
     BuildContext context,
+    int petId,
     PetInformationLoaded state,
   ) async {
     final result = await Navigator.push(
@@ -162,7 +162,7 @@ class PetInformationPage extends StatelessWidget {
     );
 
     // If edit was successful, refresh the pet information
-    if (result == true) {
+    if (result == true && context.mounted) {
       context.read<PetInformationCubit>().refreshPetInformation(petId);
     }
   }
@@ -194,7 +194,7 @@ class PetInformationPage extends StatelessWidget {
               context.read<PetInformationCubit>().refreshPetInformation(petId),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height - 200,
           child: Center(
             child: Column(
@@ -325,7 +325,7 @@ class PetInformationPage extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
           child: ElevatedButton.icon(
-            onPressed: () => _navigateToEditPet(context, state),
+            onPressed: () => _navigateToEditPet(context, petId, state),
             icon: const Icon(Icons.edit, size: 20),
             label: const Text(
               'Chỉnh sửa thông tin',
@@ -342,7 +342,7 @@ class PetInformationPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 2,
-              shadowColor: AppColors.primary.withOpacity(0.3),
+              shadowColor: AppColors.primary.withValues(alpha: 0.3),
             ),
           ),
         );
@@ -367,12 +367,12 @@ class PetInformationPage extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary.withOpacity(0.8), AppColors.primary],
+          colors: [AppColors.primary.withValues(alpha: 0.8), AppColors.primary],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: const Offset(0, 8),
@@ -390,7 +390,7 @@ class PetInformationPage extends StatelessWidget {
               border: Border.all(color: Colors.white, width: 4),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   spreadRadius: 0,
                   blurRadius: 15,
                   offset: const Offset(0, 5),
@@ -433,7 +433,7 @@ class PetInformationPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              '${_convertSpeciesToVietnamese(pet.species) ?? 'N/A'}',
+              _convertSpeciesToVietnamese(pet.species),
               style: TextStyle(
                 fontSize: isTablet ? 16 : 14,
                 color: Colors.white,
@@ -452,7 +452,7 @@ class PetInformationPage extends StatelessWidget {
       child: Icon(
         Icons.pets,
         size: isTablet ? 80 : 60,
-        color: AppColors.primary.withOpacity(0.5),
+        color: AppColors.primary.withValues(alpha: 0.5),
       ),
     );
   }
@@ -467,7 +467,7 @@ class PetInformationPage extends StatelessWidget {
         _buildInfoRow('Tên:', pet.name ?? 'N/A', Icons.pets),
         _buildInfoRow(
           'Loài:',
-          _convertSpeciesToVietnamese(pet.species) ?? 'N/A',
+          _convertSpeciesToVietnamese(pet.species),
           Icons.category,
         ),
         _buildInfoRow('Giống:', pet.breed ?? 'N/A', Icons.label),
@@ -553,7 +553,7 @@ class PetInformationPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -568,7 +568,7 @@ class PetInformationPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, size: 20, color: AppColors.primary),

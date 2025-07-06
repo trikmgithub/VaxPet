@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../core/configs/theme/app_colors.dart';
 import '../../appointment_vaccination_note_detail/pages/appointment_vaccination_note_detail.dart';
 import '../bloc/appointment_vaccination_note_cubit.dart';
 import '../bloc/appointment_vaccination_note_state.dart';
@@ -228,11 +227,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.check_circle_outline,
-                size: 64,
-                color: Colors.grey,
-              ),
+              Icon(Icons.check_circle_outline, size: 64, color: Colors.grey),
               SizedBox(height: 16),
               Text(
                 state.selectedStatusFilter != null
@@ -266,10 +261,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
         children: [
           // Filter Header with Filter Icon
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -350,8 +342,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
-                    onPressed:
-                        () => _showFilterDialog(context, state),
+                    onPressed: () => _showFilterDialog(context, state),
                     icon: Icon(
                       Icons.filter_list,
                       color: Theme.of(context).primaryColor,
@@ -623,8 +614,9 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                           final count = state.getCountForStatus(status);
                           final statusInfo = statusMap[status];
 
-                          if (statusInfo == null || count == 0)
+                          if (statusInfo == null || count == 0) {
                             return const SizedBox.shrink();
+                          }
 
                           final isSelected =
                               state.selectedStatusFilter == status;
@@ -724,7 +716,7 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
                               },
                             ),
                           );
-                        }).toList(),
+                        }),
                       ],
                     ),
                   ),
@@ -813,12 +805,6 @@ class _AppointmentVaccinationNoteState extends State<AppointmentVaccinationNote>
         );
       },
     );
-  }
-
-  void _filterByStatus(int status, List<dynamic> confirmedAppointments) {
-    // This method is now replaced by direct cubit calls in the dialog
-    // But keeping it for backward compatibility if needed
-    context.read<AppointmentVaccinationNoteCubit>().setStatusFilter(status);
   }
 }
 

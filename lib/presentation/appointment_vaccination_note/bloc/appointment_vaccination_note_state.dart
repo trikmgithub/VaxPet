@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 
 enum AppointmentVaccinationNoteStatus { initial, loading, success, failure }
 
@@ -24,6 +25,12 @@ class AppointmentVaccinationNoteState extends Equatable {
     this.availableStatuses = const [],
   });
 
+  void _debugLog(String message) {
+    if (kDebugMode) {
+      print(message);
+    }
+  }
+
   AppointmentVaccinationNoteState copyWith({
     AppointmentVaccinationNoteStatus? status,
     Either? pendingAppointments,
@@ -37,11 +44,13 @@ class AppointmentVaccinationNoteState extends Equatable {
     return AppointmentVaccinationNoteState(
       status: status ?? this.status,
       pendingAppointments: pendingAppointments ?? this.pendingAppointments,
-      confirmedAppointments: confirmedAppointments ?? this.confirmedAppointments,
+      confirmedAppointments:
+          confirmedAppointments ?? this.confirmedAppointments,
       errorMessage: errorMessage ?? this.errorMessage,
-      selectedStatusFilter: clearFilter
-          ? null
-          : (selectedStatusFilter ?? this.selectedStatusFilter),
+      selectedStatusFilter:
+          clearFilter
+              ? null
+              : (selectedStatusFilter ?? this.selectedStatusFilter),
       appointmentsByStatus: appointmentsByStatus ?? this.appointmentsByStatus,
       availableStatuses: availableStatuses ?? this.availableStatuses,
     );
@@ -49,27 +58,35 @@ class AppointmentVaccinationNoteState extends Equatable {
 
   // Helper method để lấy appointments đã filter
   List<dynamic> get filteredAppointments {
-    print('=== State: Getting Filtered Appointments ===');
-    print('Selected status filter: $selectedStatusFilter');
-    print('Available statuses: $availableStatuses');
-    print('Appointments by status keys: ${appointmentsByStatus.keys.toList()}');
+    _debugLog('=== State: Getting Filtered Appointments ===');
+    _debugLog('Selected status filter: $selectedStatusFilter');
+    _debugLog('Available statuses: $availableStatuses');
+    _debugLog(
+      'Appointments by status keys: ${appointmentsByStatus.keys.toList()}',
+    );
 
     if (selectedStatusFilter == null) {
       // Trả về tất cả confirmed appointments
-      final result = confirmedAppointments?.fold(
+      final result =
+          confirmedAppointments?.fold(
             (failure) => <dynamic>[],
             (appointments) => List<dynamic>.from(appointments ?? []),
-          ) ?? [];
-      print('No filter - returning all ${result.length} appointments');
+          ) ??
+          [];
+      _debugLog('No filter - returning all ${result.length} appointments');
       return result;
     }
 
     // Trả về appointments của status được chọn
     final result = appointmentsByStatus[selectedStatusFilter] ?? [];
-    print('Filter by status $selectedStatusFilter - returning ${result.length} appointments');
+    _debugLog(
+      'Filter by status $selectedStatusFilter - returning ${result.length} appointments',
+    );
 
     for (var appointment in result) {
-      print('  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})');
+      _debugLog(
+        '  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})',
+      );
     }
 
     return result;
@@ -82,12 +99,12 @@ class AppointmentVaccinationNoteState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        pendingAppointments,
-        confirmedAppointments,
-        errorMessage,
-        selectedStatusFilter,
-        appointmentsByStatus,
-        availableStatuses,
-      ];
+    status,
+    pendingAppointments,
+    confirmedAppointments,
+    errorMessage,
+    selectedStatusFilter,
+    appointmentsByStatus,
+    availableStatuses,
+  ];
 }

@@ -131,19 +131,19 @@ class _PetRecordViewState extends State<_PetRecordView> {
       final totalDays = difference.inDays;
 
       if (totalDays < 7) {
-        return ' • ${totalDays} ngày tuổi';
+        return ' • $totalDays ngày tuổi';
       } else if (totalDays < 365) {
         final weeks = (totalDays / 7).floor();
-        return ' • 0 tuổi (${weeks} tuần)';
+        return ' • 0 tuổi ($weeks tuần)';
       } else {
         final years = (totalDays / 365).floor();
         final remainingDays = totalDays % 365;
         final remainingWeeks = (remainingDays / 7).floor();
 
         if (remainingWeeks > 0) {
-          return ' • ${years} năm ${remainingWeeks} tuần tuổi';
+          return ' • $years năm $remainingWeeks tuần tuổi';
         } else {
-          return ' • ${years} năm tuổi';
+          return ' • $years năm tuổi';
         }
       }
     } catch (e) {
@@ -191,7 +191,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -208,12 +208,12 @@ class _PetRecordViewState extends State<_PetRecordView> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   width: 3,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -326,7 +326,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(
@@ -372,7 +372,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
       color: AppColors.primary,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height - 200,
           child: Center(
             child: Column(
@@ -444,60 +444,6 @@ class _PetRecordViewState extends State<_PetRecordView> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh:
-          () =>
-              context.read<GetPetRecordCubit>().refreshPetRecord(widget.petId),
-      color: AppColors.primary,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: MediaQuery.of(context).size.height - 200,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.medical_services_outlined,
-                    size: 60,
-                    color: Colors.grey[400],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Chưa có hồ sơ tiêm chủng',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Hồ sơ tiêm chủng sẽ được hiển thị sau khi\nthú cưng được tiêm vaccine lần đầu',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildEmptyStateWithHeader(BuildContext context) {
     return RefreshIndicator(
       onRefresh:
@@ -512,7 +458,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
             _buildPetHeader(),
 
             // Empty state content
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height - 300,
               child: Center(
                 child: Column(
@@ -597,7 +543,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -622,7 +568,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -648,7 +594,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -686,7 +632,9 @@ class _PetRecordViewState extends State<_PetRecordView> {
     final isCompleted = dose.isCompleted;
     final statusColor = isCompleted ? AppColors.primary : Colors.orange[600]!;
     final backgroundColor =
-        isCompleted ? AppColors.primary.withOpacity(0.1) : Colors.orange[50]!;
+        isCompleted
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : Colors.orange[50]!;
     final statusIcon = isCompleted ? Icons.check_circle : Icons.schedule;
     final statusText = isCompleted ? 'Đã tiêm' : 'Chưa tiêm';
 
@@ -706,7 +654,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: statusColor.withOpacity(0.3),
+                        color: statusColor.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -742,7 +690,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
                   color: backgroundColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: statusColor.withOpacity(0.3),
+                    color: statusColor.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
