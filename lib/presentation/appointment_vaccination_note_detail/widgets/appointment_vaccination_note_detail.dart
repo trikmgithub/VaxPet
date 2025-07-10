@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/extensions/service_type_extension.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
+import 'package:vaxpet/common/helper/message/display_message.dart';
 import '../bloc/appointment_vaccination_note_detail_cubit.dart';
 import '../bloc/appointment_vaccination_note_detail_state.dart';
 import '../bloc/appointment_vaccination_note_detail_edit_cubit.dart';
+import '../bloc/appointment_vaccination_note_cancel_cubit.dart';
+import '../bloc/appointment_vaccination_note_cancel_state.dart';
 import '../pages/appointment_vaccination_note_detail_edit.dart';
 
 class AppointmentVaccinationDetail extends StatelessWidget {
@@ -725,59 +728,89 @@ class AppointmentVaccinationDetail extends StatelessWidget {
   void _showCancelDialog(BuildContext context, dynamic data) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Row(
-            children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
-              const SizedBox(width: 12),
-              const Text(
-                'Xác nhận hủy',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          content: const Text(
-            'Bạn có chắc chắn muốn hủy lịch hẹn này không? Hành động này không thể hoàn tác.',
-            style: TextStyle(fontSize: 16),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Không',
-                style: TextStyle(color: Colors.grey[600], fontSize: 16),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // TODO: Implement appointment cancellation logic
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Tính năng hủy lịch hẹn sẽ được cập nhật sớm',
-                    ),
-                    backgroundColor: Colors.orange,
-                  ),
+      builder: (BuildContext dialogContext) {
+        return BlocProvider(
+          create: (context) => AppointmentVaccinationNoteCancelCubit(),
+          child: BlocConsumer<AppointmentVaccinationNoteCancelCubit, AppointmentVaccinationNoteCancelState>(
+            listener: (context, state) {
+              if (state.isSuccess) {
+                Navigator.of(dialogContext).pop();
+                DisplayMessage.successMessage(
+                  state.successMessage ?? 'Hủy lịch hẹn thành công',
+                  context,
                 );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
+                // Refresh the appointment detail
+                final appointmentId = data['appointment']['appointmentId'];
+                context
+                    .read<AppointmentVaccinationNoteDetailCubit>()
+                    .fetchAppointmentDetail(appointmentId);
+              } else if (state.isFailure) {
+                Navigator.of(dialogContext).pop();
+                DisplayMessage.errorMessage(
+                  state.errorMessage ?? 'Có lỗi xảy ra khi hủy lịch hẹn',
+                  context,
+                );
+              }
+            },
+            builder: (context, state) {
+              return AlertDialog(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ),
-              child: const Text(
-                'Có, hủy lịch',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
+                title: Row(
+                  children: [
+                    Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Xác nhận hủy',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                content: const Text(
+                  'Bạn có chắc chắn muốn hủy lịch hẹn này không? Hành động này không thể hoàn tác.',
+                  style: TextStyle(fontSize: 16),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: state.isLoading ? null : () => Navigator.of(dialogContext).pop(),
+                    child: Text(
+                      'Không',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: state.isLoading ? null : () {
+                      final appointmentId = data['appointment']['appointmentId'];
+                      context
+                          .read<AppointmentVaccinationNoteCancelCubit>()
+                          .cancelAppointment(appointmentId);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: state.isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Có, hủy lịch',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                  ),
+                ],
+              );
+            },
+          ),
         );
       },
     );

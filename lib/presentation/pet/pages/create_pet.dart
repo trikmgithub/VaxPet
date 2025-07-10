@@ -496,7 +496,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
         if (pickedDate != null) {
           // format date dd/mm/yyyy
           String formattedDate =
-              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
           _dateOfBirthController.text = formattedDate;
         }
       },

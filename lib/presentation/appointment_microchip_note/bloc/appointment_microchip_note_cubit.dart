@@ -1,16 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:vaxpet/domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
-import 'package:vaxpet/presentation/appointment_vaccination_note/bloc/appointment_vaccination_note_state.dart';
+import 'package:vaxpet/domain/microchip_appointment_note/usecases/get_microchip_appointment_note.dart';
+import 'package:vaxpet/presentation/appointment_microchip_note/bloc/appointment_microchip_note_state.dart';
 import 'package:vaxpet/service_locator.dart';
 
-class AppointmentVaccinationNoteCubit
-    extends Cubit<AppointmentVaccinationNoteState> {
-  AppointmentVaccinationNoteCubit()
-    : super(const AppointmentVaccinationNoteState());
+class AppointmentMicrochipNoteCubit
+    extends Cubit<AppointmentMicrochipNoteState> {
+  AppointmentMicrochipNoteCubit()
+    : super(const AppointmentMicrochipNoteState());
 
-  static const int vaccinationType = 1; // Service type for vaccination
+  static const int microchipType = 2; // Service type for microchip
 
   void _debugLog(String message) {
     if (kDebugMode) {
@@ -20,12 +20,12 @@ class AppointmentVaccinationNoteCubit
 
   // Status 1: Pending confirmation
   // Status 2-11: Confirmed (confirmed, checkedIn, injected, implanted, paid, applied, done, completed, cancelled, rejected)
-  Future<void> fetchAppointmentVaccinationNotes(int petId) async {
-    emit(state.copyWith(status: AppointmentVaccinationNoteStatus.loading));
+  Future<void> fetchAppointmentMicrochipNotes(int petId) async {
+    emit(state.copyWith(status: AppointmentMicrochipNoteStatus.loading));
 
     try {
       // Fetch pending appointments (status 1)
-      final pendingResult = await sl<GetVaccineAppointmentNoteUseCase>().call(
+      final pendingResult = await sl<GetMicrochipAppointmentNoteUseCase>().call(
         params: {'petId': petId, 'status': 1},
       );
 
@@ -34,12 +34,12 @@ class AppointmentVaccinationNoteCubit
       Map<int, List<dynamic>> appointmentsByStatus = {};
       List<int> availableStatuses = [];
 
-
-      final confirmedStatuses = [2, 3, 4, 5, 9, 10, 11];
+      // Status list: 2-confirmed, 3-checkedIn, 4-injected, 5-implanted, 6-paid, 7-applied, 8-done, 9-completed, 10-cancelled, 11-rejected
+      final confirmedStatuses = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
       for (int status in confirmedStatuses) {
         try {
-          final result = await sl<GetVaccineAppointmentNoteUseCase>().call(
+          final result = await sl<GetMicrochipAppointmentNoteUseCase>().call(
             params: {'petId': petId, 'status': status},
           );
 
@@ -51,18 +51,18 @@ class AppointmentVaccinationNoteCubit
             },
             (appointments) {
               if (appointments is List && appointments.isNotEmpty) {
-                // Filter chỉ lấy vaccination appointments
-                final vaccinationAppointments =
+                // Filter chỉ lấy microchip appointments
+                final microchipAppointments =
                     appointments
                         .where(
                           (appointment) =>
-                              appointment['serviceType'] == vaccinationType,
+                              appointment['serviceType'] == microchipType,
                         )
                         .toList();
 
-                if (vaccinationAppointments.isNotEmpty) {
+                if (microchipAppointments.isNotEmpty) {
                   // Sort appointments by date (newest first)
-                  vaccinationAppointments.sort((a, b) {
+                  microchipAppointments.sort((a, b) {
                     final dateA =
                         DateTime.tryParse(
                           a['appointmentDate']?.toString() ?? '',
@@ -77,7 +77,7 @@ class AppointmentVaccinationNoteCubit
                   });
 
                   // Lưu trữ theo appointmentStatus thực tế từ API, không phải status parameter
-                  for (var appointment in vaccinationAppointments) {
+                  for (var appointment in microchipAppointments) {
                     final actualStatus =
                         appointment['appointment']?['appointmentStatus'] ??
                         status;
@@ -92,7 +92,7 @@ class AppointmentVaccinationNoteCubit
                     appointmentsByStatus[actualStatus]!.add(appointment);
                   }
 
-                  allConfirmedAppointments.addAll(vaccinationAppointments);
+                  allConfirmedAppointments.addAll(microchipAppointments);
                 }
               }
             },
@@ -147,7 +147,7 @@ class AppointmentVaccinationNoteCubit
 
       emit(
         state.copyWith(
-          status: AppointmentVaccinationNoteStatus.success,
+          status: AppointmentMicrochipNoteStatus.success,
           pendingAppointments: pendingResult,
           confirmedAppointments: confirmedResult,
           appointmentsByStatus: appointmentsByStatus,
@@ -157,7 +157,7 @@ class AppointmentVaccinationNoteCubit
     } catch (e) {
       emit(
         state.copyWith(
-          status: AppointmentVaccinationNoteStatus.failure,
+          status: AppointmentMicrochipNoteStatus.failure,
           errorMessage: e.toString(),
         ),
       );
@@ -166,7 +166,7 @@ class AppointmentVaccinationNoteCubit
 
   // Method to refresh appointment data
   Future<void> refreshAppointments(int petId) async {
-    await fetchAppointmentVaccinationNotes(petId);
+    await fetchAppointmentMicrochipNotes(petId);
   }
 
   // Method to set status filter

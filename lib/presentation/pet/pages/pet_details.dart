@@ -4,6 +4,7 @@ import '../../../common/widgets/back_button/back_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../appointment_health_certificate/pages/appointment_health_certificate_choice.dart';
 import '../../appointment_microchip/pages/appointment_microchip_choice.dart';
+import '../../appointment_microchip_note/pages/appointment_microchip_note.dart';
 import '../../appointment_vaccination/pages/appointment_vaccination_choice.dart';
 import '../../appointment_vaccination_note/pages/appointment_vaccination_note.dart';
 import '../../pet_information/pages/pet_information.dart';
@@ -209,7 +210,16 @@ class PetDetailsPage extends StatelessWidget {
                   ServiceItem(
                     title: 'Microchip',
                     icon: Icons.qr_code,
-                    onTap: () {},
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        AppointmentMicrochipNotePage(
+                          petName: petName,
+                          petId: petId,
+                          petSpecies: petSpecies,
+                        ),
+                      );
+                    },
                   ),
                   ServiceItem(
                     title: 'Chứng nhận sức khỏe',

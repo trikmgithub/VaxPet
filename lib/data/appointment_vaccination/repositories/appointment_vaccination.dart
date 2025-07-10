@@ -18,4 +18,15 @@ class AppointmentVaccinationRepositoryImpl
       return Right(data);
     });
   }
+
+  @override
+  Future<Either> cancelAppointmentVaccination(int appointmentId) async {
+    var returnedData = await sl<AppointmentVaccinationService>()
+        .cancelAppointmentVaccination(appointmentId);
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+        data,
+        ) {
+      return Right(data);
+    });
+  }
 }

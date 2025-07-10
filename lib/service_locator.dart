@@ -18,6 +18,8 @@ import 'data/customer_profile/repositories/customer_profile.dart';
 import 'data/customer_profile/sources/customer_profile.dart';
 import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
+import 'data/microchip_appointment_note/repositories/microchip_appointment_note.dart';
+import 'data/microchip_appointment_note/sources/microchip_appointment_note.dart';
 import 'data/pet_record/repositories/pet_record.dart';
 import 'data/pet_record/sources/pet_record.dart';
 import 'data/schedule/repositories/schedule.dart';
@@ -37,6 +39,7 @@ import 'domain/appointment_health_certificate/usecases/post_appointment_health_c
 import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
 import 'domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import 'domain/appointment_vaccination/repositories/appointment_vaccination.dart';
+import 'domain/appointment_vaccination/usecases/cancel_appointment_vaccination.dart';
 import 'domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
@@ -51,6 +54,8 @@ import 'domain/customer_profile/usecases/get_customer_profile.dart';
 import 'domain/customer_profile/usecases/put_customer_profile.dart';
 import 'domain/disease/repositories/disease.dart';
 import 'domain/disease/usecases/get_disease_by_species.dart';
+import 'domain/microchip_appointment_note/repositories/microchip_appointment_note.dart';
+import 'domain/microchip_appointment_note/usecases/get_microchip_appointment_note.dart';
 import 'domain/pet/repositories/pet.dart';
 import 'domain/pet/usecases/delete_pet.dart';
 import 'domain/pet/usecases/get_pet.dart';
@@ -93,6 +98,9 @@ void setupServiceLocator() {
   sl.registerSingleton<AppointmentHealthCertificateService>(
     AppointmentHealthCertificateServiceImpl(),
   );
+  sl.registerSingleton<MicrochipAppointmentNoteService>(
+    MicrochipAppointmentNoteServiceImpl(),
+  );
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -118,6 +126,9 @@ void setupServiceLocator() {
   sl.registerSingleton<PetRecordRepository>(PetRecordRepositoryImpl());
   sl.registerSingleton<AppointmentHealthCertificateRepository>(
     AppointmentHealthCertificateRepositoryImpl(),
+  );
+  sl.registerSingleton<MicrochipAppointmentNoteRepository>(
+    MicrochipAppointmentNoteRepositoryImpl(),
   );
 
   // User Cases
@@ -164,4 +175,10 @@ void setupServiceLocator() {
   sl.registerSingleton<PutPetUseCase>(PutPetUseCase());
   sl.registerSingleton<GetPetRecordUseCase>(GetPetRecordUseCase());
   sl.registerSingleton<PostAppointmentHealthCertificateUseCase>(PostAppointmentHealthCertificateUseCase());
+  sl.registerSingleton<GetMicrochipAppointmentNoteUseCase>(
+    GetMicrochipAppointmentNoteUseCase(),
+  );
+  sl.registerSingleton<CancelAppointmentVaccinationUseCase>(
+    CancelAppointmentVaccinationUseCase(),
+  );
 }
