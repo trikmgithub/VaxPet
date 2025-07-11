@@ -34,8 +34,7 @@ class AppointmentMicrochipNoteCubit
       Map<int, List<dynamic>> appointmentsByStatus = {};
       List<int> availableStatuses = [];
 
-      // Status list: 2-confirmed, 3-checkedIn, 4-injected, 5-implanted, 6-paid, 7-applied, 8-done, 9-completed, 10-cancelled, 11-rejected
-      final confirmedStatuses = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+      final confirmedStatuses = [2, 3, 4, 5, 9, 10, 11];
 
       for (int status in confirmedStatuses) {
         try {

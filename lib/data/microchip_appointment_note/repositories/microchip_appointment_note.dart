@@ -14,7 +14,7 @@ class MicrochipAppointmentNoteRepositoryImpl
         data,
         ) {
       var appointmentNotes =
-      List.from(data).map((item) => item['data']).toList();
+      List.from(data['data']).map((item) => item['microchip']).toList();
       return Right(appointmentNotes);
     });
   }
