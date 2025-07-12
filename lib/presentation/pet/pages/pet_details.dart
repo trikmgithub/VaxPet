@@ -3,6 +3,7 @@ import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../../appointment_health_certificate/pages/appointment_health_certificate_choice.dart';
+import '../../appointment_health_certificate_note/pages/appointment_health_certificate_note.dart';
 import '../../appointment_microchip/pages/appointment_microchip_choice.dart';
 import '../../appointment_microchip_note/pages/appointment_microchip_note.dart';
 import '../../appointment_vaccination/pages/appointment_vaccination_choice.dart';
@@ -224,7 +225,16 @@ class PetDetailsPage extends StatelessWidget {
                   ServiceItem(
                     title: 'Chứng nhận sức khỏe',
                     icon: Icons.book,
-                    onTap: () {},
+                    onTap: () {
+                      AppNavigator.push(
+                        context,
+                        AppointmentHealthCertificateNotePage(
+                          petName: petName,
+                          petId: petId,
+                          petSpecies: petSpecies,
+                        ),
+                      );
+                    },
                   ),
                   ServiceItem(
                     title: 'Lịch gợi ý',

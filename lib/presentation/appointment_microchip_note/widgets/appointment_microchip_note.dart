@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../appointment_microchip_note_detail/pages/appointment_microchip_note_detail.dart';
 import '../../appointment_vaccination_note_detail/pages/appointment_vaccination_note_detail.dart';
 import '../bloc/appointment_microchip_note_cubit.dart';
 import '../bloc/appointment_microchip_note_state.dart';
@@ -1094,7 +1095,7 @@ class MicrochipAppointmentCard extends StatelessWidget {
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    AppointmentVaccinationNoteDetailPage(
+                                    AppointmentMicrochipNoteDetailPage(
                                       appointmentId: appointmentId,
                                     ),
                             transitionsBuilder: (

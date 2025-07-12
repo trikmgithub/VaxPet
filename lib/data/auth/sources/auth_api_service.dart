@@ -16,6 +16,7 @@ abstract class AuthService {
   Future<Either> verifyOtp(VerifyOtpReqParams params);
   Future<Either> getCustomerId(int accountId);
   Future<Either> logout();
+  Future<Either> changePassword(String email, String oldPassword, String newPassword);
 }
 
 class AuthServiceImpl extends AuthService {
@@ -102,6 +103,29 @@ class AuthServiceImpl extends AuthService {
       var response = 'Logout successful';
 
       return Right(response);
+    } on DioException catch (e) {
+      return Left('Lỗi kết nối: ${e.message}');
+    } catch (e) {
+      return Left('Lỗi không xác định: $e');
+    }
+  }
+
+  @override
+  Future<Either> changePassword(String email, String oldPassword, String newPassword) async {
+    try {
+      // Create FormData for multipart/form-data request
+      FormData formData = FormData.fromMap({
+        'email': email,
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+      });
+
+      var response = await sl<DioClient>().post(
+        ApiUrl.changePassword,
+        data: formData,
+      );
+
+      return Right(response.data);
     } on DioException catch (e) {
       return Left('Lỗi kết nối: ${e.message}');
     } catch (e) {

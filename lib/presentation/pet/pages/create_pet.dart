@@ -39,6 +39,9 @@ class _CreatePetPageState extends State<CreatePetPage> {
   // Thêm biến quản lý trạng thái loading
   bool _isLoading = false;
 
+  // Thêm biến để lưu ngày tháng theo định dạng mm/dd/yyyy cho API
+  String? _dateOfBirthForApi;
+
   @override
   void initState() {
     super.initState();
@@ -498,6 +501,12 @@ class _CreatePetPageState extends State<CreatePetPage> {
           String formattedDate =
               "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
           _dateOfBirthController.text = formattedDate;
+
+          // Lưu ngày sinh theo định dạng mm/dd/yyyy cho API
+          setState(() {
+            _dateOfBirthForApi =
+                "${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.year}";
+          });
         }
       },
       readOnly: true,
@@ -765,7 +774,7 @@ class _CreatePetPageState extends State<CreatePetPage> {
                       breed:
                           _breedController.text.trim().capitalizeFirstLetter(),
                       gender: _selectedGender!,
-                      dateOfBirth: _dateOfBirthController.text.trim(),
+                      dateOfBirth: _dateOfBirthForApi ?? '',
                       placeToLive:
                           _placeToLiveController.text
                               .trim()

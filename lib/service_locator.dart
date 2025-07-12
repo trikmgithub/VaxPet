@@ -18,8 +18,12 @@ import 'data/customer_profile/repositories/customer_profile.dart';
 import 'data/customer_profile/sources/customer_profile.dart';
 import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
+import 'data/health_certificate_appointment_note/repositories/health_certificate_appointment_note.dart';
+import 'data/health_certificate_appointment_note/sources/health_certificate_appointment_note.dart';
 import 'data/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'data/microchip_appointment_note/sources/microchip_appointment_note.dart';
+import 'data/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
+import 'data/microchip_appointment_note_detail/sources/microchip_appointment_note_detail.dart';
 import 'data/pet_record/repositories/pet_record.dart';
 import 'data/pet_record/sources/pet_record.dart';
 import 'data/schedule/repositories/schedule.dart';
@@ -37,11 +41,13 @@ import 'domain/appointment/usecases/put_appointment_by_id.dart';
 import 'domain/appointment_health_certificate/repositories/appointment_health_certificate.dart';
 import 'domain/appointment_health_certificate/usecases/post_appointment_health_certificate.dart';
 import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
+import 'domain/appointment_microchip/usecases/cancel_appointment_microchip.dart';
 import 'domain/appointment_microchip/usecases/post_appointment_microchip.dart';
 import 'domain/appointment_vaccination/repositories/appointment_vaccination.dart';
 import 'domain/appointment_vaccination/usecases/cancel_appointment_vaccination.dart';
 import 'domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
 import 'domain/auth/repositories/auth.dart';
+import 'domain/auth/usecases/change_password.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
 import 'domain/auth/usecases/logout.dart';
@@ -54,8 +60,13 @@ import 'domain/customer_profile/usecases/get_customer_profile.dart';
 import 'domain/customer_profile/usecases/put_customer_profile.dart';
 import 'domain/disease/repositories/disease.dart';
 import 'domain/disease/usecases/get_disease_by_species.dart';
+import 'domain/health_certificate_appointment_note/repositories/health_certificate_appointment_note.dart';
+import 'domain/health_certificate_appointment_note/usecases/get_health_certificate_appointment_note.dart';
 import 'domain/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note/usecases/get_microchip_appointment_note.dart';
+import 'domain/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
+import 'domain/microchip_appointment_note_detail/usecases/get_microchip_appointment_note_detail.dart';
+import 'domain/microchip_appointment_note_detail/usecases/put_microchip_appointment_note.dart';
 import 'domain/pet/repositories/pet.dart';
 import 'domain/pet/usecases/delete_pet.dart';
 import 'domain/pet/usecases/get_pet.dart';
@@ -101,6 +112,12 @@ void setupServiceLocator() {
   sl.registerSingleton<MicrochipAppointmentNoteService>(
     MicrochipAppointmentNoteServiceImpl(),
   );
+  sl.registerSingleton<MicrochipAppointmentNoteDetailService>(
+    MicrochipAppointmentNoteDetailServiceImpl(),
+  );
+  sl.registerSingleton<HealthCertificateAppointmentNoteService>(
+    HealthCertificateAppointmentNoteServiceImpl(),
+  );
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -129,6 +146,12 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<MicrochipAppointmentNoteRepository>(
     MicrochipAppointmentNoteRepositoryImpl(),
+  );
+  sl.registerSingleton<MicrochipAppointmentNoteDetailRepository>(
+    MicrochipAppointmentNoteDetailRepositoryImpl(),
+  );
+  sl.registerSingleton<HealthCertificateAppointmentNoteRepository>(
+    HealthCertificateAppointmentNoteRepositoryImpl(),
   );
 
   // User Cases
@@ -180,5 +203,20 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<CancelAppointmentVaccinationUseCase>(
     CancelAppointmentVaccinationUseCase(),
+  );
+  sl.registerSingleton<GetMicrochipAppointmentNoteDetailUseCase>(
+    GetMicrochipAppointmentNoteDetailUseCase(),
+  );
+  sl.registerSingleton<CancelAppointmentMicrochipUseCase>(
+    CancelAppointmentMicrochipUseCase(),
+  );
+  sl.registerSingleton<PutMicrochipAppointmentNoteUseCase>(
+    PutMicrochipAppointmentNoteUseCase(),
+  );
+  sl.registerSingleton<GetHealthCertificateAppointmentNoteUseCase>(
+    GetHealthCertificateAppointmentNoteUseCase(),
+  );
+  sl.registerSingleton<ChangePasswordUseCase>(
+    ChangePasswordUseCase(),
   );
 }

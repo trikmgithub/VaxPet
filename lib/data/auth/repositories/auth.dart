@@ -101,4 +101,19 @@ class AuthRepositoryImpl extends AuthRepository {
       return Right(data);
     });
   }
+
+  @override
+  Future<Either> changePassword(String email, String oldPassword, String newPassword) async {
+    var data = await sl<AuthService>().changePassword(
+      email,
+      oldPassword,
+      newPassword,
+    );
+    return data.fold(
+      (error) => Left(error),
+      (data) async {
+        return Right(data);
+      }
+    );
+  }
 }

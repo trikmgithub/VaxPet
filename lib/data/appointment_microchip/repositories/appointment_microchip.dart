@@ -20,4 +20,15 @@ class AppointmentMicrochipRepositoryImpl
       return Right(data);
     });
   }
+
+  @override
+  Future<Either> cancelAppointmentMicrochip(int appointmentId) async {
+    var returnedData = await sl<AppointmentMicrochipService>()
+        .cancelAppointmentMicrochip(appointmentId);
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+        data,
+        ) {
+      return Right(data);
+    });
+  }
 }

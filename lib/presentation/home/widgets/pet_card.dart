@@ -12,7 +12,24 @@ import '../bloc/pets_state.dart';
 String calculateAge(String? dob) {
   if (dob == null || dob.isEmpty) return 'Không rõ';
   try {
-    final birthDate = DateTime.parse(dob);
+    DateTime birthDate;
+
+    // Kiểm tra định dạng mm/dd/yyyy
+    if (dob.contains('/')) {
+      final parts = dob.split('/');
+      if (parts.length == 3) {
+        final month = int.parse(parts[0]);
+        final day = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        birthDate = DateTime(year, month, day);
+      } else {
+        return 'Không rõ';
+      }
+    } else {
+      // Fallback cho trường hợp khác
+      birthDate = DateTime.parse(dob);
+    }
+
     final today = DateTime.now();
 
     int age = today.year - birthDate.year;
@@ -34,6 +51,28 @@ String calculateAge(String? dob) {
     return '$age tuổi';
   } catch (e) {
     return 'Không rõ';
+  }
+}
+
+// Hàm format ngày từ mm/dd/yyyy sang dd/mm/yyyy
+String formatDateForDisplay(String? dateString) {
+  if (dateString == null || dateString.isEmpty) return '';
+
+  try {
+    // Kiểm tra định dạng mm/dd/yyyy
+    if (dateString.contains('/')) {
+      final parts = dateString.split('/');
+      if (parts.length == 3) {
+        final month = parts[0].padLeft(2, '0');
+        final day = parts[1].padLeft(2, '0');
+        final year = parts[2];
+        // Chuyển từ mm/dd/yyyy sang dd/mm/yyyy
+        return '$day/$month/$year';
+      }
+    }
+    return dateString; // Trả về nguyên bản nếu không parse được
+  } catch (e) {
+    return dateString; // Trả về nguyên bản nếu có lỗi
   }
 }
 
@@ -369,7 +408,7 @@ class PetCard extends StatelessWidget {
               petName: pet.name ?? "Chưa đặt tên",
               petImage: pet.image,
               petSpecies: pet.species ?? "Không rõ",
-              petBirthday: pet.dateOfBirth,
+              petBirthday: formatDateForDisplay(pet.dateOfBirth),
             ),
           );
         },
@@ -519,7 +558,7 @@ class PetCard extends StatelessWidget {
                                           pet.species?.toLowerCase() == "dog"
                                               ? "Chó"
                                               : "Mèo",
-                                      petBirthday: pet.dateOfBirth,
+                                      petBirthday: formatDateForDisplay(pet.dateOfBirth),
                                     ),
                                   );
                                 },

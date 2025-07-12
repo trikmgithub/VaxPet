@@ -13,4 +13,5 @@ abstract class AuthRepository {
   Future<Either> getCustomerId(int accountId);
   Future<bool> isLoggedIn();
   Future<Either> logout();
+  Future<Either> changePassword(String email, String oldPassword, String newPassword);
 }

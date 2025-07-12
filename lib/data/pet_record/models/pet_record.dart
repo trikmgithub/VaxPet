@@ -156,7 +156,7 @@ class AppointmentDetailModel {
       heartRate: json['heartRate'] as String,
       generalCondition: json['generalCondition'] as String,
       others: json['others'] as String,
-      notes: json['notes'] as String,
+      notes: json['notes'] as String? ?? '',
       vet: VetModel.fromJson(json['vet']),
       vaccineBatch: VaccineBatchModel.fromJson(json['vaccineBatch']),
     );
@@ -191,8 +191,8 @@ class VetModel {
   factory VetModel.fromJson(Map<String, dynamic> json) {
     return VetModel(
       vetCode: json['vetCode'] as String,
-      name: json['name'] as String?,
-      specialization: json['specialization'] as String?,
+      name: json['name'] as String? ?? 'Không rõ',
+      specialization: json['specialization'] as String? ?? 'Không rõ',
     );
   }
 

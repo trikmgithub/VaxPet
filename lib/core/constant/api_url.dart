@@ -8,6 +8,8 @@ class ApiUrl {
   static const login = '${apiV}auth/login';
   static const verifyEmail = '${apiV}auth/verify-email';
   static const verifyOtp = '${apiV}auth/verify-otp';
+  static const changePassword =
+      '${apiV}auth/reset-password';
 
   // CUSTOMER ENDPOINTS
   //Get
@@ -66,9 +68,16 @@ class ApiUrl {
   //Get
   static const getAppointmentForMicrochipByPetIdAndStatus =
       '${apiV}AppointmentForMicrochip/get-appointment-microchip-by-pet-id-and-status';
+  static const getAppointmentForMicrochipById =
+      '${apiV}AppointmentForMicrochip/get-appointment-microchip-by-appointment-id';
   //Post
   static const postAppointmentForMicrochip =
       '${apiV}AppointmentForMicrochip/create-appointment-microchip';
+  //Put
+  static const putUpdateAppointmentForMicrochip =
+      '${apiV}AppointmentForMicrochip/update-appointment-microchip';
+  static const putCancelAppointmentForMicrochip =
+      '${apiV}AppointmentForMicrochip/update-appointment-microchip';
 
   // DISEASE ENDPOINTS
   static const getDiseaseByPetId = '${apiV}disease/get-disease-by-pet-id';
@@ -87,4 +96,7 @@ class ApiUrl {
   //Post
   static const postAppointmentForHealthCertificate =
       '${apiV}AppointmentForHealthCondition/create-appointment-healthCondition';
+  //Get
+  static const getAppointmentForHealthCertificateByPetIdAndStatus =
+      '${apiV}AppointmentForHealthCondition/get-appointment-detail-healthCondition-by-pet-and-status';
 }
