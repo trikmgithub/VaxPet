@@ -418,6 +418,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             );
                       }
                     },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(isDesktop ? 16 : 12),
+                ),
+                elevation: 3,
+                shadowColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+              ),
               child: state.status == ChangePasswordStatus.loading
                   ? const CircularProgressIndicator(
                       color: Colors.white,
@@ -430,15 +439,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(isDesktop ? 16 : 12),
-                ),
-                elevation: 3,
-                shadowColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-              ),
             ),
           ),
 

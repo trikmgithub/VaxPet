@@ -33,6 +33,23 @@ class AppointmentHealthCertificateNoteState extends Equatable {
         selectedStatusFilter,
       ];
 
+  // Getter for filtered appointments based on selected status
+  List<dynamic> get filteredAppointments {
+    if (selectedStatusFilter != null) {
+      return appointmentsByStatus[selectedStatusFilter!] ?? [];
+    } else {
+      return confirmedAppointments?.fold(
+        (failure) => <dynamic>[],
+        (appointments) => appointments,
+      ) ?? [];
+    }
+  }
+
+  // Method to get count for specific status
+  int getCountForStatus(int status) {
+    return appointmentsByStatus[status]?.length ?? 0;
+  }
+
   AppointmentHealthCertificateNoteState copyWith({
     AppointmentHealthCertificateNoteStatus? status,
     Either<String, List<dynamic>>? pendingAppointments,

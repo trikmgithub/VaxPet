@@ -10,7 +10,7 @@ class AppointmentHealthCertificateNoteCubit
   AppointmentHealthCertificateNoteCubit()
     : super(const AppointmentHealthCertificateNoteState());
 
-  static const int healthCertificateType = 2; // Service type for health certificate (changed from 3 to 2)
+  static const int healthCertificateType = 3; // Service type for health certificate (corrected to match API data)
 
   void _debugLog(String message) {
     if (kDebugMode) {
@@ -24,9 +24,17 @@ class AppointmentHealthCertificateNoteCubit
     emit(state.copyWith(status: AppointmentHealthCertificateNoteStatus.loading));
 
     try {
+      _debugLog('=== Starting to fetch appointments for petId: $petId ===');
+
       // Fetch pending appointments (status 1)
       final pendingResult = await sl<GetHealthCertificateAppointmentNoteUseCase>().call(
         params: {'petId': petId, 'status': 1},
+      );
+
+      _debugLog('=== Pending appointments fetch completed ===');
+      pendingResult.fold(
+        (failure) => _debugLog('Pending appointments error: $failure'),
+        (appointments) => _debugLog('Raw pending appointments count: ${appointments?.length ?? 0}'),
       );
 
       // Fetch all confirmed appointments and organize by actual appointmentStatus
@@ -38,6 +46,7 @@ class AppointmentHealthCertificateNoteCubit
 
       for (int status in confirmedStatuses) {
         try {
+          _debugLog('=== Fetching status $status ===');
           final result = await sl<GetHealthCertificateAppointmentNoteUseCase>().call(
             params: {'petId': petId, 'status': status},
           );
@@ -49,15 +58,43 @@ class AppointmentHealthCertificateNoteCubit
               );
             },
             (appointments) {
+              _debugLog('Raw appointments for status $status: ${appointments?.length ?? 0}');
+
               if (appointments is List && appointments.isNotEmpty) {
+                // Debug: Print all raw appointments
+                for (int i = 0; i < appointments.length; i++) {
+                  final appointment = appointments[i];
+                  _debugLog('  Raw appointment $i:');
+                  _debugLog('    - Root serviceType: ${appointment['serviceType']}');
+                  _debugLog('    - Nested serviceType: ${appointment['appointment']?['serviceType']}');
+                  _debugLog('    - Root appointmentStatus: ${appointment['appointmentStatus']}');
+                  _debugLog('    - Nested appointmentStatus: ${appointment['appointment']?['appointmentStatus']}');
+                  _debugLog('    - appointmentDetailCode: ${appointment['appointmentDetailCode']}');
+                  _debugLog('    - appointmentCode: ${appointment['appointment']?['appointmentCode']}');
+                }
+
                 // Filter chỉ lấy health certificate appointments
+                // Check serviceType at both root level and nested appointment level
                 final healthCertificateAppointments =
                     appointments
                         .where(
-                          (appointment) =>
-                              appointment['serviceType'] == healthCertificateType,
+                          (appointment) {
+                            // Check serviceType at root level first
+                            final rootServiceType = appointment['serviceType'];
+                            // Also check serviceType in nested appointment object
+                            final nestedServiceType = appointment['appointment']?['serviceType'];
+
+                            final isHealthCertificate = rootServiceType == healthCertificateType ||
+                                   nestedServiceType == healthCertificateType;
+
+                            _debugLog('    Filtering appointment ${appointment['appointmentDetailCode']}: rootServiceType=$rootServiceType, nestedServiceType=$nestedServiceType, isHealthCertificate=$isHealthCertificate');
+
+                            return isHealthCertificate;
+                          },
                         )
                         .toList();
+
+                _debugLog('Filtered health certificate appointments for status $status: ${healthCertificateAppointments.length}');
 
                 if (healthCertificateAppointments.isNotEmpty) {
                   // Sort appointments by date (newest first)
@@ -75,11 +112,12 @@ class AppointmentHealthCertificateNoteCubit
                     return dateB.compareTo(dateA);
                   });
 
-                  // Lưu trữ theo appointmentStatus thực tế từ API, không phải status parameter
+                  // Lưu trữ theo appointmentStatus thực tế từ API
                   for (var appointment in healthCertificateAppointments) {
-                    final actualStatus =
-                        appointment['appointment']?['appointmentStatus'] ??
-                        status;
+                    // Get status from root level first, then from nested appointment, then fallback to parameter
+                    final actualStatus = appointment['appointmentStatus'] ??
+                                       appointment['appointment']?['appointmentStatus'] ??
+                                       status;
 
                     if (!appointmentsByStatus.containsKey(actualStatus)) {
                       appointmentsByStatus[actualStatus] = [];
@@ -128,32 +166,70 @@ class AppointmentHealthCertificateNoteCubit
         });
       }
 
-      // Debug: Print appointments by status
-      _debugLog('=== Debug: Appointments by Status ===');
-      for (int status in appointmentsByStatus.keys) {
-        _debugLog(
-          'Status $status: ${appointmentsByStatus[status]!.length} appointments',
-        );
-        for (var appointment in appointmentsByStatus[status]!) {
-          _debugLog(
-            '  - ${appointment['appointment']?['appointmentCode']} (Status: ${appointment['appointment']?['appointmentStatus']})',
-          );
-        }
-      }
+      // Process pending appointments with the same filtering logic
+      final processedPendingResult = pendingResult.fold(
+        (failure) => Left<String, List<dynamic>>(failure.toString()),
+        (appointments) {
+          if (appointments is List) {
+            _debugLog('=== Processing Pending Appointments ===');
+            _debugLog('Raw pending appointments: ${appointments.length}');
+
+            // Debug: Print all raw pending appointments
+            for (int i = 0; i < appointments.length; i++) {
+              final appointment = appointments[i];
+              _debugLog('  Raw pending appointment $i:');
+              _debugLog('    - Root serviceType: ${appointment['serviceType']}');
+              _debugLog('    - Nested serviceType: ${appointment['appointment']?['serviceType']}');
+              _debugLog('    - Root appointmentStatus: ${appointment['appointmentStatus']}');
+              _debugLog('    - Nested appointmentStatus: ${appointment['appointment']?['appointmentStatus']}');
+              _debugLog('    - appointmentDetailCode: ${appointment['appointmentDetailCode']}');
+              _debugLog('    - appointmentCode: ${appointment['appointment']?['appointmentCode']}');
+            }
+
+            // Filter pending appointments for health certificate service type
+            final healthCertificatePending = appointments
+                .where((appointment) {
+                  final rootServiceType = appointment['serviceType'];
+                  final nestedServiceType = appointment['appointment']?['serviceType'];
+
+                  final isHealthCertificate = rootServiceType == healthCertificateType ||
+                         nestedServiceType == healthCertificateType;
+
+                  _debugLog('    Filtering pending appointment ${appointment['appointmentDetailCode']}: rootServiceType=$rootServiceType, nestedServiceType=$nestedServiceType, isHealthCertificate=$isHealthCertificate');
+
+                  return isHealthCertificate;
+                })
+                .toList();
+
+            // Sort by date (newest first)
+            healthCertificatePending.sort((a, b) {
+              final dateA = DateTime.tryParse(a['appointmentDate']?.toString() ?? '') ?? DateTime.now();
+              final dateB = DateTime.tryParse(b['appointmentDate']?.toString() ?? '') ?? DateTime.now();
+              return dateB.compareTo(dateA);
+            });
+
+            _debugLog('=== Debug: Pending Appointments ===');
+            _debugLog('Total pending health certificate appointments: ${healthCertificatePending.length}');
+            for (var appointment in healthCertificatePending) {
+              final appointmentCode = appointment['appointment']?['appointmentCode'] ??
+                                    appointment['appointmentDetailCode'] ??
+                                    'Unknown';
+              _debugLog('  - $appointmentCode (Service Type: ${appointment['serviceType']})');
+            }
+
+            return Right<String, List<dynamic>>(healthCertificatePending);
+          }
+          return Right<String, List<dynamic>>([]);
+        },
+      );
 
       // Create properly typed Either results
       final confirmedResult = Right<String, List<dynamic>>(allConfirmedAppointments);
 
-      // Ensure pendingResult has correct type
-      final typedPendingResult = pendingResult.fold(
-        (failure) => Left<String, List<dynamic>>(failure.toString()),
-        (appointments) => Right<String, List<dynamic>>(appointments),
-      );
-
       emit(
         state.copyWith(
           status: AppointmentHealthCertificateNoteStatus.success,
-          pendingAppointments: typedPendingResult,
+          pendingAppointments: processedPendingResult,
           confirmedAppointments: confirmedResult,
           appointmentsByStatus: appointmentsByStatus,
           availableStatuses: availableStatuses,
