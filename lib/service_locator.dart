@@ -4,6 +4,8 @@ import 'package:vaxpet/data/pet/sources/pet.dart';
 import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 
 import 'core/network/dio_client.dart';
+import 'data/address_vax_pet/repositories/address_vax_pet.dart';
+import 'data/address_vax_pet/sources/address_vax_pet.dart';
 import 'data/appointment/repositories/appointment.dart';
 import 'data/appointment/sources/appointment.dart';
 import 'data/appointment_health_certificate/repositories/appointment_health_certificate.dart';
@@ -32,6 +34,7 @@ import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart
 import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
 import 'data/vaccine_appointment_note_detail/sources/vaccine_appointment_note_detail.dart';
+import 'domain/address_vax_pet/repositories/address_vax_pet.dart';
 import 'domain/appointment/repositories/appointment.dart';
 import 'domain/appointment/usecases/get_appointment_by_id.dart';
 import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
@@ -118,6 +121,7 @@ void setupServiceLocator() {
   sl.registerSingleton<HealthCertificateAppointmentNoteService>(
     HealthCertificateAppointmentNoteServiceImpl(),
   );
+  sl.registerSingleton<AddressVaxPetService>(AddressVaxPetServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -152,6 +156,9 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<HealthCertificateAppointmentNoteRepository>(
     HealthCertificateAppointmentNoteRepositoryImpl(),
+  );
+  sl.registerSingleton<AddressVaxPetRepository>(
+    AddressVaxPetRepositoryImpl(),
   );
 
   // User Cases

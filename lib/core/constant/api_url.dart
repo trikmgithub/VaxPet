@@ -99,4 +99,8 @@ class ApiUrl {
   //Get
   static const getAppointmentForHealthCertificateByPetIdAndStatus =
       '${apiV}AppointmentForHealthCondition/get-appointment-detail-healthCondition-by-pet-and-status';
+
+
+  // ADDRESS ENDPOINTS
+  static const getAddressPetVax= '${apiV}PetVaxLocation/get-coordinates-of-vaxpet';
 }

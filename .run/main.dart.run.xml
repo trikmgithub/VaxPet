@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--dart-define ACCESS_TOKEN=pk.eyJ1IjoiY2hyaXMyMzQyMzQiLCJhIjoiY21kYWlmaTZtMGtpMTJscTBqOTZmODZjNiJ9.YgoJGTeLCV3mAvtOcK03bQ" />
     <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
     <method v="2" />
   </configuration>
