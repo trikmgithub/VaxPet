@@ -5,6 +5,7 @@ import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vaxpet/common/widgets/app_bar/app_bar.dart';
+import 'package:vaxpet/core/constant/enviroment.dart';
 
 class AddressVaxPetPage extends StatefulWidget {
   const AddressVaxPetPage({super.key});
@@ -25,6 +26,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
   final String address = '123 Nguyễn Văn Linh, Phường Tân Phong, Quận 7, TP.HCM';
   final String phone = '028 3888 9999';
   final String openingHours = '8:00 - 12:00 & 13:00-17:00 (Thứ 2 - Chủ nhật)';
+  final String mapboxAccessToken = Environment.MAPBOX_KEY;
 
   // Method kiểm tra trạng thái hoạt động
   Map<String, dynamic> _getClinicStatus() {
@@ -107,7 +109,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
   @override
   void initState() {
     super.initState();
-    MapboxOptions.setAccessToken('');
+    MapboxOptions.setAccessToken(mapboxAccessToken);
 
     Timer(const Duration(seconds: 3), () {
       if (mounted && _mapLoading) {
