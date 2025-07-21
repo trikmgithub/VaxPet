@@ -35,6 +35,7 @@ import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
 import 'data/vaccine_appointment_note_detail/sources/vaccine_appointment_note_detail.dart';
 import 'domain/address_vax_pet/repositories/address_vax_pet.dart';
+import 'domain/address_vax_pet/usecases/get_address_vax_pet.dart';
 import 'domain/appointment/repositories/appointment.dart';
 import 'domain/appointment/usecases/get_appointment_by_id.dart';
 import 'domain/appointment/usecases/get_future_appointment_by_cusid.dart';
@@ -225,5 +226,8 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<ChangePasswordUseCase>(
     ChangePasswordUseCase(),
+  );
+  sl.registerSingleton<GetAddressVaxPetUseCase>(
+    GetAddressVaxPetUseCase(),
   );
 }

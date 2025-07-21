@@ -1,39 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vaxpet/common/widgets/app_bar/app_bar.dart';
 import 'package:vaxpet/core/constant/enviroment.dart';
+import '../bloc/get_address_vax_pet_cubit.dart';
+import '../bloc/get_address_vax_pet_state.dart';
 
-class AddressVaxPetPage extends StatefulWidget {
+class AddressVaxPetPage extends StatelessWidget {
   const AddressVaxPetPage({super.key});
 
   @override
-  State<AddressVaxPetPage> createState() => _AddressVaxPetPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => GetAddressVaxPetCubit()..getAddressVaxPet(),
+      child: const _AddressVaxPetContent(),
+    );
+  }
 }
 
-class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
+class _AddressVaxPetContent extends StatefulWidget {
+  const _AddressVaxPetContent();
+
+  @override
+  State<_AddressVaxPetContent> createState() => _AddressVaxPetContentState();
+}
+
+class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
   MapboxMap? mapboxMap;
   PointAnnotationManager? pointAnnotationManager;
   bool _mapLoading = true;
 
-  // VaxPet location data
-  final num latitude = 10.840846;
-  final num longitude = 106.777707;
-  final String clinicName = 'VaxPet Veterinary Center';
-  final String address = '123 Nguyễn Văn Linh, Phường Tân Phong, Quận 7, TP.HCM';
-  final String phone = '028 3888 9999';
+  // Chỉ lấy data từ API, không có default values
+  double? latitude;
+  double? longitude;
+  String? clinicName;
+  String? address;
+  final String phone = '012 3456 7890'; // Số điện thoại giả định
   final String openingHours = '8:00 - 12:00 & 13:00-17:00 (Thứ 2 - Chủ nhật)';
   final String mapboxAccessToken = Environment.MAPBOX_KEY;
+
+  @override
+  void initState() {
+    super.initState();
+    MapboxOptions.setAccessToken(mapboxAccessToken);
+
+    Timer(const Duration(seconds: 3), () {
+      if (mounted && _mapLoading) {
+        setState(() {
+          _mapLoading = false;
+        });
+      }
+    });
+  }
+
+  // Method cập nhật dữ liệu khi nhận được từ API
+  void _updateAddressData(GetAddressVaxPetSuccess state) {
+    setState(() {
+      latitude = state.latitude;
+      longitude = state.longitude;
+      clinicName = state.clinicName;
+      address = state.address;
+    });
+
+    // Update map nếu đã được tạo
+    if (mapboxMap != null) {
+      _updateMapLocation();
+    }
+  }
+
+  // Method cập nhật vị trí map
+  void _updateMapLocation() async {
+    if (mapboxMap != null) {
+      // Cập nhật camera position
+      await mapboxMap!.easeTo(
+        CameraOptions(
+          center: Point(coordinates: Position(longitude!, latitude!)),
+          zoom: 15.0,
+        ),
+        MapAnimationOptions(duration: 1000, startDelay: 0),
+      );
+
+      // Clear existing annotations và add mới
+      await _addSimpleMarker();
+    }
+  }
 
   // Method kiểm tra trạng thái hoạt động
   Map<String, dynamic> _getClinicStatus() {
     final now = DateTime.now();
     final currentHour = now.hour;
     final currentMinute = now.minute;
-    final currentTime = currentHour * 60 + currentMinute; // Chuyển về phút để so sánh dễ hơn
+    final currentTime = currentHour * 60 + currentMinute;
 
     // Giờ làm việc: 8:00-12:00 và 13:00-17:00
     const morningStart = 8 * 60; // 8:00 = 480 phút
@@ -106,20 +167,6 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    MapboxOptions.setAccessToken(mapboxAccessToken);
-
-    Timer(const Duration(seconds: 3), () {
-      if (mounted && _mapLoading) {
-        setState(() {
-          _mapLoading = false;
-        });
-      }
-    });
-  }
-
   _onMapCreated(MapboxMap mapboxMap) async {
     try {
       this.mapboxMap = mapboxMap;
@@ -139,7 +186,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
     if (pointAnnotationManager != null) {
       try {
         final pointAnnotationOptions = PointAnnotationOptions(
-          geometry: Point(coordinates: Position(longitude, latitude)),
+          geometry: Point(coordinates: Position(longitude!, latitude!)),
           // Thay emoji bằng text đơn giản
           textField: "VaxPet",
           textOffset: [0.0, -2.0],
@@ -154,7 +201,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
         // Thêm circle marker để làm nổi bật vị trí
         final circleAnnotationManager = await mapboxMap!.annotations.createCircleAnnotationManager();
         final circleOptions = CircleAnnotationOptions(
-          geometry: Point(coordinates: Position(longitude, latitude)),
+          geometry: Point(coordinates: Position(longitude!, latitude!)),
           circleRadius: 8.0,
           circleColor: AppColors.primary.toARGB32(),
           circleStrokeColor: Colors.white.toARGB32(),
@@ -190,7 +237,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
 
   // Dialog xác nhận mở Google Maps
   Future<bool> _showOpenMapsConfirmation() async {
-    return await showDialog<bool>(
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -297,7 +344,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              clinicName,
+                              clinicName ?? '',
                               style: TextStyle(
                                 fontSize: isTablet ? 16 : 15,
                                 fontWeight: FontWeight.bold,
@@ -306,7 +353,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              address,
+                              address ?? '',
                               style: TextStyle(
                                 fontSize: isTablet ? 14 : 13,
                                 color: AppColors.textGray,
@@ -393,7 +440,8 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
           ),
         );
       },
-    ) ?? false; // Trả về false nếu user dismiss dialog
+    );
+    return result ?? false;
   }
 
   Future<void> _makePhoneCall() async {
@@ -410,7 +458,7 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
   }
 
   Future<void> _copyAddress() async {
-    await Clipboard.setData(ClipboardData(text: address));
+    await Clipboard.setData(ClipboardData(text: address!));
     _showMessage('Đã sao chép địa chỉ');
   }
 
@@ -450,9 +498,6 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600;
 
-    // Lấy trạng thái phòng khám
-    final clinicStatus = _getClinicStatus();
-
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: BasicAppbar(
@@ -480,162 +525,250 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
         hideBack: false,
         elevation: 2,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Map Container
-            Container(
-              margin: EdgeInsets.all(isTablet ? 24 : 16),
-              height: screenHeight * (isTablet ? 0.4 : 0.35),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Stack(
-                  children: [
-                    MapWidget(
-                      key: const ValueKey("mapWidget"),
-                      cameraOptions: CameraOptions(
-                        center: Point(coordinates: Position(longitude, latitude)),
-                        zoom: 15.0,
+      body: BlocListener<GetAddressVaxPetCubit, GetAddressVaxPetState>(
+        listener: (context, state) {
+          if (state is GetAddressVaxPetSuccess) {
+            _updateAddressData(state);
+          } else if (state is GetAddressVaxPetFailure) {
+            _showMessage(state.message, isError: true);
+          }
+        },
+        child: BlocBuilder<GetAddressVaxPetCubit, GetAddressVaxPetState>(
+          builder: (context, state) {
+            final clinicStatus = _getClinicStatus();
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Loading indicator khi đang fetch data
+                  if (state is GetAddressVaxPetLoading)
+                    Container(
+                      margin: EdgeInsets.all(isTablet ? 24 : 16),
+                      padding: EdgeInsets.all(isTablet ? 32 : 24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
                       ),
-                      styleUri: MapboxStyles.MAPBOX_STREETS,
-                      onMapCreated: _onMapCreated,
-                    ),
-                    if (_mapLoading)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Center(
-                          child: CircularProgressIndicator(
+                      child: Row(
+                        children: [
+                          const CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                           ),
-                        ),
+                          const SizedBox(width: 16),
+                          Text(
+                            'Đang tải thông tin địa chỉ...',
+                            style: TextStyle(
+                              fontSize: isTablet ? 16 : 14,
+                              color: AppColors.textGray,
+                            ),
+                          ),
+                        ],
                       ),
-                    // Map overlay button
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                    ),
+
+                  // Map Container
+                  if (latitude != null && longitude != null)
+                    Container(
+                      margin: EdgeInsets.all(isTablet ? 24 : 16),
+                      height: screenHeight * (isTablet ? 0.4 : 0.35),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          children: [
+                            MapWidget(
+                              key: const ValueKey("mapWidget"),
+                              cameraOptions: CameraOptions(
+                                center: Point(coordinates: Position(longitude!, latitude!)),
+                                zoom: 15.0,
+                              ),
+                              styleUri: MapboxStyles.MAPBOX_STREETS,
+                              onMapCreated: _onMapCreated,
+                            ),
+                            if (_mapLoading)
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                  ),
+                                ),
+                              ),
+                            // Map overlay button
+                            Positioned(
+                              top: 12,
+                              right: 12,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.1),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.fullscreen, color: AppColors.primary),
+                                  onPressed: _openMapsApp,
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.fullscreen, color: AppColors.primary),
-                          onPressed: _openMapsApp,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
 
-            // Clinic Info Card
-            Container(
-              margin: EdgeInsets.fromLTRB(
-                isTablet ? 24 : 16,
-                0,
-                isTablet ? 24 : 16,
-                isTablet ? 24 : 16
-              ),
-              padding: EdgeInsets.all(isTablet ? 28 : 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header with logo
-                  Row(
-                    children: [
-                      Container(
-                        width: isTablet ? 60 : 50,
-                        height: isTablet ? 60 : 50,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.7)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                  // Placeholder khi chưa có data
+                  if (latitude == null || longitude == null)
+                    Container(
+                      margin: EdgeInsets.all(isTablet ? 24 : 16),
+                      height: screenHeight * (isTablet ? 0.4 : 0.35),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
                           ),
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
+                        ],
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.map_outlined,
+                              size: isTablet ? 80 : 60,
                               color: AppColors.primary.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Đang tải bản đồ...',
+                              style: TextStyle(
+                                fontSize: isTablet ? 18 : 16,
+                                color: AppColors.textGray,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.local_hospital_rounded,
-                          color: Colors.white,
-                          size: 28,
-                        ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+
+                  // Clinic Info Card
+                  Container(
+                    margin: EdgeInsets.fromLTRB(
+                      isTablet ? 24 : 16,
+                      0,
+                      isTablet ? 24 : 16,
+                      isTablet ? 24 : 16
+                    ),
+                    padding: EdgeInsets.all(isTablet ? 28 : 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 20,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header with logo
+                        Row(
                           children: [
-                            Text(
-                              clinicName,
-                              style: TextStyle(
-                                fontSize: isTablet ? 20 : 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textBlack,
+                            Container(
+                              width: isTablet ? 60 : 50,
+                              height: isTablet ? 60 : 50,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.7)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.local_hospital_rounded,
+                                color: Colors.white,
+                                size: 28,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            // Hiển thị trạng thái hoạt động của phòng khám
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: clinicStatus['bgColor'],
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: clinicStatus['borderColor']),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    clinicStatus['icon'],
-                                    color: clinicStatus['color'],
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 4),
                                   Text(
-                                    clinicStatus['status'],
+                                    clinicName ?? '',
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: clinicStatus['color'],
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: isTablet ? 20 : 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textBlack,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  // Hiển thị trạng thái hoạt động của phòng khám
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: clinicStatus['bgColor'],
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: clinicStatus['borderColor']),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          clinicStatus['icon'],
+                                          color: clinicStatus['color'],
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          clinicStatus['status'],
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: clinicStatus['color'],
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -643,75 +776,75 @@ class _AddressVaxPetPageState extends State<AddressVaxPetPage> {
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                  // Address Info
-                  _buildInfoRow(
-                    Icons.location_on_rounded,
-                    'Địa chỉ',
-                    address,
-                    AppColors.primary,
-                    onTap: _copyAddress,
-                    isTablet: isTablet,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Phone Info
-                  _buildInfoRow(
-                    Icons.phone_rounded,
-                    'Điện thoại',
-                    phone,
-                    Colors.green.shade600,
-                    onTap: _makePhoneCall,
-                    isTablet: isTablet,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Hours Info
-                  _buildInfoRow(
-                    Icons.access_time_rounded,
-                    'Giờ làm việc',
-                    '${openingHours}\n${_getNextOpenTime()}',
-                    Colors.orange.shade600,
-                    isTablet: isTablet,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildActionButton(
-                          icon: Icons.directions_rounded,
-                          label: 'Chỉ đường',
-                          color: AppColors.primary,
-                          onPressed: _openMapsApp,
+                        // Address Info
+                        _buildInfoRow(
+                          Icons.location_on_rounded,
+                          'Địa chỉ',
+                          address ?? '',
+                          AppColors.primary,
+                          onTap: _copyAddress,
                           isTablet: isTablet,
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildActionButton(
-                          icon: Icons.call_rounded,
-                          label: 'Gọi điện',
-                          color: Colors.green.shade600,
-                          onPressed: _makePhoneCall,
+
+                        const SizedBox(height: 20),
+
+                        // Phone Info
+                        _buildInfoRow(
+                          Icons.phone_rounded,
+                          'Điện thoại',
+                          phone,
+                          Colors.green.shade600,
+                          onTap: _makePhoneCall,
                           isTablet: isTablet,
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(height: 20),
+
+                        // Hours Info
+                        _buildInfoRow(
+                          Icons.access_time_rounded,
+                          'Giờ làm việc',
+                          '$openingHours\n${_getNextOpenTime()}',
+                          Colors.orange.shade600,
+                          isTablet: isTablet,
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Action Buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildActionButton(
+                                icon: Icons.directions_rounded,
+                                label: 'Chỉ đường',
+                                color: AppColors.primary,
+                                onPressed: _openMapsApp,
+                                isTablet: isTablet,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildActionButton(
+                                icon: Icons.call_rounded,
+                                label: 'Gọi điện',
+                                color: Colors.green.shade600,
+                                onPressed: _makePhoneCall,
+                                isTablet: isTablet,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
