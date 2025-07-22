@@ -719,10 +719,12 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
                   );
 
                   if (result == true && context.mounted) {
-                    final appointmentId = appointment['appointmentId'];
+                    // Use appointmentDetailId instead of appointmentId
+                    final appointmentDetailId = appointment['appointmentDetailId'];
+                    debugPrint('Refreshing with appointmentDetailId: $appointmentDetailId');
                     context
                         .read<AppointmentHealthCertificateNoteDetailCubit>()
-                        .fetchAppointmentDetail(appointmentId);
+                        .fetchAppointmentDetail(appointmentDetailId);
                   }
                 },
                 icon: Icon(Icons.edit, size: isTablet ? 24 : 20),
