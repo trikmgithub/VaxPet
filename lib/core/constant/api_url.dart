@@ -1,6 +1,7 @@
+import 'package:vaxpet/core/constant/enviroment.dart';
+
 class ApiUrl {
-  static const baseURL =
-      'https://petvax-dva5eufae0brhdgf.eastasia-01.azurewebsites.net/';
+  static var baseURL = Environment.API_URL;
   static const apiV = 'api/';
 
   // AUTH ENDPOINTS
@@ -99,8 +100,13 @@ class ApiUrl {
   //Get
   static const getAppointmentForHealthCertificateByPetIdAndStatus =
       '${apiV}AppointmentForHealthCondition/get-appointment-detail-healthCondition-by-pet-and-status';
-
-
+  static const getAppointmentForHealthCertificateById =
+      '${apiV}AppointmentForHealthCondition/get-appointment-detail-healthCondition-by';
+  //Put
+  static const updateAppointmentForHealthCertificate =
+      '${apiV}AppointmentForHealthCondition/update-appointment-for-customer';
+  static const cancelAppointmentForHealthCertificate =
+      '${apiV}AppointmentForHealthCondition/update-appointment-healthCondition-for-staff';
   // ADDRESS ENDPOINTS
   static const getAddressPetVax= '${apiV}PetVaxLocation/get-coordinates-of-vaxpet';
 }

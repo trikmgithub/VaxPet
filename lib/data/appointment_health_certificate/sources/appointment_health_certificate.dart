@@ -11,6 +11,8 @@ abstract class AppointmentHealthCertificateService {
   Future<Either> postAppointmentHealthCertificate(
     PostAppointmentHealthCertificateModel? params,
   );
+  // Put
+  Future<Either> cancelAppointmentHealthCertificate(int appointmentId);
 }
 
 class AppointmentHealthCertificateServiceImpl
@@ -33,6 +35,30 @@ class AppointmentHealthCertificateServiceImpl
             "address": params?.address,
           },
         },
+      );
+      return Right(response.data);
+    } on DioException catch (e) {
+      return Left('Lỗi kết nối mạng! ${e.message}');
+    } catch (e) {
+      return Left('Lỗi tại postAppointmentMicrochip: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<Either> cancelAppointmentHealthCertificate(int appointmentId) async {
+    try {
+      final url = ApiUrl.cancelAppointmentForHealthCertificate;
+
+      // Sử dụng FormData cho multipart/form-data
+      final formData = FormData.fromMap({
+        'appointmentId': appointmentId,
+        'appointmentStatus': 10, // Assuming 10 is the status for cancellation
+      });
+
+      final response = await sl<DioClient>().put(url, data: formData,
+        options: Options(
+          headers: {'Content-Type': 'multipart/form-data'},
+        ),
       );
       return Right(response.data);
     } on DioException catch (e) {

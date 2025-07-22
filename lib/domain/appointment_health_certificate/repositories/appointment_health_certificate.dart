@@ -7,4 +7,7 @@ abstract class AppointmentHealthCertificateRepository {
   Future<Either> postAppointmentHealthCertificate(
     PostAppointmentHealthCertificateModel? params,
   );
+
+  //Put
+  Future<Either> cancelAppointmentHealthCertificate(int appointmentId);
 }

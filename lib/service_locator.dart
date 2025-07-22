@@ -22,6 +22,8 @@ import 'data/disease/repositories/disease.dart';
 import 'data/disease/sources/disease.dart';
 import 'data/health_certificate_appointment_note/repositories/health_certificate_appointment_note.dart';
 import 'data/health_certificate_appointment_note/sources/health_certificate_appointment_note.dart';
+import 'data/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
+import 'data/health_certificate_appointment_note_detail/sources/health_certificate_appointment_note_detail.dart';
 import 'data/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'data/microchip_appointment_note/sources/microchip_appointment_note.dart';
 import 'data/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
@@ -43,6 +45,7 @@ import 'domain/appointment/usecases/get_past_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/get_today_appointment_by_cusid.dart';
 import 'domain/appointment/usecases/put_appointment_by_id.dart';
 import 'domain/appointment_health_certificate/repositories/appointment_health_certificate.dart';
+import 'domain/appointment_health_certificate/usecases/cancel_appointment_health_certificate.dart';
 import 'domain/appointment_health_certificate/usecases/post_appointment_health_certificate.dart';
 import 'domain/appointment_microchip/repositories/appointment_microchip.dart';
 import 'domain/appointment_microchip/usecases/cancel_appointment_microchip.dart';
@@ -66,6 +69,9 @@ import 'domain/disease/repositories/disease.dart';
 import 'domain/disease/usecases/get_disease_by_species.dart';
 import 'domain/health_certificate_appointment_note/repositories/health_certificate_appointment_note.dart';
 import 'domain/health_certificate_appointment_note/usecases/get_health_certificate_appointment_note.dart';
+import 'domain/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
+import 'domain/health_certificate_appointment_note_detail/usecases/get_health_certificate_appointment_note_detail.dart';
+import 'domain/health_certificate_appointment_note_detail/usecases/put_health_certificate_appointment_note.dart';
 import 'domain/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note/usecases/get_microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
@@ -123,6 +129,9 @@ void setupServiceLocator() {
     HealthCertificateAppointmentNoteServiceImpl(),
   );
   sl.registerSingleton<AddressVaxPetService>(AddressVaxPetServiceImpl());
+  sl.registerSingleton<HealthCertificateAppointmentNoteDetailService>(
+    HealthCertificateAppointmentNoteDetailServiceImpl(),
+  );
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -161,8 +170,11 @@ void setupServiceLocator() {
   sl.registerSingleton<AddressVaxPetRepository>(
     AddressVaxPetRepositoryImpl(),
   );
+  sl.registerSingleton<HealthCertificateAppointmentNoteDetailRepository>(
+    HealthCertificateAppointmentNoteDetailRepositoryImpl(),
+  );
 
-  // User Cases
+  // Use Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
   sl.registerSingleton<SigninUseCase>(SigninUseCase());
   sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
@@ -229,5 +241,14 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<GetAddressVaxPetUseCase>(
     GetAddressVaxPetUseCase(),
+  );
+  sl.registerSingleton<GetHealthCertificateAppointmentNoteDetailUseCase>(
+    GetHealthCertificateAppointmentNoteDetailUseCase(),
+  );
+  sl.registerSingleton<PutHealthCertificateAppointmentNoteUseCase>(
+    PutHealthCertificateAppointmentNoteUseCase(),
+  );
+  sl.registerSingleton<CancelAppointmentHealthCertificateUseCase>(
+    CancelAppointmentHealthCertificateUseCase(),
   );
 }

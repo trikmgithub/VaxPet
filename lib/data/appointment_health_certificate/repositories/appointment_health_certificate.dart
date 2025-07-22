@@ -18,4 +18,15 @@ class AppointmentHealthCertificateRepositoryImpl
       return Right(data);
     });
   }
+
+  @override
+  Future<Either> cancelAppointmentHealthCertificate(int appointmentId) async {
+    var returnedData = await sl<AppointmentHealthCertificateService>()
+        .cancelAppointmentHealthCertificate(appointmentId);
+    return returnedData.fold((error) => Left(Exception(error.toString())), (
+        data,
+        ) {
+      return Right(data);
+    });
+  }
 }

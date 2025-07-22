@@ -13,4 +13,8 @@ class Environment {
   static String get MAPBOX_KEY {
     return dotenv.env['MAPBOX_KEY'] ?? '';
   }
+
+  static String get API_URL {
+    return dotenv.env['API_URL'] ?? '';
+  }
 }

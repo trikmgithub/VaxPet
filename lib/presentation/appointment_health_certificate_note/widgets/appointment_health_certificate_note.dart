@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../appointment_health_certificate_note_detail/pages/appointment_health_certificate_note_detail.dart';
 import '../bloc/appointment_health_certificate_note_cubit.dart';
 import '../bloc/appointment_health_certificate_note_state.dart';
 
@@ -1109,40 +1110,34 @@ class HealthCertificateAppointmentCard extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       // Navigate to detail page for both pending and confirmed appointments
-                      // Add null safety check for appointmentId
-                      final appointmentId = appointment['appointmentId'];
-                      if (appointmentId != null) {
-                        // TODO: Navigate to health certificate detail page
-                        // Navigator.push(
-                        //   context,
-                        //   PageRouteBuilder(
-                        //     pageBuilder: (context, animation, secondaryAnimation) =>
-                        //         AppointmentHealthCertificateNoteDetailPage(
-                        //           appointmentId: appointmentId,
-                        //         ),
-                        //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        //       return SlideTransition(
-                        //         position: animation.drive(
-                        //           Tween(
-                        //             begin: const Offset(1.0, 0.0),
-                        //             end: Offset.zero,
-                        //           ).chain(CurveTween(curve: Curves.easeOutCubic)),
-                        //         ),
-                        //         child: child,
-                        //       );
-                        //     },
-                        //   ),
-                        // );
-
-                        // Temporarily show info dialog
-                        _showAppointmentDetails(context, appointment);
+                      // Add null safety check for appointmentDetailId
+                      final appointmentDetailId = appointment['appointmentDetailId'];
+                      if (appointmentDetailId != null) {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                AppointmentHealthCertificateNoteDetailPage(
+                                  appointmentDetailId: appointmentDetailId,
+                                ),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: animation.drive(
+                                  Tween(
+                                    begin: const Offset(1.0, 0.0),
+                                    end: Offset.zero,
+                                  ).chain(CurveTween(curve: Curves.easeOutCubic)),
+                                ),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
                       } else {
-                        // Show error message if appointmentId is null
+                        // Show error message if appointmentDetailId is null
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                              'Không thể tải chi tiết lịch hẹn. Vui lòng thử lại.',
-                            ),
+                            content: Text('Có lỗi xảy ra khi tải thông tin lịch hẹn'),
                             backgroundColor: Colors.red,
                           ),
                         );
