@@ -79,8 +79,16 @@ String formatDateForDisplay(String? dateString) {
 class Pets extends StatelessWidget {
   final int accountId;
   final bool isSmallScreen;
+  final String searchQuery;
+  final String selectedFilter;
 
-  const Pets({super.key, required this.accountId, this.isSmallScreen = true});
+  const Pets({
+    super.key,
+    required this.accountId,
+    this.isSmallScreen = true,
+    this.searchQuery = '',
+    this.selectedFilter = 'all',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -115,15 +123,18 @@ class Pets extends StatelessWidget {
             }
 
             if (state is PetsLoaded) {
+              // Lọc thú cưng theo tên dựa trên searchQuery
+              final filteredPets = _filterPetsByName(state.pets);
+
               return RefreshIndicator(
                 onRefresh: () => _refreshPets(context),
                 color: AppColors.primary,
                 backgroundColor: Colors.white,
                 strokeWidth: 2.5,
                 child:
-                    state.pets.isEmpty
+                    filteredPets.isEmpty
                         ? _buildEmptyState()
-                        : _buildPetsList(state.pets),
+                        : _buildPetsList(filteredPets),
               );
             }
 
@@ -140,6 +151,30 @@ class Pets extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Phương thức lọc thú cưng theo tên và loài
+  List<PetEntity> _filterPetsByName(List<PetEntity> pets) {
+    List<PetEntity> filteredPets = pets;
+
+    // Lọc theo loài thú cưng
+    if (selectedFilter != 'all') {
+      filteredPets = filteredPets.where((pet) {
+        final species = pet.species?.toLowerCase() ?? '';
+        return species == selectedFilter;
+      }).toList();
+    }
+
+    // Lọc theo tên (nếu có từ khóa tìm kiếm)
+    if (searchQuery.isNotEmpty) {
+      filteredPets = filteredPets.where((pet) {
+        final petName = pet.name?.toLowerCase() ?? '';
+        final query = searchQuery.toLowerCase();
+        return petName.contains(query);
+      }).toList();
+    }
+
+    return filteredPets;
   }
 
   // Widget hiển thị khi không có dữ liệu
@@ -159,14 +194,16 @@ class Pets extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.pets,
+                  searchQuery.isNotEmpty ? Icons.search_off : Icons.pets,
                   size: 64,
                   color: AppColors.primary.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 20),
               Text(
-                'Chưa có thú cưng nào',
+                searchQuery.isNotEmpty
+                    ? 'Không tìm thấy thú cưng'
+                    : 'Chưa có thú cưng nào',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -175,7 +212,9 @@ class Pets extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Nhấn nút "+" để thêm thú cưng đầu tiên',
+                searchQuery.isNotEmpty
+                    ? 'Không có thú cưng nào có tên "${searchQuery}"'
+                    : 'Nhấn nút "+" để thêm thú cưng đầu tiên',
                 style: TextStyle(fontSize: 16, color: Colors.grey[500]),
                 textAlign: TextAlign.center,
               ),

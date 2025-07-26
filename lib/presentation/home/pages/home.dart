@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage>
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _animationController;
   late Animation<double> _animation;
+  String _searchQuery = '';
+  String _selectedFilter = 'all'; // 'all', 'dog', 'cat'
 
   @override
   void initState() {
@@ -42,6 +44,13 @@ class _HomePageState extends State<HomePage>
     );
 
     _animationController.forward();
+
+    // Lắng nghe thay đổi trong ô tìm kiếm
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
   }
 
   @override
@@ -58,6 +67,89 @@ class _HomePageState extends State<HomePage>
       accountId = storedId;
       isLoading = false;
     });
+  }
+
+  void _showFilterMenu(BuildContext context, Offset buttonPosition) {
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        buttonPosition.dx - 100, // Điều chỉnh vị trí x
+        buttonPosition.dy + 10,   // Hiển thị ngay dưới button
+        buttonPosition.dx + 100,
+        buttonPosition.dy + 200,
+      ),
+      items: [
+        PopupMenuItem<String>(
+          value: 'all',
+          child: _buildFilterMenuItem('Tất cả', 'all', Icons.pets),
+        ),
+        PopupMenuItem<String>(
+          value: 'dog',
+          child: _buildFilterMenuItem('Chó', 'dog', Icons.pets),
+        ),
+        PopupMenuItem<String>(
+          value: 'cat',
+          child: _buildFilterMenuItem('Mèo', 'cat', Icons.pets),
+        ),
+      ],
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ).then((String? value) {
+      if (value != null) {
+        setState(() {
+          _selectedFilter = value;
+        });
+      }
+    });
+  }
+
+  Widget _buildFilterMenuItem(String label, String value, IconData icon) {
+    bool isSelected = _selectedFilter == value;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.primary.withValues(alpha: 0.2)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.textGray,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.textBlack,
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (isSelected)
+            Icon(
+              Icons.check,
+              size: 16,
+              color: AppColors.primary,
+            ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -170,19 +262,35 @@ class _HomePageState extends State<HomePage>
                                   color: AppColors.textBlack,
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Icon(
-                                  Icons.filter_list,
-                                  color: AppColors.primary,
-                                  size: isSmallScreen ? 20 : 24,
-                                ),
+                              Builder(
+                                builder: (BuildContext context) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                      final position = renderBox.localToGlobal(Offset.zero);
+                                      _showFilterMenu(context, Offset(
+                                        position.dx - 50, // Căn menu về bên trái một chút
+                                        position.dy + renderBox.size.height + 5, // Ngay dưới icon
+                                      ));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: _selectedFilter != 'all'
+                                            ? AppColors.primary.withValues(alpha: 0.8)
+                                            : AppColors.primary.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Icon(
+                                        Icons.filter_list,
+                                        color: _selectedFilter != 'all'
+                                            ? Colors.white
+                                            : AppColors.primary,
+                                        size: isSmallScreen ? 20 : 24,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -218,6 +326,8 @@ class _HomePageState extends State<HomePage>
                               ? Pets(
                                 accountId: accountId!,
                                 isSmallScreen: isSmallScreen,
+                                searchQuery: _searchQuery,
+                                selectedFilter: _selectedFilter,
                               )
                               : Center(
                                 child: Column(

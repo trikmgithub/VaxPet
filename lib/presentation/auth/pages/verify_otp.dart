@@ -29,7 +29,18 @@ class VerifyOtpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BasicAppbar(hideBack: false),
+      appBar: BasicAppbar(
+        title: Text(
+        'VaxPet',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: AppColors.textWhite,
+        ),
+      ),
+      backgroundColor: AppColors.primary,
+      hideBack: false,
+      elevation: 2,
+      ),
       body: SafeArea(
         minimum: const EdgeInsets.all(16),
         child: Column(

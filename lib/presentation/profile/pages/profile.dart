@@ -13,6 +13,7 @@ import '../../buy_history/pages/buy_history.dart';
 import '../../customer_profile/pages/customer_profile.dart';
 import '../../help/pages/help.dart';
 import '../../membership/pages/membership.dart';
+import '../../preferential/pages/preferential.dart';
 import '../../splash/pages/introduce.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -94,11 +95,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         const Divider(height: 1),
                         _buildMenuItem(
                           context,
-                          'Hạng thành viên',
+                          'Ưu đãi',
                           Icons.card_membership,
                           () => AppNavigator.push(
                             context,
-                            const MembershipPage(),
+                            const PreferentialPage(),
                           ),
                         ),
                         const Divider(height: 1),
