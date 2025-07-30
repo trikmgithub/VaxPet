@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 
 import '../../../common/widgets/app_bar/app_bar.dart';
+import '../bloc/all_voucher_cubit.dart';
+import '../bloc/customer_voucher_cubit.dart';
+import '../widgets/all_voucher.dart';
+import '../widgets/customer_voucher.dart';
 
 class PointPage extends StatefulWidget {
   const PointPage({super.key});
@@ -126,19 +131,15 @@ class _PointPageState extends State<PointPage> with TickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-                // Chờ đổi tab
-                Center(
-                  child: Text(
-                    'Danh sách đổi điểm đang chờ xử lý',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
+                // Khám phá tab - All Vouchers
+                BlocProvider(
+                  create: (context) => AllVoucherCubit(),
+                  child: const AllVoucher(),
                 ),
-                // Đã đổi tab
-                Center(
-                  child: Text(
-                    'Lịch sử đổi điểm đã hoàn thành',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
+                // Đã đổi tab - Customer Vouchers
+                BlocProvider(
+                  create: (context) => CustomerVoucherCubit(),
+                  child: const CustomerVoucher(),
                 ),
               ],
             ),

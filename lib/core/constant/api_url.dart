@@ -109,4 +109,21 @@ class ApiUrl {
       '${apiV}AppointmentForHealthCondition/update-appointment-healthCondition-for-staff';
   // ADDRESS ENDPOINTS
   static const getAddressPetVax= '${apiV}PetVaxLocation/get-coordinates-of-vaxpet';
+
+  // MEMBERSHIP ENDPOINTS
+  // Get
+  static const getCustomerRankingInfo = '${apiV}membership/get-customer-ranking-info';
+  static const getMembershipStatus = '${apiV}membership/get-membership-status';
+
+  // POINT TRANSACTION ENDPOINTS
+  // Get
+  static const getPointTransactionByCustomerId = '${apiV}pointTransaction/get-point-transaction-by-customer-id';
+
+  // VOUCHER ENDPOINTS
+  // Get
+  static const getAllVoucher = '${apiV}voucher/get-all-vouchers';
+
+  // CUSTOMER VOUCHER ENDPOINTS
+  // Get
+  static const getCustomerVoucher = '${apiV}customerVoucher/get-customer-vouchers-by-customer-id';
 }

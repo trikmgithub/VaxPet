@@ -24,18 +24,24 @@ import 'data/health_certificate_appointment_note/repositories/health_certificate
 import 'data/health_certificate_appointment_note/sources/health_certificate_appointment_note.dart';
 import 'data/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
 import 'data/health_certificate_appointment_note_detail/sources/health_certificate_appointment_note_detail.dart';
+import 'data/membership/repositories/membership.dart';
+import 'data/membership/sources/membership.dart';
 import 'data/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'data/microchip_appointment_note/sources/microchip_appointment_note.dart';
 import 'data/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
 import 'data/microchip_appointment_note_detail/sources/microchip_appointment_note_detail.dart';
 import 'data/pet_record/repositories/pet_record.dart';
 import 'data/pet_record/sources/pet_record.dart';
+import 'data/point_transaction/repositories/point_transaction.dart';
+import 'data/point_transaction/sources/point_transaction.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
 import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
 import 'data/vaccine_appointment_note_detail/sources/vaccine_appointment_note_detail.dart';
+import 'data/voucher/repositories/voucher.dart';
+import 'data/voucher/sources/voucher.dart';
 import 'domain/address_vax_pet/repositories/address_vax_pet.dart';
 import 'domain/address_vax_pet/usecases/get_address_vax_pet.dart';
 import 'domain/appointment/repositories/appointment.dart';
@@ -72,6 +78,9 @@ import 'domain/health_certificate_appointment_note/usecases/get_health_certifica
 import 'domain/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
 import 'domain/health_certificate_appointment_note_detail/usecases/get_health_certificate_appointment_note_detail.dart';
 import 'domain/health_certificate_appointment_note_detail/usecases/put_health_certificate_appointment_note.dart';
+import 'domain/membership/repositories/membership.dart';
+import 'domain/membership/usecases/get_customer_ranking_info.dart';
+import 'domain/membership/usecases/get_membership_status.dart';
 import 'domain/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note/usecases/get_microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
@@ -84,12 +93,17 @@ import 'domain/pet/usecases/get_pets.dart';
 import 'domain/pet/usecases/put_pet.dart';
 import 'domain/pet_record/repositories/pet_record.dart';
 import 'domain/pet_record/usecases/get_pet_record.dart';
+import 'domain/point_transaction/repositories/point_transaction.dart';
+import 'domain/point_transaction/usecases/get_point_transaction.dart';
 import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
 import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
 import 'domain/vaccine_appointment_note_detail/usecases/get_vaccine_appointment_note_detail.dart';
+import 'domain/voucher/repositories/voucher.dart';
+import 'domain/voucher/usecases/get_all_vouchers.dart';
+import 'domain/voucher/usecases/get_customer_vouchers.dart';
 
 final sl = GetIt.instance;
 
@@ -132,6 +146,9 @@ void setupServiceLocator() {
   sl.registerSingleton<HealthCertificateAppointmentNoteDetailService>(
     HealthCertificateAppointmentNoteDetailServiceImpl(),
   );
+  sl.registerSingleton<MembershipService>(MembershipServiceImpl());
+  sl.registerSingleton<PointTransactionService>(PointTransactionServiceImpl());
+  sl.registerSingleton<VoucherService>(VoucherServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -173,6 +190,9 @@ void setupServiceLocator() {
   sl.registerSingleton<HealthCertificateAppointmentNoteDetailRepository>(
     HealthCertificateAppointmentNoteDetailRepositoryImpl(),
   );
+  sl.registerSingleton<MembershipRepository>(MembershipRepositoryImpl());
+  sl.registerSingleton<PointTransactionRepository>(PointTransactionRepositoryImpl());
+  sl.registerSingleton<VoucherRepository>(VoucherRepositoryImpl());
 
   // Use Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -250,5 +270,20 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<CancelAppointmentHealthCertificateUseCase>(
     CancelAppointmentHealthCertificateUseCase(),
+  );
+  sl.registerSingleton<GetCustomerRankingInfoUseCase>(
+    GetCustomerRankingInfoUseCase(),
+  );
+  sl.registerSingleton<GetMembershipStatusUseCase>(
+    GetMembershipStatusUseCase(),
+  );
+  sl.registerSingleton<GetPointTransactionUseCase>(
+    GetPointTransactionUseCase(),
+  );
+  sl.registerSingleton<GetAllVouchersUseCase>(
+    GetAllVouchersUseCase(),
+  );
+  sl.registerSingleton<GetCustomerVouchersUseCase>(
+    GetCustomerVouchersUseCase(),
   );
 }
