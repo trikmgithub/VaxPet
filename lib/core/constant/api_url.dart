@@ -122,8 +122,18 @@ class ApiUrl {
   // VOUCHER ENDPOINTS
   // Get
   static const getAllVoucher = '${apiV}voucher/get-all-vouchers';
+  // Post
+  static const postVoucher = '${apiV}voucher/redeem-points-for-voucher';
 
   // CUSTOMER VOUCHER ENDPOINTS
   // Get
   static const getCustomerVoucher = '${apiV}customerVoucher/get-customer-vouchers-by-customer-id';
+
+  // SERVICE HISTORIES ENDPOINTS
+  // Get
+  static const getServiceHistories = '${apiV}serviceHistories/get-service-history-by';
+
+  // VACCINATION SCHEDULE ENDPOINTS
+  // Get
+  static const getVaccineSchedule = '${apiV}vaccinationSchedule/get-vaccination-schedule-by-species';
 }

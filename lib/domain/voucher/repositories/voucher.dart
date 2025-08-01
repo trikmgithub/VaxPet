@@ -4,4 +4,6 @@ abstract class VoucherRepository {
   //Get
   Future<Either> getAllVouchers(Map<String, dynamic>? params);
   Future<Either> getCustomerVoucher(int customerId);
+  //Post
+  Future<Either> postVoucher(int customerId, int voucherId);
 }

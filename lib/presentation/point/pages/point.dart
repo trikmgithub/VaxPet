@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
+import 'package:vaxpet/presentation/preferential/bloc/preferential_state.dart';
 
 import '../../../common/widgets/app_bar/app_bar.dart';
 import '../bloc/all_voucher_cubit.dart';
@@ -9,7 +10,12 @@ import '../widgets/all_voucher.dart';
 import '../widgets/customer_voucher.dart';
 
 class PointPage extends StatefulWidget {
-  const PointPage({super.key});
+  final CustomerRankingInfo customerRankingInfo;
+
+  const PointPage({
+    super.key,
+    required this.customerRankingInfo,
+  });
 
   @override
   State<PointPage> createState() => _PointPageState();
@@ -90,7 +96,10 @@ class _PointPageState extends State<PointPage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '1,250 điểm',
+                  '${widget.customerRankingInfo.currentPoints.toString().replaceAllMapped(
+                    RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                    (Match m) => '${m[1]},',
+                  )} điểm',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32,
@@ -98,7 +107,12 @@ class _PointPageState extends State<PointPage> with TickerProviderStateMixin {
                   ),
                 ),
                 Text(
-                  'Hạng Bạc • Còn 750 điểm để lên hạng Vàng',
+                  widget.customerRankingInfo.nextRank.isNotEmpty
+                      ? '${widget.customerRankingInfo.currentRankDisplayName} • Còn ${widget.customerRankingInfo.pointsToNextRank.toString().replaceAllMapped(
+                          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                          (Match m) => '${m[1]},',
+                        )} điểm để lên ${widget.customerRankingInfo.nextRankDisplayName}'
+                      : widget.customerRankingInfo.currentRankDisplayName,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
@@ -134,7 +148,10 @@ class _PointPageState extends State<PointPage> with TickerProviderStateMixin {
                 // Khám phá tab - All Vouchers
                 BlocProvider(
                   create: (context) => AllVoucherCubit(),
-                  child: const AllVoucher(),
+                  child: AllVoucher(
+                    currentPoints: widget.customerRankingInfo.currentPoints,
+                    customerId: widget.customerRankingInfo.customerId,
+                  ),
                 ),
                 // Đã đổi tab - Customer Vouchers
                 BlocProvider(

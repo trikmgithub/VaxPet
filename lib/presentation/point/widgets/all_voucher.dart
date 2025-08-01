@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bloc/all_voucher_cubit.dart';
 import '../bloc/all_voucher_state.dart';
+import '../bloc/post_voucher_cubit.dart';
+import '../bloc/post_voucher_state.dart';
 
 class AllVoucher extends StatefulWidget {
-  const AllVoucher({super.key});
+  final int? currentPoints;
+  final int? customerId;
+
+  const AllVoucher({
+    super.key,
+    this.currentPoints,
+    this.customerId,
+  });
 
   @override
   State<AllVoucher> createState() => _AllVoucherState();
@@ -16,13 +26,31 @@ class _AllVoucherState extends State<AllVoucher> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool? _selectedStatus;
+  int? _customerId;
+  int? _currentPoints;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // Use passed parameters or fallback to SharedPreferences
+    _customerId = widget.customerId;
+    _currentPoints = widget.currentPoints;
+
+    // If no parameters passed, load from SharedPreferences
+    if (_customerId == null || _currentPoints == null) {
+      _loadCustomerData();
+    }
+
     // Load initial vouchers
     context.read<AllVoucherCubit>().getAllVouchers();
+  }
+
+  Future<void> _loadCustomerData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _customerId = prefs.getInt('customerId');
+    _currentPoints = prefs.getInt('currentPoints');
+    setState(() {});
   }
 
   @override
@@ -432,52 +460,110 @@ class _AllVoucherState extends State<AllVoucher> {
   }
 
   void _showExchangeDialog(BuildContext context, dynamic voucher) {
-    final String title = voucher['title'] ?? voucher['name'] ?? 'Voucher';
-    final int points = voucher['points'] ?? voucher['requiredPoints'] ?? 0;
+    final String title = voucher['voucherName'] ?? 'Voucher';
+    final int points = voucher['pointsRequired'] ?? 0;
+    final int voucherId = voucher['voucherId'] ?? voucher['id'] ?? 0;
+
+    // Check if user has enough points
+    final bool hasEnoughPoints = _currentPoints != null && _currentPoints! >= points;
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Xác nhận đổi voucher'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Bạn có muốn đổi voucher "$title" với $points điểm?'),
-              const SizedBox(height: 8),
-              Text(
-                'Điểm hiện tại: 1,250 điểm',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // TODO: Implement exchange logic
+      builder: (BuildContext dialogContext) {
+        return BlocProvider(
+          create: (context) => PostVoucherCubit(),
+          child: BlocConsumer<PostVoucherCubit, PostVoucherState>(
+            listener: (context, state) {
+              if (state is PostVoucherSuccess) {
+                Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Đổi voucher thành công!'),
+                  SnackBar(
+                    content: Text(state.message),
                     backgroundColor: Colors.green,
                   ),
                 );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Đồng ý'),
-            ),
-          ],
+                // Refresh vouchers and reload customer data
+                context.read<AllVoucherCubit>().refreshVouchers();
+                _loadCustomerData();
+              } else if (state is PostVoucherError) {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              return AlertDialog(
+                title: const Text('Xác nhận đổi voucher'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Bạn có muốn đổi voucher "$title" với ${points.toString().replaceAllMapped(
+                      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                      (Match m) => '${m[1]},',
+                    )} điểm?'),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Điểm hiện tại: ${_currentPoints?.toString().replaceAllMapped(
+                        RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                        (Match m) => '${m[1]},',
+                      ) ?? '0'} điểm',
+                      style: TextStyle(
+                        color: hasEnoughPoints ? Colors.grey[600] : Colors.red,
+                        fontSize: 14,
+                        fontWeight: hasEnoughPoints ? FontWeight.normal : FontWeight.bold,
+                      ),
+                    ),
+                    if (!hasEnoughPoints) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Bạn không đủ điểm để đổi voucher này!',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: state is PostVoucherLoading ? null : () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Hủy'),
+                  ),
+                  ElevatedButton(
+                    onPressed: (state is PostVoucherLoading || !hasEnoughPoints || _customerId == null)
+                        ? null
+                        : () {
+                            context.read<PostVoucherCubit>().exchangeVoucher(
+                              customerId: _customerId!,
+                              voucherId: voucherId,
+                            );
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: state is PostVoucherLoading
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text('Đồng ý'),
+                  ),
+                ],
+              );
+            },
+          ),
         );
       },
     );

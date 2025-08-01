@@ -31,5 +31,15 @@ class VoucherRepositoryImpl extends VoucherRepository {
     );
   }
 
+  @override
+  Future<Either> postVoucher(int customerId, int voucherId) async {
+    var returnedData = await sl<VoucherService>().postVoucher(customerId, voucherId);
 
+    return returnedData.fold(
+      (error) => Left(Exception(error.toString())),
+      (data) {
+        return Right(data);
+      },
+    );
+  }
 }

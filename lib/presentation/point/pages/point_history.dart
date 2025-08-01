@@ -3,12 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/presentation/point/bloc/point_history_cubit.dart';
 import 'package:vaxpet/presentation/point/bloc/point_history_state.dart';
+import 'package:vaxpet/presentation/preferential/bloc/preferential_state.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/widgets/app_bar/app_bar.dart';
 
 class PointHistoryPage extends StatelessWidget {
-  const PointHistoryPage({super.key});
+  final CustomerRankingInfo customerRankingInfo;
+
+  const PointHistoryPage({
+    super.key,
+    required this.customerRankingInfo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,82 +34,155 @@ class PointHistoryPage extends StatelessWidget {
           elevation: 2,
         ),
         body: SafeArea(
-          child: BlocBuilder<PointHistoryCubit, PointHistoryState>(
-            builder: (context, state) {
-              if (state is PointHistoryLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is PointHistoryFailure) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.grey[400],
+          child: Column(
+            children: [
+              // Header với thông tin điểm tích lũy
+              Container(
+                margin: EdgeInsets.all(16),
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.8)
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.history_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Điểm hiện tại',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '${customerRankingInfo.currentPoints.toString().replaceAllMapped(
+                              RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                              (Match m) => '${m[1]},',
+                            )} điểm',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            customerRankingInfo.currentRankDisplayName,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        state.message,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
+                    ),
+                  ],
+                ),
+              ),
+              // History list
+              Expanded(
+                child: BlocBuilder<PointHistoryCubit, PointHistoryState>(
+                  builder: (context, state) {
+                    if (state is PointHistoryLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is PointHistoryFailure) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              state.message,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.read<PointHistoryCubit>().getPointHistory();
+                              },
+                              child: const Text('Thử lại'),
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
+                      );
+                    } else if (state is PointHistoryLoaded) {
+                      if (state.transactions.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.history,
+                                size: 64,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Chưa có lịch sử giao dịch điểm',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return RefreshIndicator(
+                        onRefresh: () async {
                           context.read<PointHistoryCubit>().getPointHistory();
                         },
-                        child: const Text('Thử lại'),
-                      ),
-                    ],
-                  ),
-                );
-              } else if (state is PointHistoryLoaded) {
-                if (state.transactions.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.history,
-                          size: 64,
-                          color: Colors.grey[400],
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: state.transactions.length,
+                          itemBuilder: (context, index) {
+                            final transaction = state.transactions[index];
+                            return _buildTransactionCard(transaction);
+                          },
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Chưa có lịch sử giao dịch điểm',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                      );
+                    }
 
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    context.read<PointHistoryCubit>().getPointHistory();
+                    return const SizedBox.shrink();
                   },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: state.transactions.length,
-                    itemBuilder: (context, index) {
-                      final transaction = state.transactions[index];
-                      return _buildTransactionCard(transaction);
-                    },
-                  ),
-                );
-              }
-
-              return const SizedBox.shrink();
-            },
+                ),
+              ),
+            ],
           ),
         ),
       ),

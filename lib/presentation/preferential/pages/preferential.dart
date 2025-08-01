@@ -313,7 +313,11 @@ class PreferentialPage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const PointPage()),
+                        MaterialPageRoute(
+                          builder: (context) => PointPage(
+                            customerRankingInfo: customerInfo,
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -325,7 +329,11 @@ class PreferentialPage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const PointHistoryPage()),
+                        MaterialPageRoute(
+                          builder: (context) => PointHistoryPage(
+                            customerRankingInfo: customerInfo,
+                          ),
+                        ),
                       );
                     },
                   ),

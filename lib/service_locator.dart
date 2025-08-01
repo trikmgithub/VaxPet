@@ -34,8 +34,12 @@ import 'data/pet_record/repositories/pet_record.dart';
 import 'data/pet_record/sources/pet_record.dart';
 import 'data/point_transaction/repositories/point_transaction.dart';
 import 'data/point_transaction/sources/point_transaction.dart';
+import 'data/sample_schedule_pet/repositories/sample_schedule_pet.dart';
+import 'data/sample_schedule_pet/sources/sample_schedule_pet.dart';
 import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
+import 'data/service_history/repositories/service_history.dart';
+import 'data/service_history/sources/service_history.dart';
 import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
@@ -95,8 +99,12 @@ import 'domain/pet_record/repositories/pet_record.dart';
 import 'domain/pet_record/usecases/get_pet_record.dart';
 import 'domain/point_transaction/repositories/point_transaction.dart';
 import 'domain/point_transaction/usecases/get_point_transaction.dart';
+import 'domain/sample_schedule_pet/repositories/sample_schedule_pet.dart';
+import 'domain/sample_schedule_pet/usecases/get_sample_schedule_pet.dart';
 import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
+import 'domain/service_history/repositories/service_history.dart';
+import 'domain/service_history/usecases/get_service_history.dart';
 import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
@@ -104,6 +112,7 @@ import 'domain/vaccine_appointment_note_detail/usecases/get_vaccine_appointment_
 import 'domain/voucher/repositories/voucher.dart';
 import 'domain/voucher/usecases/get_all_vouchers.dart';
 import 'domain/voucher/usecases/get_customer_vouchers.dart';
+import 'domain/voucher/usecases/post_voucher.dart';
 
 final sl = GetIt.instance;
 
@@ -149,6 +158,7 @@ void setupServiceLocator() {
   sl.registerSingleton<MembershipService>(MembershipServiceImpl());
   sl.registerSingleton<PointTransactionService>(PointTransactionServiceImpl());
   sl.registerSingleton<VoucherService>(VoucherServiceImpl());
+  sl.registerSingleton<SampleSchedulePetService>(SampleSchedulePetServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -193,6 +203,9 @@ void setupServiceLocator() {
   sl.registerSingleton<MembershipRepository>(MembershipRepositoryImpl());
   sl.registerSingleton<PointTransactionRepository>(PointTransactionRepositoryImpl());
   sl.registerSingleton<VoucherRepository>(VoucherRepositoryImpl());
+  sl.registerSingleton<ServiceHistoryService>(ServiceHistoryServiceImpl());
+  sl.registerSingleton<ServiceHistoryRepository>(ServiceHistoryRepositoryImpl());
+  sl.registerSingleton<SampleSchedulePetRepository>(SampleSchedulePetRepositoryImpl());
 
   // Use Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -285,5 +298,14 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<GetCustomerVouchersUseCase>(
     GetCustomerVouchersUseCase(),
+  );
+  sl.registerSingleton<PostVoucherUseCase>(
+    PostVoucherUseCase(),
+  );
+  sl.registerSingleton<GetServiceHistoryUseCase>(
+    GetServiceHistoryUseCase(),
+  );
+  sl.registerSingleton<GetSampleSchedulePetUseCase>(
+    GetSampleSchedulePetUseCase(),
   );
 }

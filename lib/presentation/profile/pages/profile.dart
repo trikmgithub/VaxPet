@@ -9,11 +9,10 @@ import '../../../domain/auth/usecases/logout.dart';
 import '../../../service_locator.dart';
 import '../../address_vax_pet/pages/address_vax_pet.dart';
 import '../../auth/pages/change_password.dart';
-import '../../buy_history/pages/buy_history.dart';
 import '../../customer_profile/pages/customer_profile.dart';
 import '../../help/pages/help.dart';
-import '../../membership/pages/membership.dart';
 import '../../preferential/pages/preferential.dart';
+import '../../service_history/pages/service_history.dart';
 import '../../splash/pages/introduce.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -109,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Icons.shopping_bag_outlined,
                           () => AppNavigator.push(
                             context,
-                            const BuyHistoryPage(),
+                            const ServiceHistoryPage(),
                           ),
                         ),
                       ]),
