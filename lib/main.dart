@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vaxpet/core/constant/enviroment.dart';
+import 'package:vaxpet/common/bloc/notification/notification_bloc.dart';
+import 'package:vaxpet/common/services/local_notification_service.dart';
 import 'package:vaxpet/presentation/splash/bloc/splash_cubit.dart';
 import 'package:vaxpet/presentation/splash/pages/splash.dart';
 import 'package:vaxpet/service_locator.dart';
@@ -15,6 +17,11 @@ Future<void> main() async {
   );
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
+
+  // Khởi tạo Local Notification Service
+  await LocalNotificationService.initialize();
+  await LocalNotificationService.requestPermission();
+
   runApp(const MyApp());
 }
 
@@ -26,8 +33,11 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent),
     );
-    return BlocProvider(
-      create: (context) => SplashCubit()..appStarted(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => SplashCubit()..appStarted()),
+        BlocProvider(create: (context) => NotificationBloc()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.appTheme,

@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaxpet/common/bloc/bottom_nav_bar/bottom_nav_bar_bloc.dart';
 import 'package:vaxpet/common/bloc/bottom_nav_bar/bottom_nav_bar_event.dart';
+import 'package:vaxpet/common/bloc/notification/notification_bloc.dart';
+import 'package:vaxpet/common/bloc/notification/notification_state.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/presentation/home/widgets/pet_card.dart';
+import 'package:vaxpet/presentation/home/widgets/notification_badge.dart';
 import 'dart:ui';
 
 import '../../pet/pages/create_pet.dart';
@@ -213,13 +216,26 @@ class _HomePageState extends State<HomePage>
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-            onPressed: () {
-              // Chuyển tab đến Calendar Page (index 1) thay vì push trang mới
-              context.read<BottomNavBarBloc>().add(NavigateTo(index: 1));
+          BlocBuilder<NotificationBloc, NotificationState>(
+            builder: (context, state) {
+              int appointmentCount = 0;
+
+              if (state is NotificationUpdated) {
+                appointmentCount = state.appointmentCount;
+              }
+
+              return IconButton(
+                icon: NotificationBadge(
+                  count: appointmentCount,
+                  child: const Icon(Icons.notifications_outlined, color: Colors.white),
+                ),
+                onPressed: () {
+                  // Chuyển tab đến Calendar Page (index 1) thay vì push trang mới
+                  context.read<BottomNavBarBloc>().add(NavigateTo(index: 1));
+                },
+                tooltip: 'Thông báo',
+              );
             },
-            tooltip: 'Thông báo',
           ),
         ],
       ),

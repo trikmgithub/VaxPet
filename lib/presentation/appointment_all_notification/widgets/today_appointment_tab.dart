@@ -4,6 +4,8 @@ import 'package:vaxpet/common/extensions/appointment_status_extension.dart';
 import 'package:vaxpet/common/extensions/location_type_extension.dart';
 import 'package:vaxpet/common/extensions/service_type_extension.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
+import 'package:vaxpet/common/bloc/notification/notification_bloc.dart';
+import 'package:vaxpet/common/bloc/notification/notification_event.dart';
 import '../../../domain/appointment/entities/today_appointment.dart';
 import '../bloc/today_appointment_cubit.dart';
 import '../bloc/today_appointment_state.dart';
@@ -146,12 +148,24 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
               isLoadingMore = true;
             }
 
+            // Gửi số lượng lịch hẹn đến notification bloc
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final notificationBloc = context.read<NotificationBloc>();
+              notificationBloc.add(UpdateAppointmentCount(appointments.length));
+            });
+
             return _buildAppointmentList(
               appointments,
               isLoadingMore: isLoadingMore,
               onRefresh: () async => _appointmentCubit.refreshAppointments(),
             );
           }
+
+          // Không có dữ liệu - gửi count 0
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final notificationBloc = context.read<NotificationBloc>();
+            notificationBloc.add(UpdateAppointmentCount(0));
+          });
 
           return const Center(child: Text('Không có dữ liệu'));
         },
