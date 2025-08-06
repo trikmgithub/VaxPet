@@ -72,6 +72,8 @@ class AuthRepositoryImpl extends AuthRepository {
       // Lưu thông tin người dùng
       sharedPreferences.setString('email', data['data']['email']);
       sharedPreferences.setInt('accountId', data['data']['accountId']);
+      sharedPreferences.setString('userName', data['data']['fullName'] ?? '');
+      sharedPreferences.setString('profileImage', data['data']['image'] ?? '');
 
       return Right(data);
     });

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../../domain/tips_pet/entities/handbook.dart';
+import '../bloc/tips_pet_cubit.dart';
+import '../bloc/tips_pet_state.dart';
 import 'tips_detail_page.dart';
 
-class TipsPetPage extends StatelessWidget {
+class TipsPetPage extends StatefulWidget {
   final String petName;
   final int petId;
   final String? petBirthday;
@@ -17,34 +21,95 @@ class TipsPetPage extends StatelessWidget {
   });
 
   @override
+  State<TipsPetPage> createState() => _TipsPetPageState();
+}
+
+class _TipsPetPageState extends State<TipsPetPage> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  late TipsPetCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      _cubit.loadMoreHandbooks();
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text(
-          'Cẩm nang',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+    return BlocProvider(
+      create: (context) {
+        _cubit = TipsPetCubit()..getAllHandbooks();
+        return _cubit;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          title: const Text(
+            'Cẩm nang',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
+        body: Column(
           children: [
             _buildHeaderSection(context),
-            _buildArticleGrid(context),
+            _buildSearchBar(),
+            Expanded(
+              child: BlocBuilder<TipsPetCubit, TipsPetState>(
+                builder: (context, state) {
+                  if (state is TipsPetLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is TipsPetSuccess || state is TipsPetLoadingMore) {
+                    final handbooks = state is TipsPetSuccess 
+                        ? state.handbooks 
+                        : (state as TipsPetLoadingMore).handbooks;
+                    final hasReachedMax = state is TipsPetSuccess ? state.hasReachedMax : false;
+                    
+                    return _buildHandbooksList(context, handbooks, hasReachedMax);
+                  } else if (state is TipsPetFailure) {
+                    return _buildErrorWidget(context, state.message);
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -72,85 +137,381 @@ class TipsPetPage extends StatelessWidget {
           width: 2,
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-                  width: 1,
+      child: const Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Text(
+          'Cẩm nang chăm sóc toàn diện',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          hintText: 'Tìm kiếm cẩm nang...',
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, color: Colors.grey),
+                  onPressed: () {
+                    _searchController.clear();
+                    _cubit.refreshHandbooks();
+                  },
+                )
+              : null,
+        ),
+        onChanged: (value) {
+          setState(() {});
+        },
+        onSubmitted: (value) {
+          if (value.trim().isNotEmpty) {
+            _cubit.searchHandbooks(value.trim());
+          } else {
+            _cubit.refreshHandbooks();
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildHandbooksList(BuildContext context, List<HandbookEntity> handbooks, bool hasReachedMax) {
+    if (handbooks.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () => _cubit.refreshHandbooks(keyWord: _searchController.text.trim().isEmpty ? null : _searchController.text.trim()),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 200),
+            Center(
+              child: Text(
+                'Chưa có cẩm nang nào',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Icon(
-                      _getSpeciesIcon(),
-                      size: 40,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          petName,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'Loài: $petSpecies',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        if (petBirthday != null) ...[
-                          const SizedBox(height: 3),
-                          Text(
-                            'Sinh nhật: ${_formatBirthday(petBirthday!)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Cẩm nang chăm sóc toàn diện',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => _cubit.refreshHandbooks(keyWord: _searchController.text.trim().isEmpty ? null : _searchController.text.trim()),
+      child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _getItemCount(handbooks, hasReachedMax),
+        itemBuilder: (context, index) {
+          if (index == 0 && handbooks.isNotEmpty) {
+            // Featured article (first item)
+            return Column(
+              children: [
+                _buildFeaturedHandbook(context, handbooks[0]),
+                const SizedBox(height: 20),
+              ],
+            );
+          } else if (index < handbooks.length) {
+            // Adjust index for grid items (skip featured article)
+            final gridIndex = index - 1;
+            if (gridIndex % 2 == 0 && gridIndex + 1 < handbooks.length - 1) {
+              // Build row with 2 cards
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildHandbookCard(context, handbooks[gridIndex + 1], gridIndex + 1),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: gridIndex + 2 < handbooks.length
+                          ? _buildHandbookCard(context, handbooks[gridIndex + 2], gridIndex + 2)
+                          : const SizedBox(),
+                    ),
+                  ],
+                ),
+              );
+            } else if (gridIndex % 2 == 1) {
+              return const SizedBox.shrink(); // Skip odd indices as they're handled in pairs
+            } else {
+              // Single card for last item if odd number
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildHandbookCard(context, handbooks[gridIndex + 1], gridIndex + 1),
+                    ),
+                    const Expanded(child: SizedBox()),
+                  ],
+                ),
+              );
+            }
+          } else {
+            // Loading indicator or end message
+            return _buildBottomWidget(hasReachedMax);
+          }
+        },
+      ),
+    );
+  }
+
+  int _getItemCount(List<HandbookEntity> handbooks, bool hasReachedMax) {
+    if (handbooks.isEmpty) return 0;
+    // Featured item + grid items + bottom widget
+    final gridItemCount = handbooks.length > 1 ? ((handbooks.length - 1) / 2).ceil() : 0;
+    return 1 + gridItemCount + 1; // 1 for featured + grid + 1 for bottom
+  }
+
+  Widget _buildBottomWidget(bool hasReachedMax) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: hasReachedMax
+            ? Column(
+                children: [
+                  Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green[400],
+                    size: 32,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Đã hiển thị tất cả cẩm nang',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              )
+            : const CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildFeaturedHandbook(BuildContext context, HandbookEntity handbook) {
+    return GestureDetector(
+      onTap: () => _navigateToDetail(context, handbook),
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      _getHandbookColor(0),
+                      _getHandbookColor(0).withValues(alpha: 0.8),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                right: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'BÀI VIẾT NỔI BẬT',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _getHandbookColor(0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      handbook.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      handbook.introduction,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(
+                    _getHandbookIcon(0),
+                    color: _getHandbookColor(0),
+                    size: 24,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHandbookCard(BuildContext context, HandbookEntity handbook, int index) {
+    final color = _getHandbookColor(index);
+    final icon = _getHandbookIcon(index);
+
+    return GestureDetector(
+      onTap: () => _navigateToDetail(context, handbook),
+      child: Container(
+        height: 220,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 80,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  icon,
+                  size: 40,
+                  color: color,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      handbook.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Text(
+                        handbook.introduction,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          height: 1.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          'Đọc thêm',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 12,
+                          color: color,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -159,9 +520,71 @@ class TipsPetPage extends StatelessWidget {
     );
   }
 
+  Widget _buildErrorWidget(BuildContext context, String message) {
+    return RefreshIndicator(
+      onRefresh: () => _cubit.refreshHandbooks(),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Có lỗi xảy ra',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    _cubit.refreshHandbooks();
+                  },
+                  child: const Text('Thử lại'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToDetail(BuildContext context, HandbookEntity handbook) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TipsDetailPage(
+          handbook: handbook,
+          petName: widget.petName,
+          petSpecies: widget.petSpecies,
+        ),
+      ),
+    );
+  }
+
   String _formatBirthday(String birthday) {
     try {
-      // Thử parse với nhiều format khác nhau
       DateTime? dateTime;
 
       // Thử format yyyy-MM-dd
@@ -206,247 +629,8 @@ class TipsPetPage extends StatelessWidget {
     }
   }
 
-  Widget _buildArticleGrid(BuildContext context) {
-    final articles = _getArticles();
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // Featured article
-          _buildFeaturedArticle(context, articles[0]),
-          const SizedBox(height: 20),
-
-          // Grid articles
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: articles.length - 1,
-            itemBuilder: (context, index) {
-              return _buildArticleCard(context, articles[index + 1]);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeaturedArticle(BuildContext context, ArticleData article) {
-    return GestureDetector(
-      onTap: () => _navigateToDetail(context, article),
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      article.color,
-                      article.color.withValues(alpha: 0.8),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 20,
-                left: 20,
-                right: 20,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        'BÀI VIẾT NỔI BẬT',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: article.color,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      article.title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      article.subtitle,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Icon(
-                    article.icon,
-                    color: article.color,
-                    size: 24,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildArticleCard(BuildContext context, ArticleData article) {
-    return GestureDetector(
-      onTap: () => _navigateToDetail(context, article),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: article.color.withValues(alpha: 0.3),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 80,
-              decoration: BoxDecoration(
-                color: article.color.withValues(alpha: 0.1),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
-                ),
-              ),
-              child: Center(
-                child: Icon(
-                  article.icon,
-                  size: 40,
-                  color: article.color,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      article.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: Text(
-                        article.subtitle,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                          height: 1.3,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          'Đọc thêm',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: article.color,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 12,
-                          color: article.color,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _navigateToDetail(BuildContext context, ArticleData article) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TipsDetailPage(
-          article: article,
-          petName: petName,
-          petSpecies: petSpecies,
-        ),
-      ),
-    );
-  }
-
   IconData _getSpeciesIcon() {
-    switch (petSpecies.toLowerCase()) {
+    switch (widget.petSpecies.toLowerCase()) {
       case 'chó':
       case 'dog':
         return Icons.pets;
@@ -464,141 +648,28 @@ class TipsPetPage extends StatelessWidget {
     }
   }
 
-  List<ArticleData> _getArticles() {
-    return [
-      ArticleData(
-        title: 'Hướng dẫn chăm sóc ${petSpecies.toLowerCase()}',
-        subtitle: 'Những kiến thức cơ bản và nâng cao để chăm sóc ${petSpecies.toLowerCase()} một cách tốt nhất',
-        icon: Icons.favorite,
-        color: Colors.green,
-        content: _getSpeciesSpecificTips(),
-        type: 'species',
-      ),
-      ArticleData(
-        title: 'Chuẩn bị trước tiêm phòng',
-        subtitle: 'Những điều cần làm để đảm bảo an toàn khi tiêm phòng',
-        icon: Icons.medical_services,
-        color: Colors.orange,
-        content: _getPreVaccinationTips(),
-        type: 'pre_vaccination',
-      ),
-      ArticleData(
-        title: 'Chăm sóc sau tiêm phòng',
-        subtitle: 'Hướng dẫn theo dõi và chăm sóc sau khi tiêm phòng',
-        icon: Icons.healing,
-        color: Colors.red,
-        content: _getPostVaccinationTips(),
-        type: 'post_vaccination',
-      ),
-      ArticleData(
-        title: 'Chăm sóc tổng quát',
-        subtitle: 'Kiến thức tổng quan về chăm sóc sức khỏe thú cưng',
-        icon: Icons.health_and_safety,
-        color: Colors.purple,
-        content: _getGeneralCareTips(),
-        type: 'general',
-      ),
+  Color _getHandbookColor(int index) {
+    final colors = [
+      Colors.green,
+      Colors.orange,
+      Colors.red,
+      Colors.purple,
+      Colors.blue,
+      Colors.teal,
     ];
+    return colors[index % colors.length];
   }
 
-  List<String> _getSpeciesSpecificTips() {
-    switch (petSpecies.toLowerCase()) {
-      case 'chó':
-      case 'dog':
-        return [
-          'Cho chó đi dạo ít nhất 30 phút mỗi ngày',
-          'Tắm cho chó 1-2 lần/tuần tùy theo giống',
-          'Chải lông hàng ngày để tránh rối lông',
-          'Cho ăn 2-3 lần/ngày với khẩu phần phù hợp',
-          'Huấn luyện cơ bản: ngồi, nằm, ở lại',
-          'Kiểm tra tai, mắt, răng miệng thường xuyên',
-          'Cắt móng chân 2-3 tuần/lần',
-        ];
-      case 'mèo':
-      case 'cat':
-        return [
-          'Đặt khay cát sạch sẽ ở nơi yên tĩnh',
-          'Thay cát vệ sinh hàng ngày',
-          'Chải lông 2-3 lần/tuần để tránh búi lông',
-          'Cho ăn thức ăn chất lượng cao 2 lần/ngày',
-          'Cung cấp nước sạch thường xuyên',
-          'Cắt móng vuốt 2-3 tuần/lần',
-          'Tạo không gian riêng tư cho mèo nghỉ ngơi',
-        ];
-      case 'chim':
-      case 'bird':
-        return [
-          'Vệ sinh lồng chim hàng ngày',
-          'Cung cấp thức ăn hạt chất lượng cao',
-          'Bổ sung rau xanh, trái cây tươi',
-          'Đảm bảo ánh sáng tự nhiên 10-12 giờ/ngày',
-          'Thay nước uống hàng ngày',
-          'Kiểm tra sức khỏe qua hành vi và tiếng kêu',
-          'Tạo môi trường kích thích trí tuệ',
-        ];
-      case 'thỏ':
-      case 'rabbit':
-        return [
-          'Cung cấp cỏ khô (hay) không giới hạn',
-          'Cho ăn rau xanh tươi hàng ngày',
-          'Hạn chế pellet, chỉ 1/4 cốc/kg thể trọng',
-          'Vệ sinh chuồng thỏ hàng ngày',
-          'Để thỏ vận động ít nhất 3-4 giờ/ngày',
-          'Kiểm tra răng và móng vuốt thường xuyên',
-          'Chải lông đều đặn, đặc biệt khi thay lông',
-        ];
-      default:
-        return [
-          'Cho ăn đúng giờ, đủ dinh dưỡng',
-          'Vệ sinh nơi ở sạch sẽ',
-          'Quan sát sức khỏe hàng ngày',
-          'Tạo môi trường sống phù hợp',
-          'Thăm khám thú y định kỳ',
-        ];
-    }
-  }
-
-  List<String> _getPreVaccinationTips() {
-    return [
-      'Đảm bảo thú cưng khỏe mạnh trước khi tiêm',
-      'Nhịn ăn 2-3 giờ trước khi tiêm (nếu bác sĩ yêu cầu)',
-      'Mang theo sổ tiêm chủng và hồ sơ y tế',
-      'Thông báo với bác sĩ về các triệu chứng bất thường',
-      'Không tắm cho thú cưng 2-3 ngày trước tiêm',
-      'Giữ thú cưng ở nơi yên tĩnh trước khi đến phòng khám',
-      'Chuẩn bị câu hỏi để hỏi bác sĩ thú y',
-      'Kiểm tra lịch tiêm chủng để đảm bảo đúng thời gian',
+  IconData _getHandbookIcon(int index) {
+    final icons = [
+      Icons.favorite,
+      Icons.medical_services,
+      Icons.healing,
+      Icons.health_and_safety,
+      Icons.pets,
+      Icons.info,
     ];
-  }
-
-  List<String> _getPostVaccinationTips() {
-    return [
-      'Quan sát thú cưng 24-48 giờ sau tiêm',
-      'Để thú cưng nghỉ ngơi, tránh vận động mạnh',
-      'Không tắm trong 7 ngày sau tiêm',
-      'Cho ăn nhẹ nhàng, dễ tiêu hóa',
-      'Theo dõi vùng tiêm có sưng, đỏ bất thường',
-      'Liên hệ bác sĩ nếu xuất hiện: sốt cao, nôn mửa, tiêu chảy',
-      'Ghi chép thời gian và phản ứng sau tiêm',
-      'Đặt lịch tiêm mũi tiếp theo nếu cần',
-      'Tránh tiếp xúc với động vật khác trong 1 tuần',
-      'Cung cấp đủ nước, tránh stress',
-    ];
-  }
-
-  List<String> _getGeneralCareTips() {
-    return [
-      'Thăm khám thú y định kỳ 6 tháng/lần',
-      'Tiêm phòng đầy đủ theo lịch trình',
-      'Tẩy giun định kỳ 3-6 tháng/lần',
-      'Vệ sinh răng miệng thường xuyên',
-      'Cân nặng thú cưng hàng tháng',
-      'Tạo môi trường sống an toàn',
-      'Chuẩn bị thuốc sơ cứu cơ bản',
-      'Lưu số điện thoại bác sĩ thú y khẩn cấp',
-      'Mua bảo hiểm thú cưng nếu có thể',
-      'Tham gia cộng đồng yêu thú cưng để học hỏi',
-    ];
+    return icons[index % icons.length];
   }
 }
 

@@ -26,6 +26,12 @@ class GetAddressVaxPetSuccess extends GetAddressVaxPetState {
   String get address => addressData['address'] as String? ?? '123 Nguyễn Văn Linh, Phường Tân Phong, Quận 7, TP.HCM';
   String get phone => addressData['phone'] as String? ?? '028 3888 9999';
   String get openingHours => addressData['openingHours'] as String? ?? '8:00 - 12:00 & 13:00-17:00 (Thứ 2 - Chủ nhật)';
+
+  // New getters for the updated API response
+  String get phoneNumber => addressData['phoneNumber'] as String? ?? '0976345543';
+  String get timeMorning => addressData['timeMorning'] as String? ?? '8:00 - 12:00';
+  String get timeAfternoon => addressData['timeAfternoon'] as String? ?? '13:00 - 17:00';
+  String get dayOfWeek => addressData['dayOfWeek'] as String? ?? 'Thứ 2 - Thứ 7';
 }
 
 class GetAddressVaxPetFailure extends GetAddressVaxPetState {

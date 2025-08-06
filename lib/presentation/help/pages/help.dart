@@ -1,370 +1,240 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
+import '../bloc/faq_cubit.dart';
+import '../bloc/support_cubit.dart';
+import '../widgets/faq_widget.dart';
+import '../widgets/support_widget.dart';
 
-class HelpPage extends StatelessWidget {
+class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
 
   @override
+  State<HelpPage> createState() => _HelpPageState();
+}
+
+class _HelpPageState extends State<HelpPage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: BasicAppbar(
-        title: Text(
-          'Hỗ trợ',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textWhite,
-          ),
-        ),
-        backgroundColor: AppColors.primary,
-        hideBack: false,
-        elevation: 2,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header section
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.support_agent,
-                      size: 64,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Chúng tôi sẵn sàng hỗ trợ bạn',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Tìm hiểu cách sử dụng VaxPet hiệu quả nhất',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textGray,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
 
-              const SizedBox(height: 24),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => FAQCubit()),
+        BlocProvider(create: (context) => SupportCubit()),
+      ],
+      child: Scaffold(
+        body: Column(
+          children: [
+            // Custom header với style giống BasicAppbar
+            _buildCustomHeader(context, isTablet),
 
-              // Quick Help Section
-              _buildSectionTitle('Hỗ trợ nhanh'),
-              const SizedBox(height: 16),
-              _buildHelpItem(
-                icon: Icons.pets,
-                title: 'Quản lý thú cưng',
-                subtitle: 'Hướng dẫn thêm và quản lý thông tin thú cưng',
-                onTap: () => _showHelpDialog(context, 'Quản lý thú cưng', _getPetManagementHelp()),
-              ),
-              _buildHelpItem(
-                icon: Icons.calendar_today,
-                title: 'Lịch tiêm phòng',
-                subtitle: 'Cách đặt lịch và theo dõi tiêm phòng',
-                onTap: () => _showHelpDialog(context, 'Lịch tiêm phòng', _getVaccinationHelp()),
-              ),
-              _buildHelpItem(
-                icon: Icons.location_on,
-                title: 'Tìm phòng khám',
-                subtitle: 'Hướng dẫn tìm kiếm phòng khám gần bạn',
-                onTap: () => _showHelpDialog(context, 'Tìm phòng khám', _getClinicSearchHelp()),
-              ),
-
-              const SizedBox(height: 32),
-
-              // FAQ Section
-              _buildSectionTitle('Câu hỏi thường gặp'),
-              const SizedBox(height: 16),
-              _buildFAQExpansionTile(
-                'Làm thế nào để thêm thú cưng mới?',
-                'Vào mục "Thú cưng" trong menu chính, nhấn nút "+" ở góc phải màn hình. Điền đầy đủ thông tin về thú cưng của bạn và nhấn "Lưu".',
-              ),
-              _buildFAQExpansionTile(
-                'Tôi có thể đặt lịch tiêm phòng như thế nào?',
-                'Vào mục "Lịch tiêm", chọn thú cưng cần tiêm, chọn loại vaccine và thời gian phù hợp. Hệ thống sẽ tự động nhắc nhở bạn trước ngày hẹn.',
-              ),
-              _buildFAQExpansionTile(
-                'Ứng dụng có miễn phí không?',
-                'VaxPet hoàn toàn miễn phí cho các tính năng cơ bản như quản lý thú cưng và đặt lịch tiêm phòng.',
-              ),
-              _buildFAQExpansionTile(
-                'Làm sao để sao lưu dữ liệu?',
-                'Dữ liệu của bạn được tự động sao lưu trên cloud khi bạn đăng nhập tài khoản. Bạn có thể khôi phục dữ liệu khi đăng nhập trên thiết bị mới.',
-              ),
-
-              const SizedBox(height: 32),
-
-              // Contact Section
-              _buildSectionTitle('Liên hệ hỗ trợ'),
-              const SizedBox(height: 16),
-              _buildContactItem(
-                icon: Icons.email,
-                title: 'Email hỗ trợ',
-                subtitle: 'support@vaxpet.com',
-                onTap: () => _launchEmail('support@vaxpet.com'),
-              ),
-              _buildContactItem(
-                icon: Icons.phone,
-                title: 'Hotline',
-                subtitle: '1900 1234',
-                onTap: () => _launchPhone('19001234'),
-              ),
-              _buildContactItem(
-                icon: Icons.schedule,
-                title: 'Thời gian hỗ trợ',
-                subtitle: 'T2 - CN: 8:00 - 17:00',
-                onTap: null,
-              ),
-
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textBlack,
-      ),
-    );
-  }
-
-  Widget _buildHelpItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: AppColors.primary),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(color: AppColors.textGray),
-        ),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textGray),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  Widget _buildContactItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    VoidCallback? onTap,
-  }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: AppColors.primary),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(color: AppColors.textGray),
-        ),
-        trailing: onTap != null ? Icon(Icons.open_in_new, size: 16, color: AppColors.textGray) : null,
-        onTap: onTap,
-      ),
-    );
-  }
-
-  Widget _buildFAQExpansionTile(String question, String answer) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ExpansionTile(
-        title: Text(
-          question,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              answer,
-              style: TextStyle(
-                color: AppColors.textGray,
-                height: 1.5,
+            // TabBar content
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: const [
+                  FAQWidget(),
+                  SupportWidget(),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showHelpDialog(BuildContext context, String title, String content) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: SingleChildScrollView(
-          child: Text(content),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Đóng', style: TextStyle(color: AppColors.primary)),
-          ),
-        ],
       ),
     );
   }
 
-  String _getPetManagementHelp() {
-    return '''
-Để quản lý thú cưng hiệu quả:
+  Widget _buildCustomHeader(BuildContext context, bool isTablet) {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.primary,
+                AppColors.primary.withOpacity(0.8),
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // AppBar section
+                Container(
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      // Custom back button giống BasicAppbar
+                      _buildBackButton(context, isTablet),
 
-1. Thêm thú cưng mới:
-   • Nhấn nút "+" trong tab Thú cưng
-   • Điền đầy đủ thông tin: tên, giống, tuổi, cân nặng
-   • Thêm ảnh để dễ nhận biết
+                      // Title
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Hỗ trợ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textWhite,
+                              fontSize: isTablet ? 22 : 20,
+                            ),
+                          ),
+                        ),
+                      ),
 
-2. Cập nhật thông tin:
-   • Chọn thú cưng cần chỉnh sửa
-   • Nhấn "Chỉnh sửa" để cập nhật thông tin
+                      // Spacer để cân bằng với back button
+                      SizedBox(width: isTablet ? 48 : 44),
+                    ],
+                  ),
+                ),
 
-3. Theo dõi sức khỏe:
-   • Ghi chú tình trạng sức khỏe
-   • Lưu lịch sử bệnh án
-   • Đặt nhắc nhở khám định kỳ
-    ''';
-  }
+                // TabBar section
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: isTablet ? 32 : 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    tabs: [
+                      Tab(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isTablet ? 24 : 16,
+                            vertical: isTablet ? 12 : 10,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.help_outline_rounded,
+                                size: isTablet ? 20 : 18,
+                              ),
+                              SizedBox(width: isTablet ? 8 : 6),
+                              Text(
+                                'FAQ',
+                                style: TextStyle(
+                                  fontSize: isTablet ? 16 : 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isTablet ? 24 : 16,
+                            vertical: isTablet ? 12 : 10,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.support_agent_rounded,
+                                size: isTablet ? 20 : 18,
+                              ),
+                              SizedBox(width: isTablet ? 8 : 6),
+                              Text(
+                                'Kênh liên hệ',
+                                style: TextStyle(
+                                  fontSize: isTablet ? 16 : 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    labelColor: AppColors.textWhite,
+                    unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+                    indicator: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                    overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  ),
+                ),
 
-  String _getVaccinationHelp() {
-    return '''
-Hướng dẫn sử dụng lịch tiêm phòng:
-
-1. Đặt lịch tiêm mới:
-   • Chọn thú cưng cần tiêm
-   • Chọn loại vaccine phù hợp với độ tuổi
-   • Chọn ngày giờ và phòng khám
-
-2. Theo dõi lịch tiêm:
-   • Xem lịch sử tiêm phòng
-   • Nhận thông báo nhắc nhở
-   • Cập nhật kết quả sau tiêm
-
-3. Quản lý vaccine:
-   • Theo dõi chu kỳ tiêm phòng
-   • Xem danh sách vaccine cần thiết
-   • Đặt lịch tiêm nhắc lại
-    ''';
-  }
-
-  String _getClinicSearchHelp() {
-    return '''
-Tìm kiếm phòng khám thú y:
-
-1. Sử dụng bản đồ:
-   • Cho phép truy cập vị trí
-   • Xem các phòng khám gần bạn
-   • Xem thông tin chi tiết và đánh giá
-
-2. Tìm kiếm theo địa chỉ:
-   • Nhập địa chỉ cụ thể
-   • Lọc theo khoảng cách
-   • Sắp xếp theo đánh giá hoặc khoảng cách
-
-3. Đặt lịch hẹn:
-   • Chọn phòng khám phù hợp
-   • Chọn thời gian có sẵn
-   • Xác nhận thông tin đặt lịch
-    ''';
-  }
-
-  String _getNotificationHelp() {
-    return '''
-Cài đặt thông báo:
-
-1. Bật thông báo:
-   • Vào Cài đặt > Thông báo
-   • Cho phép ứng dụng gửi thông báo
-   • Chọn loại thông báo muốn nhận
-
-2. Tùy chỉnh thông báo:
-   • Nhắc nhở tiêm phòng: 1-7 ngày trước
-   • Nhắc nhở khám định kỳ
-   • Thông báo từ phòng khám
-
-3. Quản lý thông báo:
-   • Xem lịch sử thông báo
-   • Tắt/bật thông báo theo loại
-   • Cài đặt âm thanh và rung
-    ''';
-  }
-
-  void _launchEmail(String email) async {
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: email,
-      query: 'subject=Hỗ trợ VaxPet',
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
-    }
   }
 
-  void _launchPhone(String phone) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    }
+  Widget _buildBackButton(BuildContext context, bool isTablet) {
+    final size = isTablet ? 44.0 : 40.0;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Container(
+          height: size,
+          width: size,
+          decoration: BoxDecoration(
+            color: AppColors.returnBackground,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 3,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.arrow_back_ios_new,
+            size: isTablet ? 18 : 16,
+            color: AppColors.returnIcon,
+          ),
+        ),
+      ),
+    );
   }
 }

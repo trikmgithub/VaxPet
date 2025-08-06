@@ -136,4 +136,17 @@ class ApiUrl {
   // VACCINATION SCHEDULE ENDPOINTS
   // Get
   static const getVaccineSchedule = '${apiV}vaccinationSchedule/get-vaccination-schedule-by-species';
+
+  // HANDBOOK ENDPOINTS
+  // Get
+  static const getAllHandbooks = '${apiV}handbook/get-all-handbooks';
+
+  // SUPPORT ENDPOINTS
+  // Get
+  static const getSupports = '${apiV}supportCategory/get-all-support-categories';
+
+  // FAQ ENDPOINTS
+  // Get
+  static const getFAQ = '${apiV}faq/get-all-faqs';
+
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'tips_pet.dart';
+import '../../../domain/tips_pet/entities/handbook.dart';
 
 class TipsDetailPage extends StatelessWidget {
-  final ArticleData article;
+  final HandbookEntity handbook;
   final String petName;
   final String petSpecies;
 
   const TipsDetailPage({
     super.key,
-    required this.article,
+    required this.handbook,
     required this.petName,
     required this.petSpecies,
   });
@@ -29,10 +29,12 @@ class TipsDetailPage extends StatelessWidget {
   }
 
   Widget _buildSliverAppBar(BuildContext context) {
+    final color = _getColorFromTitle(handbook.title);
+
     return SliverAppBar(
       expandedHeight: 250,
       pinned: true,
-      backgroundColor: article.color,
+      backgroundColor: color,
       foregroundColor: Colors.white,
       leading: IconButton(
         onPressed: () => Navigator.of(context).pop(),
@@ -49,8 +51,8 @@ class TipsDetailPage extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                article.color,
-                article.color.withValues(alpha: 0.7),
+                color,
+                color.withValues(alpha: 0.7),
               ],
             ),
           ),
@@ -89,17 +91,17 @@ class TipsDetailPage extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            article.icon,
+                            _getIconFromTitle(handbook.title),
                             size: 16,
-                            color: article.color,
+                            color: color,
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            _getCategoryText(),
+                            'CẨM NANG',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: article.color,
+                              color: color,
                             ),
                           ),
                         ],
@@ -107,7 +109,7 @@ class TipsDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      article.title,
+                      handbook.title,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -143,11 +145,9 @@ class TipsDetailPage extends StatelessWidget {
         // Main content
         _buildMainContent(),
 
-        // Additional tips based on article type
-        _buildAdditionalTips(),
-
-        // Bottom action
-        _buildBottomAction(context),
+        // Important note
+        if (handbook.importantNote.isNotEmpty)
+          _buildImportantNote(),
 
         const SizedBox(height: 30),
       ],
@@ -155,6 +155,8 @@ class TipsDetailPage extends StatelessWidget {
   }
 
   Widget _buildIntroductionCard() {
+    final color = _getColorFromTitle(handbook.title);
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
@@ -177,12 +179,12 @@ class TipsDetailPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: article.color.withValues(alpha: 0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   Icons.info_outline,
-                  color: article.color,
+                  color: color,
                   size: 20,
                 ),
               ),
@@ -199,51 +201,58 @@ class TipsDetailPage extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           Text(
-            article.subtitle,
+            handbook.introduction,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[700],
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 15),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: article.color.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: article.color.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.lightbulb_outline,
-                  color: article.color,
-                  size: 20,
+          if (handbook.highlight.isNotEmpty) ...[
+            const SizedBox(height: 15),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: color.withValues(alpha: 0.2),
+                  width: 1,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    _getIntroductionTip(),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: article.color.withValues(alpha: 0.8),
-                      fontWeight: FontWeight.w500,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.lightbulb_outline,
+                    color: color,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      handbook.highlight,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: color.withValues(alpha: 0.8),
+                        fontWeight: FontWeight.w500,
+                        height: 1.4,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildMainContent() {
+    final color = _getColorFromTitle(handbook.title);
+    final contentItems = _parseContentItems(handbook.content);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
@@ -266,12 +275,12 @@ class TipsDetailPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: article.color.withValues(alpha: 0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  article.icon,
-                  color: article.color,
+                  _getIconFromTitle(handbook.title),
+                  color: color,
                   size: 20,
                 ),
               ),
@@ -287,17 +296,27 @@ class TipsDetailPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          ...article.content.asMap().entries.map((entry) {
-            int index = entry.key;
-            String tip = entry.value;
-            return _buildTipItem(tip, index + 1);
-          }).toList(),
+          if (contentItems.isNotEmpty)
+            ...contentItems.asMap().entries.map((entry) {
+              int index = entry.key;
+              String item = entry.value;
+              return _buildContentItem(item, index + 1, color);
+            }).toList()
+          else
+            Text(
+              handbook.content,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                height: 1.5,
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildTipItem(String tip, int number) {
+  Widget _buildContentItem(String content, int number, Color color) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -316,7 +335,7 @@ class TipsDetailPage extends StatelessWidget {
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-              color: article.color,
+              color: color,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Center(
@@ -333,7 +352,7 @@ class TipsDetailPage extends StatelessWidget {
           const SizedBox(width: 15),
           Expanded(
             child: Text(
-              tip,
+              content.trim(),
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
@@ -346,11 +365,7 @@ class TipsDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAdditionalTips() {
-    List<String> additionalTips = _getAdditionalTips();
-
-    if (additionalTips.isEmpty) return const SizedBox.shrink();
-
+  Widget _buildImportantNote() {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
@@ -377,7 +392,7 @@ class TipsDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
-                  Icons.star_outline,
+                  Icons.warning_amber_outlined,
                   color: Colors.amber,
                   size: 20,
                 ),
@@ -394,198 +409,79 @@ class TipsDetailPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 15),
-          ...additionalTips.map((tip) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 6),
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: Colors.amber,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    tip,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ],
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.amber.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Colors.amber.withValues(alpha: 0.2),
+                width: 1,
+              ),
             ),
-          )).toList(),
+            child: Text(
+              handbook.importantNote,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                height: 1.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomAction(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            article.color.withValues(alpha: 0.1),
-            article.color.withValues(alpha: 0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: article.color.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.favorite,
-            color: article.color,
-            size: 30,
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Bài viết hữu ích?',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Hãy chia sẻ với những người yêu thú cưng khác!',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Cảm ơn bạn đã đánh giá!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.thumb_up),
-                  label: const Text('Hữu ích'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: article.color,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    // Share functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Tính năng chia sẻ sẽ sớm có!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.share),
-                  label: const Text('Chia sẻ'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: article.color,
-                    side: BorderSide(color: article.color),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   ImageProvider _getBackgroundPattern() {
     // You can replace this with actual pattern images
     return const AssetImage('assets/images/pattern.png');
   }
 
-  String _getCategoryText() {
-    switch (article.type) {
-      case 'species':
-        return 'CHĂM SÓC THEO LOÀI';
-      case 'pre_vaccination':
-        return 'TRƯỚC TIÊM PHÒNG';
-      case 'post_vaccination':
-        return 'SAU TIÊM PHÒNG';
-      case 'general':
-        return 'CHĂM SÓC TỔNG QUÁT';
-      default:
-        return 'CẨM NANG';
+  Color _getColorFromTitle(String title) {
+    if (title.toLowerCase().contains('tiêm phòng') || title.toLowerCase().contains('vaccine')) {
+      if (title.toLowerCase().contains('trước') || title.toLowerCase().contains('chuẩn bị')) {
+        return Colors.orange;
+      } else if (title.toLowerCase().contains('sau')) {
+        return Colors.red;
+      }
+      return Colors.blue;
+    } else if (title.toLowerCase().contains('chăm sóc')) {
+      return Colors.green;
+    } else if (title.toLowerCase().contains('tổng quát')) {
+      return Colors.purple;
     }
+    return Colors.teal;
   }
 
-  String _getIntroductionTip() {
-    switch (article.type) {
-      case 'species':
-        return 'Mỗi loài thú cưng có nhu cầu chăm sóc khác nhau. Hãy tìm hiểu kỹ về loài của bạn!';
-      case 'pre_vaccination':
-        return 'Chuẩn bị kỹ càng trước tiêm phòng giúp giảm thiểu rủi ro và tăng hiệu quả vắc-xin.';
-      case 'post_vaccination':
-        return 'Theo dõi sát sao thú cưng sau tiêm phòng để phát hiện sớm các phản ứng bất thường.';
-      case 'general':
-        return 'Chăm sóc định kỳ và đúng cách là chìa khóa để thú cưng luôn khỏe mạnh.';
-      default:
-        return 'Hãy đọc kỹ và áp dụng những lời khuyên phù hợp với thú cưng của bạn.';
+  IconData _getIconFromTitle(String title) {
+    if (title.toLowerCase().contains('tiêm phòng') || title.toLowerCase().contains('vaccine')) {
+      if (title.toLowerCase().contains('trước') || title.toLowerCase().contains('chuẩn bị')) {
+        return Icons.medical_services;
+      } else if (title.toLowerCase().contains('sau')) {
+        return Icons.healing;
+      }
+      return Icons.vaccines;
+    } else if (title.toLowerCase().contains('chăm sóc')) {
+      return Icons.favorite;
+    } else if (title.toLowerCase().contains('tổng quát')) {
+      return Icons.health_and_safety;
     }
+    return Icons.info;
   }
 
-  List<String> _getAdditionalTips() {
-    switch (article.type) {
-      case 'species':
-        return [
-          'Luôn tham khảo ý kiến bác sĩ thú y khi có thắc mắc',
-          'Mỗi cá thể có thể có nhu cầu khác nhau dù cùng loài',
-          'Quan sát hành vi hàng ngày để hiểu rõ thú cưng hơn',
-        ];
-      case 'pre_vaccination':
-        return [
-          'Không tiêm phòng khi thú cưng bị bệnh hoặc stress',
-          'Thông báo với bác sĩ về các loại thuốc đang sử dụng',
-          'Đến đúng giờ hẹn để tránh chờ đợi lâu',
-        ];
-      case 'post_vaccination':
-        return [
-          'Gọi ngay cho bác sĩ nếu thú cưng có phản ứng nghiêm trọng',
-          'Ghi chép chi tiết về tình trạng thú cưng',
-          'Không lo lắng với các phản ứng nhẹ như buồn ngủ',
-        ];
-      case 'general':
-        return [
-          'Tạo lập thói quen chăm sóc đều đặn',
-          'Đầu tư vào thức ăn và đồ dùng chất lượng',
-          'Tham gia các khóa học chăm sóc thú cưng',
-        ];
-      default:
-        return [];
+  List<String> _parseContentItems(String content) {
+    // Try to split content by common separators
+    if (content.contains('  ')) {
+      return content.split('  ').where((item) => item.trim().isNotEmpty).toList();
+    } else if (content.contains('\n')) {
+      return content.split('\n').where((item) => item.trim().isNotEmpty).toList();
+    } else if (content.contains('. ')) {
+      final items = content.split('. ');
+      return items.map((item) => item.trim().endsWith('.') ? item : '$item.').toList();
     }
+    return [];
   }
 }

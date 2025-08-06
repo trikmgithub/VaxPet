@@ -41,8 +41,10 @@ class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
   double? longitude;
   String? clinicName;
   String? address;
-  final String phone = '012 3456 7890'; // Số điện thoại giả định
-  final String openingHours = '8:00 - 12:00 & 13:00-17:00 (Thứ 2 - Chủ nhật)';
+  String? phoneNumber;
+  String? timeMorning;
+  String? timeAfternoon;
+  String? dayOfWeek;
   final String mapboxAccessToken = Environment.MAPBOX_KEY;
 
   @override
@@ -66,6 +68,10 @@ class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
       longitude = state.longitude;
       clinicName = state.clinicName;
       address = state.address;
+      phoneNumber = state.phoneNumber;
+      timeMorning = state.timeMorning;
+      timeAfternoon = state.timeAfternoon;
+      dayOfWeek = state.dayOfWeek;
     });
 
     // Update map nếu đã được tạo
@@ -511,7 +517,8 @@ class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
   }
 
   Future<void> _makePhoneCall() async {
-    final url = 'tel:$phone';
+    final phoneToCall = phoneNumber ?? '012 3456 7890'; // Fallback nếu chưa có data từ API
+    final url = 'tel:$phoneToCall';
     try {
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(Uri.parse(url));
@@ -862,7 +869,7 @@ class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
                           _buildInfoRow(
                             Icons.phone_rounded,
                             'Điện thoại',
-                            phone,
+                            phoneNumber ?? '012 3456 7890',
                             Colors.green.shade600,
                             onTap: _makePhoneCall,
                             isTablet: isTablet,
@@ -874,7 +881,7 @@ class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
                           _buildInfoRow(
                             Icons.access_time_rounded,
                             'Giờ làm việc',
-                            '$openingHours\n${_getNextOpenTime()}',
+                            _getWorkingHoursText(),
                             Colors.orange.shade600,
                             isTablet: isTablet,
                           ),
@@ -1021,5 +1028,35 @@ class _AddressVaxPetContentState extends State<_AddressVaxPetContent> {
         ],
       ),
     );
+  }
+
+  String _getWorkingHoursText() {
+    // Lấy giờ làm việc từ API và định dạng lại
+    String workingHours = '';
+
+    // Thêm thông tin ngày làm việc nếu có
+    if (dayOfWeek != null && dayOfWeek!.isNotEmpty) {
+      workingHours += '$dayOfWeek\n';
+    }
+
+    // Thêm giờ sáng
+    if (timeMorning != null && timeMorning!.isNotEmpty) {
+      workingHours += 'Sáng: $timeMorning';
+    }
+
+    // Thêm giờ chiều
+    if (timeAfternoon != null && timeAfternoon!.isNotEmpty) {
+      if (workingHours.isNotEmpty && !workingHours.endsWith('\n')) {
+        workingHours += '\n';
+      }
+      workingHours += 'Chiều: $timeAfternoon';
+    }
+
+    // Fallback nếu chưa có data từ API
+    if (workingHours.trim().isEmpty) {
+      return 'Thứ 2 - Thứ 7\nSáng: 8:00 - 12:00\nChiều: 13:00 - 17:00';
+    }
+
+    return workingHours.trim();
   }
 }

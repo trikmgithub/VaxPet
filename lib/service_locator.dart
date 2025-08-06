@@ -24,6 +24,8 @@ import 'data/health_certificate_appointment_note/repositories/health_certificate
 import 'data/health_certificate_appointment_note/sources/health_certificate_appointment_note.dart';
 import 'data/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
 import 'data/health_certificate_appointment_note_detail/sources/health_certificate_appointment_note_detail.dart';
+import 'data/helps/repositories/helps.dart';
+import 'data/helps/sources/helps.dart';
 import 'data/membership/repositories/membership.dart';
 import 'data/membership/sources/membership.dart';
 import 'data/microchip_appointment_note/repositories/microchip_appointment_note.dart';
@@ -40,6 +42,8 @@ import 'data/schedule/repositories/schedule.dart';
 import 'data/schedule/sources/schedule.dart';
 import 'data/service_history/repositories/service_history.dart';
 import 'data/service_history/sources/service_history.dart';
+import 'data/tips_pet/repositories/tips_pet.dart';
+import 'data/tips_pet/sources/tips_pet.dart';
 import 'data/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note/sources/vaccine_appointment_note.dart';
 import 'data/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
@@ -82,6 +86,9 @@ import 'domain/health_certificate_appointment_note/usecases/get_health_certifica
 import 'domain/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
 import 'domain/health_certificate_appointment_note_detail/usecases/get_health_certificate_appointment_note_detail.dart';
 import 'domain/health_certificate_appointment_note_detail/usecases/put_health_certificate_appointment_note.dart';
+import 'domain/helps/repositories/helps.dart';
+import 'domain/helps/usecases/get_faq.dart';
+import 'domain/helps/usecases/get_supports.dart';
 import 'domain/membership/repositories/membership.dart';
 import 'domain/membership/usecases/get_customer_ranking_info.dart';
 import 'domain/membership/usecases/get_membership_status.dart';
@@ -105,6 +112,8 @@ import 'domain/schedule/repositories/schedule.dart';
 import 'domain/schedule/usecases/create_app_vac.dart';
 import 'domain/service_history/repositories/service_history.dart';
 import 'domain/service_history/usecases/get_service_history.dart';
+import 'domain/tips_pet/repositories/tips_pet.dart';
+import 'domain/tips_pet/usecases/get_all_handbooks.dart';
 import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
@@ -159,6 +168,8 @@ void setupServiceLocator() {
   sl.registerSingleton<PointTransactionService>(PointTransactionServiceImpl());
   sl.registerSingleton<VoucherService>(VoucherServiceImpl());
   sl.registerSingleton<SampleSchedulePetService>(SampleSchedulePetServiceImpl());
+  sl.registerSingleton<TipsPetService>(TipsPetServiceImpl());
+  sl.registerSingleton<HelpsService>(HelpsServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
@@ -206,6 +217,8 @@ void setupServiceLocator() {
   sl.registerSingleton<ServiceHistoryService>(ServiceHistoryServiceImpl());
   sl.registerSingleton<ServiceHistoryRepository>(ServiceHistoryRepositoryImpl());
   sl.registerSingleton<SampleSchedulePetRepository>(SampleSchedulePetRepositoryImpl());
+  sl.registerSingleton<TipsPetRepository>(TipsPetRepositoryImpl());
+  sl.registerSingleton<HelpsRepository>(HelpsRepositoryImpl());
 
   // Use Cases
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase());
@@ -307,5 +320,14 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<GetSampleSchedulePetUseCase>(
     GetSampleSchedulePetUseCase(),
+  );
+  sl.registerSingleton<GetAllHandbooksUseCase>(
+    GetAllHandbooksUseCase(),
+  );
+  sl.registerSingleton<GetSupportsUseCase>(
+    GetSupportsUseCase(),
+  );
+  sl.registerSingleton<GetFAQUseCase>(
+    GetFAQUseCase(),
   );
 }
