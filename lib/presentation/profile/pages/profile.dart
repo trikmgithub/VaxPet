@@ -225,12 +225,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: ClipOval(
                   child:
                       profileImagePath != null && profileImagePath!.isNotEmpty
-                          ? Image.file(
-                            File(profileImagePath!),
-                            width: isSmallScreen ? 70 : 78,
-                            height: isSmallScreen ? 70 : 78,
-                            fit: BoxFit.cover,
-                          )
+                          ? (profileImagePath!.startsWith('http')
+                              ? Image.network(
+                                  profileImagePath!,
+                                  width: isSmallScreen ? 70 : 78,
+                                  height: isSmallScreen ? 70 : 78,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.file(
+                                  File(profileImagePath!),
+                                  width: isSmallScreen ? 70 : 78,
+                                  height: isSmallScreen ? 70 : 78,
+                                  fit: BoxFit.cover,
+                                ))
                           : Icon(
                             Icons.person,
                             size: isSmallScreen ? 38 : 44,

@@ -8,7 +8,7 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
 
   List<dynamic> _allVouchers = [];
   String _currentKeyword = '';
-  bool? _currentStatus;
+  int? _currentDiscountPercent; // Only keep discount percent tracking
   int _currentPage = 1;
   int _totalPages = 1;
   bool _isLoadingMore = false;
@@ -17,7 +17,7 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
     int pageNumber = 1,
     int pageSize = 10,
     String? keyWord,
-    bool? status,
+    int? discountPercent, // Remove status parameter, keep only discount percent
     bool isRefresh = false,
   }) async {
     try {
@@ -33,7 +33,7 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
       }
 
       _currentKeyword = keyWord ?? '';
-      _currentStatus = status;
+      _currentDiscountPercent = discountPercent; // Only track discount percent
 
       final params = <String, dynamic>{
         'pageNumber': pageNumber,
@@ -44,9 +44,10 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
         params['keyWord'] = keyWord;
       }
 
-      if (status != null) {
-        params['status'] = status;
+      if (discountPercent != null) {
+        params['discountPercent'] = discountPercent;
       }
+      // Remove status parameter completely
 
       var result = await sl<GetAllVouchersUseCase>().call(params: params);
 
@@ -121,7 +122,7 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
         await getAllVouchers(
           pageNumber: _currentPage + 1,
           keyWord: _currentKeyword.isEmpty ? null : _currentKeyword,
-          status: _currentStatus,
+          discountPercent: _currentDiscountPercent, // Add discount percent parameter
         );
       }
     }
@@ -131,7 +132,7 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
     await getAllVouchers(
       pageNumber: 1,
       keyWord: _currentKeyword.isEmpty ? null : _currentKeyword,
-      status: _currentStatus,
+      discountPercent: _currentDiscountPercent, // Add discount percent parameter
       isRefresh: true,
     );
   }
@@ -140,16 +141,17 @@ class AllVoucherCubit extends Cubit<AllVoucherState> {
     await getAllVouchers(
       pageNumber: 1,
       keyWord: keyword,
-      status: _currentStatus,
+      discountPercent: _currentDiscountPercent, // Add discount percent parameter
       isRefresh: true,
     );
   }
 
-  Future<void> filterByStatus(bool? status) async {
+  // Add new method for filtering by discount percent
+  Future<void> filterByDiscountPercent(int? discountPercent) async {
     await getAllVouchers(
       pageNumber: 1,
       keyWord: _currentKeyword.isEmpty ? null : _currentKeyword,
-      status: status,
+      discountPercent: discountPercent,
       isRefresh: true,
     );
   }

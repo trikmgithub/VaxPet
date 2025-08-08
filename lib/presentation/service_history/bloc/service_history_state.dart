@@ -30,6 +30,7 @@ class ServiceHistoryEntity {
   final bool? isDeleted;
   final CustomerEntity? customer;
   final PetEntity? pet;
+  final AppointmentEntity? appointment;
 
   ServiceHistoryEntity({
     this.serviceHistoryId,
@@ -46,6 +47,7 @@ class ServiceHistoryEntity {
     this.isDeleted,
     this.customer,
     this.pet,
+    this.appointment,
   });
 
   String get serviceTypeName {
@@ -157,5 +159,15 @@ class AccountResponseDTO {
     this.email,
     this.role,
     this.vetId,
+  });
+}
+
+class AppointmentEntity {
+  final int? appointmentId;
+  final String? appointmentCode;
+
+  AppointmentEntity({
+    this.appointmentId,
+    this.appointmentCode,
   });
 }

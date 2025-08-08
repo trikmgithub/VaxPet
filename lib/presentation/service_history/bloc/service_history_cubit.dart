@@ -91,6 +91,10 @@ class ServiceHistoryCubit extends Cubit<ServiceHistoryState> {
                   isSterilized: item['pet']['isSterilized'],
                   isDeleted: item['pet']['isDeleted'],
                 ) : null,
+                appointment: item['appointment'] != null ? AppointmentEntity(
+                  appointmentId: item['appointment']['appointmentId'],
+                  appointmentCode: item['appointment']['appointmentCode'],
+                ) : null,
               );
             }).toList();
           }

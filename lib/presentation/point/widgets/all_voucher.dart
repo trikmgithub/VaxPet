@@ -25,7 +25,7 @@ class AllVoucher extends StatefulWidget {
 class _AllVoucherState extends State<AllVoucher> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool? _selectedStatus;
+  int? _selectedDiscountPercent; // Changed from bool? _selectedStatus
   int? _customerId;
   int? _currentPoints;
 
@@ -71,11 +71,11 @@ class _AllVoucherState extends State<AllVoucher> {
     context.read<AllVoucherCubit>().searchVouchers(value);
   }
 
-  void _onStatusFilter(bool? status) {
+  void _onDiscountPercentFilter(int? percent) { // Renamed from _onStatusFilter
     setState(() {
-      _selectedStatus = status;
+      _selectedDiscountPercent = percent;
     });
-    context.read<AllVoucherCubit>().filterByStatus(status);
+    context.read<AllVoucherCubit>().filterByDiscountPercent(percent); // Changed method call
   }
 
   @override
@@ -107,52 +107,7 @@ class _AllVoucherState extends State<AllVoucher> {
                   fillColor: Colors.white,
                 ),
               ),
-              const SizedBox(height: 12),
-              // Filter Chips
-              Row(
-                children: [
-                  Text(
-                    'Trạng thái: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          FilterChip(
-                            label: const Text('Tất cả'),
-                            selected: _selectedStatus == null,
-                            onSelected: (_) => _onStatusFilter(null),
-                            selectedColor: AppColors.primary.withOpacity(0.2),
-                            checkmarkColor: AppColors.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          FilterChip(
-                            label: const Text('Còn hạn'),
-                            selected: _selectedStatus == true,
-                            onSelected: (_) => _onStatusFilter(true),
-                            selectedColor: AppColors.primary.withOpacity(0.2),
-                            checkmarkColor: AppColors.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          FilterChip(
-                            label: const Text('Hết hạn'),
-                            selected: _selectedStatus == false,
-                            onSelected: (_) => _onStatusFilter(false),
-                            selectedColor: AppColors.primary.withOpacity(0.2),
-                            checkmarkColor: AppColors.primary,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // const SizedBox(height: 12),
             ],
           ),
         ),
@@ -282,7 +237,7 @@ class _AllVoucherState extends State<AllVoucher> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -364,8 +319,8 @@ class _AllVoucherState extends State<AllVoucher> {
                   ),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.red.withOpacity(0.1),
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(

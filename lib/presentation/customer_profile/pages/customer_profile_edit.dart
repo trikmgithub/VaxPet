@@ -45,7 +45,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
 
   String? _selectedGender;
   final ImagePicker _picker = ImagePicker();
-  File? image;
+  String? imageUrl; // Changed from File? image to String? imageUrl
   bool _isCommitmentChecked = false;
   bool _isLoading = false; // Thêm biến loading state
 
@@ -81,7 +81,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       _selectedGender = widget.customerProfile?.gender;
     }
     if (widget.customerProfile?.image != null) {
-      image = File(widget.customerProfile!.image!);
+      imageUrl = widget.customerProfile!.image!;
     }
     _dateOfBirthController = TextEditingController(
       text: widget.customerProfile?.dateOfBirth ?? '',
@@ -118,7 +118,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     );
     if (pickedFile != null) {
       setState(() {
-        image = File(pickedFile.path);
+        imageUrl = pickedFile.path;
       });
     }
   }
@@ -644,10 +644,10 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         ),
         clipBehavior: Clip.antiAlias, // Đảm bảo ảnh được cắt theo hình tròn
         child:
-            image != null
-                ? (image!.path.startsWith('http')
-                    ? Image.network(image!.path, fit: BoxFit.cover)
-                    : Image.file(image!, fit: BoxFit.cover))
+            imageUrl != null
+                ? (imageUrl!.startsWith('http')
+                    ? Image.network(imageUrl!, fit: BoxFit.cover)
+                    : Image.file(File(imageUrl!), fit: BoxFit.cover))
                 : const Center(
                   child: Padding(
                     padding: EdgeInsets.all(8.0), // Thêm padding cho text
@@ -820,14 +820,14 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                 });
 
                 try {
-                  await sl<PutCustomerProfileUseCase>().call(
+                  final result = await sl<PutCustomerProfileUseCase>().call(
                     params: CustomerProfileModel(
                       customerId: widget.customerId,
                       fullName: _nameController.text.trim(),
                       userName: _userNameController.text.trim(),
                       image:
-                          (image != null && !image!.path.startsWith('http'))
-                              ? image!.path
+                          (imageUrl != null && !imageUrl!.startsWith('http'))
+                              ? imageUrl
                               : null,
                       phoneNumber: _phoneNumberController.text.trim(),
                       dateOfBirth: _dateOfBirthController.text.trim(),
@@ -837,54 +837,65 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                     ),
                   );
 
-                  if (mounted) {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    final address =
-                        '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}';
-                    await prefs.setString('address', address);
-
-                    if (image != null && !image!.path.startsWith('http')) {
-                      final String? cachedImagePath = await _saveImageToCache(
-                        image!,
-                      );
-                      if (cachedImagePath != null) {
-                        await prefs.setString('profileImage', cachedImagePath);
+                  // Kiểm tra kết quả Either trước khi hiển thị thông báo
+                  result.fold(
+                    (error) {
+                      // Trường hợp lỗi - hiển thị thông báo lỗi
+                      if (mounted) {
+                        DisplayMessage.errorMessage(error.toString(), context);
                       }
-                    }
+                    },
+                    (data) async {
+                      // Trường hợp thành công - lưu thông tin và hiển thị thông báo thành công
+                      if (mounted) {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        final address =
+                            '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}';
+                        await prefs.setString('address', address);
 
-                    await prefs.setString(
-                      'fullName',
-                      _nameController.text.trim(),
-                    );
-                    await prefs.setString(
-                      'userName',
-                      _userNameController.text.trim(),
-                    );
-                    await prefs.setString(
-                      'phoneNumber',
-                      _phoneNumberController.text.trim(),
-                    );
-                    await prefs.setString(
-                      'dateOfBirth',
-                      _dateOfBirthController.text.trim(),
-                    );
-                    if (_selectedGender != null) {
-                      await prefs.setString('gender', _selectedGender!);
-                    }
+                        if (imageUrl != null && !imageUrl!.startsWith('http')) {
+                          final String? cachedImagePath = await _saveImageToCache(
+                            File(imageUrl!),
+                          );
+                          if (cachedImagePath != null) {
+                            await prefs.setString('profileImage', cachedImagePath);
+                          }
+                        }
 
-                    // Check mounted again before using BuildContext after async operations
-                    if (mounted) {
-                      DisplayMessage.successMessage(
-                        'Cập nhật thông tin thành công',
-                        context,
-                      );
-                      Navigator.of(context).pop();
-                    }
-                  }
+                        await prefs.setString(
+                          'fullName',
+                          _nameController.text.trim(),
+                        );
+                        await prefs.setString(
+                          'userName',
+                          _userNameController.text.trim(),
+                        );
+                        await prefs.setString(
+                          'phoneNumber',
+                          _phoneNumberController.text.trim(),
+                        );
+                        await prefs.setString(
+                          'dateOfBirth',
+                          _dateOfBirthController.text.trim(),
+                        );
+                        if (_selectedGender != null) {
+                          await prefs.setString('gender', _selectedGender!);
+                        }
+
+                        // Chỉ hiển thị thông báo thành công khi thực sự thành công
+                        DisplayMessage.successMessage(
+                          'Cập nhật thông tin thành công',
+                          context,
+                        );
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  );
                 } catch (error) {
+                  // Xử lý các exception khác (nếu có)
                   if (mounted) {
-                    DisplayMessage.errorMessage(error.toString(), context);
+                    DisplayMessage.errorMessage('Có lỗi xảy ra: ${error.toString()}', context);
                   }
                 } finally {
                   if (mounted) {

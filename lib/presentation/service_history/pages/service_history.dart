@@ -238,7 +238,7 @@ class _ServiceHistoryCard extends StatelessWidget {
             _buildDetailRow('Ngày dịch vụ:', _formatDate(serviceHistory.serviceDate)),
             _buildDetailRow('Phương thức thanh toán:', _getPaymentMethodText(serviceHistory.paymentMethod)),
             _buildDetailRow('Số tiền:', _formatCurrency(serviceHistory.amount)),
-            _buildDetailRow('Mã lịch hẹn:', '#${serviceHistory.appointmentId ?? 'N/A'}'),
+            _buildDetailRow('Mã lịch hẹn:', '${serviceHistory.appointment?.appointmentCode ?? 'N/A'}'),
           ],
         ),
       ),

@@ -11,7 +11,6 @@ class CustomerProfileModel {
   final String? dateOfBirth;
   final String? gender;
   final String? address;
-  final String? currentPoints;
 
   CustomerProfileModel({
     this.customerId,
@@ -26,7 +25,6 @@ class CustomerProfileModel {
     this.dateOfBirth,
     this.gender,
     this.address,
-    this.currentPoints,
   });
 
   factory CustomerProfileModel.fromJson(Map<dynamic, dynamic> json) {
@@ -45,7 +43,6 @@ class CustomerProfileModel {
       dateOfBirth: json['dateOfBirth'],
       gender: json['gender'],
       address: json['address'],
-      currentPoints: json['currentPoints'],
     );
   }
 }

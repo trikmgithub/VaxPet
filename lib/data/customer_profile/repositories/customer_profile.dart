@@ -31,9 +31,9 @@ class CustomerProfileRepositoryImpl extends CustomerProfileRepository {
       customerProfile,
     );
 
-    return returnedData.fold((error) => Left(Exception(error.toString())), (
-      data,
-    ) {
+    return returnedData.fold(
+      (error) => Left(error),
+      (data) {
       return Right(data);
     });
   }

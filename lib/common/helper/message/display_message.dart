@@ -38,17 +38,18 @@ class DisplayMessage {
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 600;
 
-    // Check if we're in a scaffold with bottom navigation
+    // Get safe area padding to account for system UI
     final viewPadding = MediaQuery.of(context).viewPadding;
 
-    // Calculate safe top position accounting for system UI and navigation
-    final safeTopMargin = viewPadding.top + 16;
+    // Calculate safe margins for top positioning
+    final topMargin = viewPadding.top + 16; // Safe area top + padding
+    final horizontalMargin = isSmallScreen ? 16.0 : 24.0;
 
     final snackBar = SnackBar(
       content: Row(
         children: [
           Icon(icon, color: textColor),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               message,
@@ -70,14 +71,13 @@ class DisplayMessage {
       ),
       duration: const Duration(seconds: 4),
       dismissDirection: DismissDirection.horizontal,
+      // Position at top of screen with safe area consideration
       margin: EdgeInsets.only(
-        bottom:
-            screenSize.height -
-            safeTopMargin -
-            60, // Position at top with safe area
-        left: isSmallScreen ? 16 : screenSize.width * 0.2,
-        right: isSmallScreen ? 16 : screenSize.width * 0.2,
-        top: safeTopMargin,
+        left: horizontalMargin,
+        right: horizontalMargin,
+        top: topMargin,
+        // Large bottom margin to push SnackBar to top
+        bottom: screenSize.height - topMargin - 80,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
