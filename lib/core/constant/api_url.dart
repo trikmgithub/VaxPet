@@ -11,6 +11,8 @@ class ApiUrl {
   static const verifyOtp = '${apiV}auth/verify-otp';
   static const changePassword =
       '${apiV}auth/reset-password';
+  static const forgotPassOTP = '${apiV}auth/send-reset-password-email';
+  static const forgotPassword = '${apiV}auth/reset-password-after-forget';
 
   // CUSTOMER ENDPOINTS
   //Get
@@ -28,7 +30,6 @@ class ApiUrl {
   static const deletePetById = '${apiV}pets/delete-pet';
   //Post
   static const createPet = '${apiV}pets/create-pet';
-  static const updatePet = '${apiV}pets/update-pet-by';
   //Put
   static const putUpdatePet = '${apiV}pets/update-pet-by';
 

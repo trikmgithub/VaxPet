@@ -19,17 +19,15 @@ class PutMicrochipAppointmentModel {
 
   Map<dynamic, dynamic> toJson() {
     return {
-      "appointment": {
-        "customerId": customerId,
-        "petId": petId,
-        "appointmentDate": appointmentDate,
-        "serviceType": 2, // Luôn là 1 (tiêm chủng)
-        "location": location,
-        "address":
-        location == 1
-            ? null
-            : address, // Trung tâm = null, Tại nhà = address
-      },
+      "customerId": customerId,
+      "petId": petId,
+      "appointmentDate": appointmentDate,
+      "serviceType": serviceType ?? 2, // Mặc định là 2 cho microchip
+      "location": location,
+      "address":
+      location == 1
+          ? null
+          : address, // Trung tâm = null, Tại nhà = address
     };
   }
 }

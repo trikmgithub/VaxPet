@@ -7,6 +7,7 @@ import 'package:vaxpet/service_locator.dart';
 
 import '../../../common/widgets/back_button/back_button.dart';
 import '../../../common/widgets/reactive_button/reactive_button.dart';
+import '../../../core/configs/theme/app_colors.dart';
 import '../../../data/appointment_vaccination/models/post_appointment_vaccination.dart';
 import '../../../domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
 import '../../disease/pages/choice_disease.dart';
@@ -612,12 +613,19 @@ class _AppointmentVaccinationHomePageState
             });
           }
         },
-        icon: Icon(Icons.vaccines),
-        label: Text('Chọn bệnh cần tiêm'),
+        icon: Icon(Icons.vaccines, color: Colors.white),
+        label: Text(
+          'Chọn bệnh cần tiêm',
+          style: TextStyle(color: Colors.white),
+        ),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          textStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: AppColors.primary, // Màu xanh nổi bật
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 3,
+          shadowColor: Colors.blue.withValues(alpha: 0.3),
         ),
       ),
     );

@@ -118,4 +118,30 @@ class AuthRepositoryImpl extends AuthRepository {
       }
     );
   }
+
+  @override
+  Future<Either> forgotPassOTP(String email) async {
+    var data = await sl<AuthService>().forgotPassOTP(email);
+    return data.fold(
+      (error) => Left('Lỗi: $error'),
+      (data) async {
+        return Right(data);
+      }
+    );
+  }
+
+  @override
+  Future<Either> forgotPassword(String email, String otp, String newPassword) async {
+    var data = await sl<AuthService>().forgotPassword(
+      email,
+      otp,
+      newPassword,
+    );
+    return data.fold(
+      (error) => Left('Lỗi: $error'),
+      (data) async {
+        return Right(data);
+      }
+    );
+  }
 }

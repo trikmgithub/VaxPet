@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
 import '../bloc/change_password_cubit.dart';
 import '../bloc/change_password_state.dart';
@@ -47,21 +48,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         child: BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
           listener: (context, state) {
             if (state.status == ChangePasswordStatus.success) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.successMessage ?? 'Đổi mật khẩu thành công'),
-                  backgroundColor: Colors.green,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              DisplayMessage.successMessage(
+                state.successMessage ?? 'Đổi mật khẩu thành công',
+                context,
               );
               Navigator.of(context).pop();
             } else if (state.status == ChangePasswordStatus.failure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage ?? 'Đã xảy ra lỗi'),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              DisplayMessage.errorMessage(
+                state.errorMessage ?? 'Đã xảy ra lỗi',
+                context,
               );
             }
           },
@@ -362,8 +357,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               if (value == null || value.isEmpty) {
                 return 'Vui lòng nhập mật khẩu mới';
               }
-              if (value.length < 6) {
-                return 'Mật khẩu phải có ít nhất 6 ký tự';
+              if (value.length < 8) {
+                return 'Mật khẩu phải có ít nhất 8 ký tự';
+              }
+              // Kiểm tra có ít nhất một chữ hoa
+              if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                return 'Mật khẩu phải có ít nhất một chữ cái viết hoa';
+              }
+              // Kiểm tra có ít nhất một chữ số
+              if (!RegExp(r'[0-9]').hasMatch(value)) {
+                return 'Mật khẩu phải có ít nhất một chữ số';
               }
               return null;
             },
@@ -551,7 +554,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ],
           ),
           SizedBox(height: isDesktop ? 12 : 8),
-          _buildRequirement('Ít nhất 6 ký tự', isDesktop),
+          _buildRequirement('Ít nhất 8 ký tự', isDesktop),
+          _buildRequirement('Ít nhất một chữ cái viết hoa', isDesktop),
+          _buildRequirement('Ít nhất một chữ số', isDesktop),
           _buildRequirement('Khác với mật khẩu hiện tại', isDesktop),
         ],
       ),

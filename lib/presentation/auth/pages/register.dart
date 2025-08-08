@@ -16,6 +16,7 @@ class RegisterPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   final ValueNotifier<bool> _isPasswordHidden = ValueNotifier<bool>(true);
+  final ValueNotifier<String> _passwordValue = ValueNotifier<String>(''); // Thêm để theo dõi nội dung password
 
   @override
   Widget build(BuildContext context) {
@@ -165,65 +166,160 @@ class RegisterPage extends StatelessWidget {
   }
 
   Widget _buildPasswordField(Size screenSize) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _isPasswordHidden,
+            builder: (context, isHidden, _) {
+              return TextField(
+                controller: _passwordController,
+                obscureText: isHidden,
+                style: TextStyle(fontSize: screenSize.width * 0.04),
+                onChanged: (value) {
+                  _passwordValue.value = value; // Cập nhật giá trị password
+                },
+                decoration: InputDecoration(
+                  hintText: 'Nhập mật khẩu',
+                  hintStyle: TextStyle(
+                    color: AppColors.textGray,
+                    fontSize: screenSize.width * 0.04,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.lock_outlined,
+                    color: AppColors.primary,
+                    size: screenSize.width * 0.06,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isHidden ? Icons.visibility_off : Icons.visibility,
+                      color: AppColors.textGray,
+                      size: screenSize.width * 0.06,
+                    ),
+                    onPressed: () {
+                      _isPasswordHidden.value = !_isPasswordHidden.value;
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: screenSize.width * 0.04,
+                    vertical: screenSize.height * 0.02,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        // Thêm thông báo yêu cầu mật khẩu
+        const SizedBox(height: 12),
+        _buildPasswordRequirements(screenSize),
+      ],
+    );
+  }
+
+  // Thêm widget hiển thị yêu cầu mật khẩu
+  Widget _buildPasswordRequirements(Size screenSize) {
+    return ValueListenableBuilder<String>(
+      valueListenable: _passwordValue,
+      builder: (context, password, _) {
+        final hasMinLength = password.length >= 8;
+        final hasUpperCase = RegExp(r'[A-Z]').hasMatch(password);
+        final hasNumber = RegExp(r'[0-9]').hasMatch(password);
+
+        return Container(
+          padding: EdgeInsets.all(screenSize.width * 0.03),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.blue[600],
+                    size: screenSize.width * 0.04,
+                  ),
+                  SizedBox(width: screenSize.width * 0.02),
+                  Text(
+                    'Yêu cầu mật khẩu:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue[600],
+                      fontSize: screenSize.width * 0.035,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenSize.width * 0.02),
+              _buildRequirement(
+                'Ít nhất 8 ký tự',
+                hasMinLength,
+                screenSize,
+              ),
+              _buildRequirement(
+                'Ít nhất một chữ cái viết hoa',
+                hasUpperCase,
+                screenSize,
+              ),
+              _buildRequirement(
+                'Ít nhất một chữ số',
+                hasNumber,
+                screenSize,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRequirement(String text, bool isValid, Size screenSize) {
+    return Padding(
+      padding: EdgeInsets.only(top: screenSize.width * 0.01),
+      child: Row(
+        children: [
+          Icon(
+            isValid ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: isValid ? Colors.green[600] : Colors.grey[400],
+            size: screenSize.width * 0.04,
+          ),
+          SizedBox(width: screenSize.width * 0.02),
+          Text(
+            text,
+            style: TextStyle(
+              color: isValid ? Colors.green[600] : Colors.grey[600],
+              fontSize: screenSize.width * 0.032,
+              fontWeight: isValid ? FontWeight.w500 : FontWeight.normal,
+            ),
           ),
         ],
-      ),
-      child: ValueListenableBuilder<bool>(
-        valueListenable: _isPasswordHidden,
-        builder: (context, isHidden, _) {
-          return TextField(
-            controller: _passwordController,
-            obscureText: isHidden,
-            style: TextStyle(fontSize: screenSize.width * 0.04),
-            decoration: InputDecoration(
-              hintText: 'Nhập mật khẩu',
-              hintStyle: TextStyle(
-                color: AppColors.textGray,
-                fontSize: screenSize.width * 0.04,
-              ),
-              prefixIcon: Icon(
-                Icons.lock_outlined,
-                color: AppColors.primary,
-                size: screenSize.width * 0.06,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  isHidden ? Icons.visibility_off : Icons.visibility,
-                  color: AppColors.textGray,
-                  size: screenSize.width * 0.06,
-                ),
-                onPressed: () {
-                  _isPasswordHidden.value = !_isPasswordHidden.value;
-                },
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: AppColors.primary,
-                  width: 2,
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: screenSize.width * 0.04,
-                vertical: screenSize.height * 0.02,
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -257,6 +353,32 @@ class RegisterPage extends StatelessWidget {
               context,
             );
             throw 'Mật khẩu không được để trống';
+          }
+
+          // Thêm validation cho yêu cầu mật khẩu
+          final password = _passwordController.text;
+          if (password.length < 8) {
+            DisplayMessage.errorMessage(
+              'Mật khẩu phải có ít nhất 8 ký tự',
+              context,
+            );
+            throw 'Mật khẩu không đủ độ dài';
+          }
+
+          if (!RegExp(r'[A-Z]').hasMatch(password)) {
+            DisplayMessage.errorMessage(
+              'Mật khẩu phải có ít nhất một chữ cái viết hoa',
+              context,
+            );
+            throw 'Mật khẩu thiếu chữ hoa';
+          }
+
+          if (!RegExp(r'[0-9]').hasMatch(password)) {
+            DisplayMessage.errorMessage(
+              'Mật khẩu phải có ít nhất một chữ số',
+              context,
+            );
+            throw 'Mật khẩu thiếu chữ số';
           }
 
           final result = await sl<RegisterUseCase>().call(

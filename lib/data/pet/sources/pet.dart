@@ -122,28 +122,62 @@ class PetServiceImpl extends PetService {
   @override
   Future<Either> updatePet(PetEntity pet) async {
     try {
-      final url = '${ApiUrl.updatePet}/${pet.petId}';
+      final url = '${ApiUrl.putUpdatePet}/${pet.petId}';
+
+      // Tạo FormData cho multipart/form-data
+      final formData = FormData();
+      formData.fields.addAll([
+        MapEntry('customerId', pet.customerId.toString()),
+        MapEntry('name', pet.name ?? ''),
+        MapEntry('species', pet.species ?? ''),
+        MapEntry('breed', pet.breed ?? ''),
+        MapEntry('gender', pet.gender ?? ''),
+        MapEntry('dateOfBirth', pet.dateOfBirth ?? ''),
+        MapEntry('placeToLive', pet.placeToLive ?? ''),
+        MapEntry('placeOfBirth', pet.placeOfBirth ?? ''),
+        MapEntry('weight', pet.weight ?? ''),
+        MapEntry('color', pet.color ?? ''),
+        MapEntry('nationality', pet.nationality ?? ''),
+        MapEntry('isSterilized', pet.isSterilized.toString()),
+      ]);
+
+      // Thêm ảnh nếu có
+      if (pet.image != null && pet.image!.isNotEmpty) {
+        // Kiểm tra xem có phải là file path hay URL
+        if (!pet.image!.startsWith('http')) {
+          // Nếu là file path, thêm như MultipartFile
+          formData.files.add(
+            MapEntry(
+              'image',
+              await MultipartFile.fromFile(
+                pet.image!,
+                filename: basename(pet.image!),
+              ),
+            ),
+          );
+        } else {
+          // Nếu là URL, chỉ gửi URL
+          formData.fields.add(MapEntry('imageUrl', pet.image!));
+        }
+      }
+
       final response = await sl<DioClient>().put(
         url,
-        data: {
-          'name': pet.customerId,
-          'species': pet.petCode,
-          'breed': pet.name,
-          'dateOfBirth': pet.species,
-          'placeToLive': pet.breed,
-          'placeOfBirth': pet.age,
-          'image': pet.image,
-          'weight': pet.weight,
-          'color': pet.color,
-          'nationality': pet.nationality,
-          'isSterilized': pet.isSterilized,
-        },
+        queryParameters: {'petId': pet.petId},
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
       );
 
       return Right(response.data);
     } on DioException catch (e) {
+      // Debug log for server error
       return Left(e);
     } catch (e) {
+      debugPrint('UpdatePet unexpected error: $e');
       return Left(Exception('An unexpected error occurred'));
     }
   }

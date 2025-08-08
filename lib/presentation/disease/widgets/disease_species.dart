@@ -375,19 +375,23 @@ class _DiseaseSpeciesState extends State<DiseaseSpecies> {
               ),
               disabledBackgroundColor: Colors.grey.shade300,
               disabledForegroundColor: Colors.grey.shade600,
+              // Thêm màu nền và màu chữ cho button khi được enable
+              backgroundColor: hasSelection ? Theme.of(context).primaryColor : null,
+              foregroundColor: hasSelection ? Colors.white : null,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (hasSelection)
-                  const Icon(Icons.check_circle_outline, size: 20),
+                  const Icon(Icons.check_circle_outline, size: 20, color: Colors.white),
                 if (hasSelection) const SizedBox(width: 8),
                 Text(
                   hasSelection ? 'Xác nhận' : 'Vui lòng chọn bệnh',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: hasSelection ? Colors.white : null,
                   ),
                 ),
               ],

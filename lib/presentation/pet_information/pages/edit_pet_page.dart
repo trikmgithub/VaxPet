@@ -1,9 +1,10 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vaxpet/domain/pet/entities/pet.dart';
 import 'package:vaxpet/presentation/pet_information/bloc/edit_pet_cubit.dart';
 import 'package:vaxpet/presentation/pet_information/bloc/edit_pet_state.dart';
-import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
 import '../../../core/configs/theme/app_colors.dart';
 
@@ -16,7 +17,7 @@ class EditPetPage extends StatefulWidget {
   State<EditPetPage> createState() => _EditPetPageState();
 }
 
-class _EditPetPageState extends State<EditPetPage> {
+class _EditPetPageState extends State<EditPetPage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _breedController;
@@ -31,10 +32,21 @@ class _EditPetPageState extends State<EditPetPage> {
   String? _selectedGender;
   bool _isSterilized = false;
 
+  // Image picker state
+  File? _selectedImage;
+
+  // Animation controller for top notification
+  AnimationController? _notificationController;
+  Animation<Offset>? _notificationAnimation;
+  String _notificationMessage = '';
+  bool _isErrorNotification = false;
+  bool _showNotification = false;
+
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    _initializeNotificationAnimation();
   }
 
   void _initializeControllers() {
@@ -62,6 +74,48 @@ class _EditPetPageState extends State<EditPetPage> {
     _isSterilized = widget.pet.isSterilized ?? false;
   }
 
+  void _initializeNotificationAnimation() {
+    _notificationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _notificationAnimation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _notificationController!,
+      curve: Curves.easeOut,
+    ));
+  }
+
+  void _showTopNotification(String message, {bool isError = false}) {
+    setState(() {
+      _notificationMessage = message;
+      _isErrorNotification = isError;
+      _showNotification = true;
+    });
+
+    _notificationController?.forward();
+
+    // Auto hide after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        _hideTopNotification();
+      }
+    });
+  }
+
+  void _hideTopNotification() {
+    _notificationController?.reverse().then((_) {
+      if (mounted) {
+        setState(() {
+          _showNotification = false;
+        });
+      }
+    });
+  }
+
   // Helper method to convert Vietnamese gender to English
   String? _convertGenderToEnglish(String? gender) {
     if (gender == null || gender.isEmpty) return null;
@@ -85,6 +139,7 @@ class _EditPetPageState extends State<EditPetPage> {
     _placeOfBirthController.dispose();
     _nationalityController.dispose();
     _dateOfBirthController.dispose();
+    _notificationController?.dispose();
     super.dispose();
   }
 
@@ -189,73 +244,153 @@ class _EditPetPageState extends State<EditPetPage> {
   }
 
   PetEntity _createUpdatedPet() {
-    // Chỉ gửi những field nào thay đổi so với dữ liệu gốc
+    // Luôn gửi giá trị hiện tại từ form, không so sánh với giá trị gốc
     return PetEntity(
       petId: widget.pet.petId,
       customerId: widget.pet.customerId,
       petCode: widget.pet.petCode,
-      // Chỉ gửi name nếu thay đổi
-      name:
-          _nameController.text.trim() != (widget.pet.name ?? '')
-              ? _nameController.text.trim()
-              : widget.pet.name,
-      // Chỉ gửi species nếu thay đổi
-      species:
-          _selectedSpecies != widget.pet.species
-              ? _selectedSpecies
-              : widget.pet.species,
-      // Chỉ gửi breed nếu thay đổi
-      breed:
-          _breedController.text.trim() != (widget.pet.breed ?? '')
-              ? _breedController.text.trim()
-              : widget.pet.breed,
+      // Luôn gửi giá trị hiện tại
+      name: _nameController.text.trim(),
+      species: _selectedSpecies,
+      breed: _breedController.text.trim(),
       age: widget.pet.age, // Keep original age
-      // Chỉ gửi gender nếu thay đổi (so sánh với giá trị đã convert)
-      gender:
-          _selectedGender != _convertGenderToEnglish(widget.pet.gender)
-              ? _selectedGender
-              : widget.pet.gender,
-      // Chỉ gửi dateOfBirth nếu thay đổi (so sánh với format chuẩn)
-      dateOfBirth:
-          _dateOfBirthController.text.trim() !=
-                  _formatDateToDDMMYYYY(widget.pet.dateOfBirth)
-              ? _dateOfBirthController.text.trim()
-              : widget.pet.dateOfBirth,
-      // Chỉ gửi placeToLive nếu thay đổi
-      placeToLive:
-          _placeToLiveController.text.trim() != (widget.pet.placeToLive ?? '')
-              ? _placeToLiveController.text.trim()
-              : widget.pet.placeToLive,
-      // Chỉ gửi placeOfBirth nếu thay đổi
-      placeOfBirth:
-          _placeOfBirthController.text.trim() != (widget.pet.placeOfBirth ?? '')
-              ? _placeOfBirthController.text.trim()
-              : widget.pet.placeOfBirth,
-      // Không gửi image URL hiện tại (Cloudinary), chỉ gửi khi có ảnh mới
-      image:
-          widget
-              .pet
-              .image, // Keep original image URL, sẽ được thay đổi khi user chọn ảnh mới
-      // Chỉ gửi weight nếu thay đổi
-      weight:
-          _weightController.text.trim() != (widget.pet.weight ?? '')
-              ? _weightController.text.trim()
-              : widget.pet.weight,
-      // Chỉ gửi color nếu thay đổi
-      color:
-          _colorController.text.trim() != (widget.pet.color ?? '')
-              ? _colorController.text.trim()
-              : widget.pet.color,
-      // Chỉ gửi nationality nếu thay đổi
-      nationality:
-          _nationalityController.text.trim() != (widget.pet.nationality ?? '')
-              ? _nationalityController.text.trim()
-              : widget.pet.nationality,
-      // Chỉ gửi isSterilized nếu thay đổi
-      isSterilized:
-          _isSterilized != (widget.pet.isSterilized ?? false)
-              ? _isSterilized
-              : widget.pet.isSterilized,
+      gender: _selectedGender,
+      dateOfBirth: _dateOfBirthController.text.trim(),
+      placeToLive: _placeToLiveController.text.trim(),
+      placeOfBirth: _placeOfBirthController.text.trim(),
+      // Sử dụng ảnh mới nếu có chọn, nếu không giữ nguyên ảnh cũ
+      image: _selectedImage?.path ?? widget.pet.image,
+      weight: _weightController.text.trim(),
+      color: _colorController.text.trim(),
+      nationality: _nationalityController.text.trim(),
+      isSterilized: _isSterilized,
+    );
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      if (photo != null) {
+        setState(() {
+          _selectedImage = File(photo.path);
+        });
+      }
+    } catch (e) {
+      _showTopNotification('Không thể chụp ảnh', isError: true);
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      _showTopNotification('Không thể chọn ảnh', isError: true);
+    }
+  }
+
+  void _showImageSourceActionSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          height: 200,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Chọn nguồn hình ảnh',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _pickImageFromCamera();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        'Camera',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _pickImageFromGallery();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        'Thư viện',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 
@@ -282,6 +417,14 @@ class _EditPetPageState extends State<EditPetPage> {
         onSterilizedChanged: (value) => setState(() => _isSterilized = value),
         onDateSelect: _selectDate,
         onSubmit: _createUpdatedPet,
+        onImagePick: _showImageSourceActionSheet,
+        selectedImage: _selectedImage,
+        notificationAnimation: _notificationAnimation,
+        showNotification: _showNotification,
+        notificationMessage: _notificationMessage,
+        isErrorNotification: _isErrorNotification,
+        onShowNotification: _showTopNotification,
+        onHideNotification: _hideTopNotification,
       ),
     );
   }
@@ -306,6 +449,14 @@ class _EditPetForm extends StatelessWidget {
   final Function(bool) onSterilizedChanged;
   final VoidCallback onDateSelect;
   final PetEntity Function() onSubmit;
+  final VoidCallback onImagePick;
+  final File? selectedImage;
+  final Animation<Offset>? notificationAnimation;
+  final bool showNotification;
+  final String notificationMessage;
+  final bool isErrorNotification;
+  final Function(String, {bool isError}) onShowNotification;
+  final VoidCallback onHideNotification;
 
   const _EditPetForm({
     required this.pet,
@@ -326,6 +477,14 @@ class _EditPetForm extends StatelessWidget {
     required this.onSterilizedChanged,
     required this.onDateSelect,
     required this.onSubmit,
+    required this.onImagePick,
+    required this.onShowNotification,
+    required this.onHideNotification,
+    this.selectedImage,
+    this.notificationAnimation,
+    this.showNotification = false,
+    this.notificationMessage = '',
+    this.isErrorNotification = false,
   });
 
   void _submitForm(BuildContext context) {
@@ -353,13 +512,22 @@ class _EditPetForm extends StatelessWidget {
       body: BlocListener<EditPetCubit, EditPetState>(
         listener: (context, state) {
           if (state is EditPetSuccess) {
-            DisplayMessage.successMessage(
-              'Cập nhật thông tin thành công!',
-              context,
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Cập nhật thông tin thành công!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
             );
             Navigator.pop(context, true); // Return true to indicate success
           } else if (state is EditPetError) {
-            DisplayMessage.errorMessage(state.message, context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 2),
+              ),
+            );
           }
         },
         child: BlocBuilder<EditPetCubit, EditPetState>(
@@ -368,9 +536,52 @@ class _EditPetForm extends StatelessWidget {
               children: [
                 _buildForm(context),
                 if (state is EditPetLoading) _buildLoadingOverlay(),
+                if (showNotification) _buildTopNotification(),
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopNotification() {
+    return SlideTransition(
+      position: notificationAnimation!,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        decoration: BoxDecoration(
+          color: isErrorNotification ? Colors.red : Colors.green,
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isErrorNotification ? Icons.error : Icons.check_circle,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                notificationMessage,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: onHideNotification,
+              icon: Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -409,6 +620,8 @@ class _EditPetForm extends StatelessWidget {
         key: formKey,
         child: Column(
           children: [
+            _buildPetImageSection(),
+            const SizedBox(height: 24),
             _buildBasicInfoCard(context),
             const SizedBox(height: 16),
             _buildPhysicalInfoCard(),
@@ -424,6 +637,98 @@ class _EditPetForm extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildPetImageSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.08),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.image, size: 20, color: AppColors.primary),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Hình ảnh thú cưng',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: GestureDetector(
+              onTap: onImagePick,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                  image: _getImageDecorationImage(),
+                ),
+                child: _getImageChild(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  DecorationImage? _getImageDecorationImage() {
+    // Ưu tiên hiển thị ảnh đã chọn từ điện thoại
+    if (selectedImage != null) {
+      return DecorationImage(
+        image: FileImage(selectedImage!),
+        fit: BoxFit.cover,
+      );
+    }
+    // Nếu không có ảnh đã chọn, hiển thị ảnh gốc
+    if (pet.image != null && pet.image!.isNotEmpty) {
+      return DecorationImage(
+        image: NetworkImage(pet.image!),
+        fit: BoxFit.cover,
+      );
+    }
+    return null;
+  }
+
+  Widget? _getImageChild() {
+    // Chỉ hiển thị icon camera khi kh��ng có ảnh nào
+    if (selectedImage == null && (pet.image == null || pet.image!.isEmpty)) {
+      return Icon(
+        Icons.camera_alt,
+        color: Colors.grey[500],
+        size: 40,
+      );
+    }
+    return null;
+  }
+
 
   Widget _buildBasicInfoCard(BuildContext context) {
     return _buildCard(

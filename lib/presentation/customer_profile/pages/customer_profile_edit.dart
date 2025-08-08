@@ -78,7 +78,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
       text: widget.customerProfile?.userName ?? '',
     );
     if (widget.customerProfile?.gender != null) {
-      _selectedGender = widget.customerProfile?.gender;
+      _selectedGender = _convertGenderToVietnamese(widget.customerProfile?.gender);
     }
     if (widget.customerProfile?.image != null) {
       imageUrl = widget.customerProfile!.image!;
@@ -404,7 +404,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
         fillColor: Colors.grey.shade50,
       ),
       textCapitalization:
-          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi từ
+          TextCapitalization.words, // Tự động viết hoa chữ cái đầu mỗi t��
     );
   }
 
@@ -831,7 +831,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                               : null,
                       phoneNumber: _phoneNumberController.text.trim(),
                       dateOfBirth: _dateOfBirthController.text.trim(),
-                      gender: _selectedGender,
+                      gender: _convertGenderToEnglish(_selectedGender),
                       address:
                           '${_houseNameController.text.trim()}, ${_wardController.text.trim()}, ${_districtController.text.trim()}, ${_cityController.text.trim()}',
                     ),
@@ -927,5 +927,30 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                 ),
               ),
     );
+  }
+
+  // Helper method to convert English gender to Vietnamese
+  String? _convertGenderToVietnamese(String? gender) {
+    if (gender == null || gender.isEmpty) return null;
+
+    final genderLower = gender.toLowerCase();
+    if (genderLower == 'male' || genderLower == 'nam') {
+      return 'Nam';
+    } else if (genderLower == 'female' || genderLower == 'nữ') {
+      return 'Nữ';
+    }
+    return null; // Return null if not recognized
+  }
+
+  // Helper method to convert Vietnamese gender to English for API
+  String? _convertGenderToEnglish(String? gender) {
+    if (gender == null || gender.isEmpty) return null;
+
+    if (gender == 'Nam') {
+      return 'Male';
+    } else if (gender == 'Nữ') {
+      return 'Female';
+    }
+    return gender; // Return as is if not recognized
   }
 }

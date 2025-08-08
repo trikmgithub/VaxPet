@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
+import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import 'package:vaxpet/presentation/main_bottom_navigator/pages/main_bottom_navigator.dart';
 import 'package:vaxpet/service_locator.dart';
 
@@ -535,12 +536,19 @@ class _AppointmentVaccinationClinicPageState
             });
           }
         },
-        icon: Icon(Icons.vaccines),
-        label: Text('Chọn bệnh cần tiêm'),
+        icon: Icon(Icons.vaccines, color: Colors.white),
+        label: Text(
+          'Chọn bệnh cần tiêm',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          textStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: AppColors.primary, // Màu xanh nổi bật
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 3,
+          shadowColor: Colors.blue.withValues(alpha: 0.3),
         ),
       ),
     );

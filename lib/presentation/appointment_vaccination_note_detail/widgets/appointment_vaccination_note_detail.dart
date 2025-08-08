@@ -735,9 +735,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
             listener: (context, state) {
               if (state.isSuccess) {
                 Navigator.of(dialogContext).pop();
-                DisplayMessage.successMessage(
-                  state.successMessage ?? 'Hủy lịch hẹn thành công',
+                _showSnackBar(
                   context,
+                  state.successMessage ?? 'Hủy lịch hẹn thành công',
+                  isError: false,
+                  icon: Icons.check_circle,
                 );
                 // Refresh the appointment detail
                 final appointmentId = data['appointment']['appointmentId'];
@@ -746,9 +748,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
                     .fetchAppointmentDetail(appointmentId);
               } else if (state.isFailure) {
                 Navigator.of(dialogContext).pop();
-                DisplayMessage.errorMessage(
-                  state.errorMessage ?? 'Có lỗi xảy ra khi hủy lịch hẹn',
+                _showSnackBar(
                   context,
+                  state.errorMessage ?? 'Có lỗi xảy ra khi hủy lịch hẹn',
+                  isError: true,
+                  icon: Icons.error,
                 );
               }
             },
@@ -814,5 +818,70 @@ class AppointmentVaccinationDetail extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _showSnackBar(BuildContext context, String message, {bool isError = false, IconData? icon}) {
+    // Hủy bỏ thông báo hiện tại (nếu có)
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    // Tạo một Overlay để hiển thị thông báo ở phía trên
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry? overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).viewPadding.top + 10,
+        left: 10,
+        right: 10,
+        child: Material(
+          elevation: 4.0,
+          borderRadius: BorderRadius.circular(8),
+          color: isError ? Colors.red : Colors.green,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 10,
+            ),
+            child: Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: Colors.white, size: 20),
+                  SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: Text(
+                    message,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    overlayEntry?.remove();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Đóng',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Hiển thị overlay
+    overlayState.insert(overlayEntry);
+
+    // Tự động ẩn sau 3 giây
+    Future.delayed(const Duration(seconds: 3), () {
+      overlayEntry?.remove();
+    });
   }
 }

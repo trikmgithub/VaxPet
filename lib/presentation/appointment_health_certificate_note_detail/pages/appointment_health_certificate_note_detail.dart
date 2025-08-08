@@ -5,11 +5,11 @@ import '../bloc/appointment_health_certificate_note_detail_cubit.dart';
 import '../widgets/appointment_health_certificate_note_detail.dart';
 
 class AppointmentHealthCertificateNoteDetailPage extends StatelessWidget {
-  final int appointmentDetailId;
+  final int appointmentId;
 
   const AppointmentHealthCertificateNoteDetailPage({
     super.key,
-    required this.appointmentDetailId,
+    required this.appointmentId,
   });
 
   @override
@@ -18,7 +18,7 @@ class AppointmentHealthCertificateNoteDetailPage extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: BasicAppbar(
         title: const Text(
-          'Chi tiết lịch hẹn xin giấy chứng nhận sức khỏe',
+          'Chi tiết lịch hẹn',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -30,7 +30,7 @@ class AppointmentHealthCertificateNoteDetailPage extends StatelessWidget {
         create:
             (context) =>
                 AppointmentHealthCertificateNoteDetailCubit()
-                  ..fetchAppointmentDetail(appointmentDetailId),
+                  ..fetchAppointmentDetail(appointmentId),
         child: const AppointmentHealthCertificateDetail(),
       ),
     );

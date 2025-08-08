@@ -68,26 +68,47 @@ class _CustomerVoucherState extends State<CustomerVoucher> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.receipt_long_outlined,
+                    Icons.card_giftcard_outlined,
                     size: 64,
                     color: Colors.grey[400],
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Bạn chưa đổi voucher nào',
+                    'Chưa có voucher nào',
                     style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Hãy khám phá các voucher có sẵn để đổi điểm!',
+                    'Bạn hiện chưa có voucher nào\nVui lòng đổi điểm để có voucher!',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[500],
+                      color: Colors.grey[600],
                     ),
                     textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Navigate back or to voucher exchange page
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.shopping_bag_outlined),
+                    label: const Text('Đổi voucher ngay'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ],
               ),

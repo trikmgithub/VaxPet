@@ -12,7 +12,9 @@ class AppointmentVaccinationRepositoryImpl
   ) async {
     var returnedData = await sl<AppointmentVaccinationService>()
         .postAppointmentVaccination(params);
-    return returnedData.fold((error) => Left(Exception(error.toString())), (
+    return returnedData.fold(
+      (error) => Left(error),
+            (
       data,
     ) {
       return Right(data);

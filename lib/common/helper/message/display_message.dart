@@ -40,27 +40,49 @@ class DisplayMessage {
 
     // Get safe area padding to account for system UI
     final viewPadding = MediaQuery.of(context).viewPadding;
+    final viewInsets = MediaQuery.of(context).viewInsets;
 
-    // Calculate safe margins for top positioning
-    final topMargin = viewPadding.top + 16; // Safe area top + padding
+    // Calculate positioning for just below the header/app bar
+    final appBarHeight = kToolbarHeight; // Standard AppBar height (56.0)
+    final statusBarHeight = viewPadding.top; // Status bar height
+    final tabBarHeight = kTextTabBarHeight; // Standard TabBar height (48.0)
+
+    // Position just below the header area
+    final topPosition = statusBarHeight + appBarHeight + tabBarHeight + 8; // 8px padding
     final horizontalMargin = isSmallScreen ? 16.0 : 24.0;
 
+    // Calculate available space for the SnackBar
+    final availableHeight = screenSize.height - topPosition - viewInsets.bottom - 100;
+
     final snackBar = SnackBar(
-      content: Row(
-        children: [
-          Icon(icon, color: textColor),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(
-                color: textColor,
-                fontSize: isSmallScreen ? 14 : 16,
-                fontWeight: FontWeight.w500,
+      content: Container(
+        constraints: BoxConstraints(
+          maxHeight: availableHeight, // Allow expansion for long messages
+          minHeight: 48, // Minimum height
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2.0),
+              child: Icon(icon, color: textColor, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: isSmallScreen ? 14 : 16,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4, // Better line height for readability
+                ),
+                maxLines: null, // Allow multiple lines for long messages
+                softWrap: true,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       behavior: SnackBarBehavior.floating,
       backgroundColor: backgroundColor,
@@ -71,13 +93,12 @@ class DisplayMessage {
       ),
       duration: const Duration(seconds: 4),
       dismissDirection: DismissDirection.horizontal,
-      // Position at top of screen with safe area consideration
+      // Position right below the header/tab bar
       margin: EdgeInsets.only(
         left: horizontalMargin,
         right: horizontalMargin,
-        top: topMargin,
-        // Large bottom margin to push SnackBar to top
-        bottom: screenSize.height - topMargin - 80,
+        top: topPosition,
+        bottom: screenSize.height - topPosition - availableHeight.clamp(60.0, availableHeight),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );

@@ -22,7 +22,7 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
   }
 
   String _getLocationText(int location) {
-    return location == 1 ? 'Trung tâm' : 'Tại nhà';
+    return location == 1 ? 'Trung tâm' : 'Lỗi';
   }
 
   String _getSpeciesText(String species) {
@@ -719,12 +719,12 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
                   );
 
                   if (result == true && context.mounted) {
-                    // Use appointmentDetailId instead of appointmentId
-                    final appointmentDetailId = appointment['appointmentDetailId'];
-                    debugPrint('Refreshing with appointmentDetailId: $appointmentDetailId');
+                    // Use appointmentId for consistency with microchip implementation
+                    final appointmentId = appointment['appointmentId'];
+                    debugPrint('Refreshing with appointmentId: $appointmentId');
                     context
                         .read<AppointmentHealthCertificateNoteDetailCubit>()
-                        .fetchAppointmentDetail(appointmentDetailId);
+                        .fetchAppointmentDetail(appointmentId);
                   }
                 },
                 icon: Icon(Icons.edit, size: isTablet ? 24 : 20),
@@ -781,24 +781,6 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  void _navigateToEditPage(BuildContext context, Map<String, dynamic> appointment) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => AppointmentHealthCertificateNoteDetailEditCubit(),
-          child: AppointmentHealthCertificateNoteDetailEditPage(
-            appointmentData: appointment,
-          ),
-        ),
-      ),
-    ).then((result) {
-      if (result == true) {
-        context.read<AppointmentHealthCertificateNoteDetailCubit>()
-            .fetchAppointmentDetail(appointment['appointmentId']);
-      }
-    });
   }
 
   void _showCancelDialog(BuildContext context, Map<String, dynamic> appointment) {

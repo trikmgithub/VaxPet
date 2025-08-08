@@ -29,8 +29,7 @@ class AppointmentVaccinationServiceImpl
       final response = await sl<DioClient>().post(url, data: params.toMap());
       return Right(response.data);
     } on DioException catch (e) {
-      debugPrint('DioException: ${e.message}');
-      return Left('Lỗi kết nối mạng!');
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left('Lỗi tại postAppointmentVaccination: ${e.toString()}');
     }

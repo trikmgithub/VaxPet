@@ -1078,14 +1078,14 @@ class HealthCertificateAppointmentCard extends StatelessWidget {
                     onPressed: () {
                       // Navigate to detail page for both pending and confirmed appointments
                       // Add null safety check for appointmentDetailId
-                      final appointmentDetailId = appointment['appointmentDetailId'];
-                      if (appointmentDetailId != null) {
+                      final appointmentId = appointment['appointmentId'];
+                      if (appointmentId != null) {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
                             pageBuilder: (context, animation, secondaryAnimation) =>
                                 AppointmentHealthCertificateNoteDetailPage(
-                                  appointmentDetailId: appointmentDetailId,
+                                  appointmentId: appointmentId,
                                 ),
                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                               return SlideTransition(

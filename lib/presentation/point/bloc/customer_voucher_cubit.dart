@@ -31,9 +31,17 @@ class CustomerVoucherCubit extends Cubit<CustomerVoucherState> {
         },
         (response) {
           // Extract data from the API response
-          if (response is Map<String, dynamic> && response['data'] != null) {
-            final List<dynamic> vouchers = response['data'];
-            emit(CustomerVoucherLoaded(customerVouchers: vouchers));
+          if (response is Map<String, dynamic>) {
+            // Handle both null data and empty list as valid empty states
+            final dynamic data = response['data'];
+            if (data == null) {
+              // When data is null, it means no vouchers available - this is a valid state
+              emit(CustomerVoucherLoaded(customerVouchers: []));
+            } else if (data is List) {
+              emit(CustomerVoucherLoaded(customerVouchers: data));
+            } else {
+              emit(CustomerVoucherFailure(errorMessage: 'Dữ liệu không hợp lệ'));
+            }
           } else {
             emit(CustomerVoucherFailure(errorMessage: 'Dữ liệu không hợp lệ'));
           }

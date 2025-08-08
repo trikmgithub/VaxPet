@@ -45,7 +45,7 @@ class MicrochipAppointmentNoteDetailServiceImpl
 
       return Right(response.data);
     } on DioException catch (e) {
-      return Left('Lỗi mạng: ${e.message}');
+      return Left('Lỗi : ${e.response?.data['message']}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }

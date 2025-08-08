@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/data/auth/models/signin_req_params.dart';
 import 'package:vaxpet/presentation/auth/pages/verify_otp.dart';
+import 'package:vaxpet/presentation/auth/pages/forget_password.dart';
 
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/helper/navigation/app_navigation.dart';
@@ -242,9 +243,11 @@ class SigninPage extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () {
-          DisplayMessage.errorMessage(
-            'Tính năng quên mật khẩu đang phát triển',
+          Navigator.push(
             context,
+            MaterialPageRoute(
+              builder: (context) => ForgetPasswordPage(),
+            ),
           );
         },
         child: Text(

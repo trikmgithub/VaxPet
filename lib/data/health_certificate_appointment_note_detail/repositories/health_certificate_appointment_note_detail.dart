@@ -8,9 +8,9 @@ import '../sources/health_certificate_appointment_note_detail.dart';
 class HealthCertificateAppointmentNoteDetailRepositoryImpl
     extends HealthCertificateAppointmentNoteDetailRepository {
   @override
-  Future<Either> getHealthCertificateAppointmentNoteDetail(int appointmentDetailId) async {
+  Future<Either> getHealthCertificateAppointmentNoteDetail(int appointmentId) async {
     var returnedData = await sl<HealthCertificateAppointmentNoteDetailService>()
-        .getHealthCertificateAppointmentNoteDetail(appointmentDetailId);
+        .getHealthCertificateAppointmentNoteDetail(appointmentId);
 
     return returnedData.fold(
             (error) => Left(Exception(error.toString())),

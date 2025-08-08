@@ -14,15 +14,15 @@ abstract class HealthCertificateAppointmentNoteDetailService {
 class HealthCertificateAppointmentNoteDetailServiceImpl
     extends HealthCertificateAppointmentNoteDetailService {
   @override
-  Future<Either> getHealthCertificateAppointmentNoteDetail(int appointmentDetailId) async {
+  Future<Either> getHealthCertificateAppointmentNoteDetail(int appointmentId) async {
     try {
       var response = await sl<DioClient>().get(
-        '${ApiUrl.getAppointmentForHealthCertificateById}/$appointmentDetailId',
+        '${ApiUrl.getAppointmentForHealthCertificateById}/$appointmentId',
       );
 
       return Right(response.data);
     } on DioException catch (e) {
-      return Left('Lỗi mạng: ${e.message}');
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }
@@ -45,7 +45,7 @@ class HealthCertificateAppointmentNoteDetailServiceImpl
 
       return Right(response.data);
     } on DioException catch (e) {
-      return Left('Lỗi mạng: ${e.message}');
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }

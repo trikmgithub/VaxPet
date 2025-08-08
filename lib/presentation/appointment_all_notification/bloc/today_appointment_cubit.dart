@@ -19,6 +19,27 @@ class TodayAppointmentCubit extends Cubit<TodayAppointmentState> {
   int get currentPage => _currentPage;
   bool get hasMoreData => _hasMoreData;
 
+  // Helper method để đợi customerId
+  Future<int?> _waitForCustomerId({int maxWaitTimeSeconds = 30}) async {
+    int attempts = 0;
+    int maxAttempts = maxWaitTimeSeconds * 2; // Check every 500ms
+
+    while (attempts < maxAttempts) {
+      final prefs = await SharedPreferences.getInstance();
+      final customerId = prefs.getInt('customerId');
+
+      if (customerId != null) {
+        return customerId;
+      }
+
+      // Đợi 500ms trước khi thử lại
+      await Future.delayed(const Duration(milliseconds: 500));
+      attempts++;
+    }
+
+    return null; // Timeout sau khi đợi quá lâu
+  }
+
   // Phương thức khởi tạo để lấy dữ liệu đầu tiên
   void getTodayAppointments() async {
     try {
@@ -29,12 +50,11 @@ class TodayAppointmentCubit extends Cubit<TodayAppointmentState> {
 
       emit(TodayAppointmentLoading());
 
-      // Get customer_profile ID from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      final customerId = prefs.getInt('customerId');
+      // Đợi customerId thay vì throw error ngay lập tức
+      final customerId = await _waitForCustomerId();
 
       if (customerId == null) {
-        emit(TodayAppointmentError(message: 'Customer ID not found'));
+        emit(TodayAppointmentError(message: 'Customer ID not found after waiting'));
         return;
       }
 
@@ -89,12 +109,11 @@ class TodayAppointmentCubit extends Cubit<TodayAppointmentState> {
       // Tăng số trang lên 1
       _currentPage++;
 
-      // Get customer_profile ID from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      final customerId = prefs.getInt('customerId');
+      // Đợi customerId thay vì throw error ngay lập tức
+      final customerId = await _waitForCustomerId();
 
       if (customerId == null) {
-        emit(TodayAppointmentError(message: 'Customer ID not found'));
+        emit(TodayAppointmentError(message: 'Customer ID not found after waiting'));
         return;
       }
 

@@ -5,9 +5,9 @@ import '../../../core/usecase/usecase.dart';
 import '../../../service_locator.dart';
 import '../repositories/auth.dart';
 
-class VerifyOtpUseCase extends UseCase<Either, VerifyOtpReqParams> {
+class ForgotPassOtpUseCase extends UseCase<Either, String> {
   @override
-  Future<Either> call({VerifyOtpReqParams? params}) async {
-    return await sl<AuthRepository>().verifyOtp(params!);
+  Future<Either> call({String? params}) async {
+    return await sl<AuthRepository>().forgotPassOTP(params!);
   }
 }

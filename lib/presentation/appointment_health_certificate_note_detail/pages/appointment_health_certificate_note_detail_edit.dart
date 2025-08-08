@@ -354,7 +354,7 @@ class _AppointmentHealthCertificateNoteDetailEditPageState
         border: Border.all(color: Colors.grey[300]!),
       ),
       child: DropdownButtonFormField<int>(
-        value: state.location,
+        value: 1, // Cố định giá trị là 1 (Trung tâm)
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 16),
           border: InputBorder.none,
@@ -365,15 +365,8 @@ class _AppointmentHealthCertificateNoteDetailEditPageState
         ),
         items: const [
           DropdownMenuItem(value: 1, child: Text('Trung tâm')),
-          DropdownMenuItem(value: 2, child: Text('Tại nhà')),
         ],
-        onChanged: (value) {
-          if (value != null) {
-            context
-                .read<AppointmentHealthCertificateNoteDetailEditCubit>()
-                .updateLocation(value);
-          }
-        },
+        onChanged: null, // Disable dropdown để không thể thay đổi
       ),
     );
   }

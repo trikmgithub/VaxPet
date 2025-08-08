@@ -8,14 +8,14 @@ class AppointmentHealthCertificateNoteDetailCubit
   AppointmentHealthCertificateNoteDetailCubit()
     : super(const AppointmentHealthCertificateNoteDetailState());
 
-  Future<void> fetchAppointmentDetail(int appointmentDetailId) async {
+  Future<void> fetchAppointmentDetail(int appointmentId) async {
     emit(
       state.copyWith(status: AppointmentHealthCertificateNoteDetailStatus.loading),
     );
 
     try {
       final result = await sl<GetHealthCertificateAppointmentNoteDetailUseCase>().call(
-        params: appointmentDetailId,
+        params: appointmentId,
       );
 
       emit(

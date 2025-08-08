@@ -69,6 +69,8 @@ import 'domain/appointment_vaccination/usecases/cancel_appointment_vaccination.d
 import 'domain/appointment_vaccination/usecases/post_appointment_vaccination.dart';
 import 'domain/auth/repositories/auth.dart';
 import 'domain/auth/usecases/change_password.dart';
+import 'domain/auth/usecases/forgot_pass_otp.dart';
+import 'domain/auth/usecases/forgot_password.dart';
 import 'domain/auth/usecases/get_customer_id.dart';
 import 'domain/auth/usecases/is_logged_in.dart';
 import 'domain/auth/usecases/logout.dart';
@@ -329,5 +331,11 @@ void setupServiceLocator() {
   );
   sl.registerSingleton<GetFAQUseCase>(
     GetFAQUseCase(),
+  );
+  sl.registerSingleton<ForgotPassOtpUseCase>(
+    ForgotPassOtpUseCase(),
+  );
+  sl.registerSingleton<ForgotPasswordUseCase>(
+    ForgotPasswordUseCase(),
   );
 }

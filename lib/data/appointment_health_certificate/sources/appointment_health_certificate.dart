@@ -51,18 +51,20 @@ class AppointmentHealthCertificateServiceImpl
 
       // Sử dụng FormData cho multipart/form-data
       final formData = FormData.fromMap({
-        'appointmentId': appointmentId,
         'appointmentStatus': 10, // Assuming 10 is the status for cancellation
       });
 
-      final response = await sl<DioClient>().put(url, data: formData,
+      final response = await sl<DioClient>().put(
+        url,
+        queryParameters: {'appointmentId': appointmentId},
+        data: formData,
         options: Options(
           headers: {'Content-Type': 'multipart/form-data'},
         ),
       );
       return Right(response.data);
     } on DioException catch (e) {
-      return Left('Lỗi kết nối mạng! ${e.message}');
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left('Lỗi tại postAppointmentMicrochip: ${e.toString()}');
     }

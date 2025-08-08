@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vaxpet/core/configs/theme/app_colors.dart';
 import '../bloc/appointment_vaccination_note_detail_edit_cubit.dart';
 import '../bloc/appointment_vaccination_note_detail_edit_state.dart';
 import '../../disease/pages/choice_disease.dart';
@@ -1037,17 +1038,22 @@ class _AppointmentVaccinationNoteDetailEditPageState
                     color: Colors.white,
                   ),
                 )
-                : Icon(Icons.edit),
+                : Icon(Icons.vaccines, color: Colors.white),
         label: Text(
           state.status ==
                   AppointmentVaccinationNoteDetailEditStatus.loadingDiseases
               ? 'Đang tải...'
               : 'Thay đổi bệnh cần tiêm',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          textStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: AppColors.primary, // Màu cam nổi bật
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 3,
+          shadowColor: Colors.blue.withValues(alpha: 0.3),
         ),
       ),
     );
