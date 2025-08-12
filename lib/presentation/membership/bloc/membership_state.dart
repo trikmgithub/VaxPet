@@ -71,7 +71,7 @@ class MembershipRankingResponse {
   final String nextRank;
   final int pointsToNextRank;
   final int redeemablePoints;
-  final int totalSpent;
+  final double totalSpent;
 
   MembershipRankingResponse({
     required this.customerId,
@@ -101,7 +101,7 @@ class MembershipRankingResponse {
       nextRank: json['nextRank'],
       pointsToNextRank: json['pointsToNextRank'],
       redeemablePoints: json['redeemablePoints'],
-      totalSpent: json['totalSpent'],
+      totalSpent: (json['totalSpent'] as num).toDouble(),
     );
   }
 }

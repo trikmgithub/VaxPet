@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage>
             ),
             const SizedBox(width: 8),
             Text(
-              'Hồ sơ thú cưng',
+              'Danh sách thú cưng',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: isSmallScreen ? 22 : 24,

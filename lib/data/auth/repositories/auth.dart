@@ -61,21 +61,23 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Either> verifyOtp(params) async {
     var data = await sl<AuthService>().verifyOtp(params);
-    return data.fold((error) => Left(error), (data) async {
-      final SharedPreferences sharedPreferences =
+    return data.fold(
+      (error) => Left(error),
+      (data) async {
+        final SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
 
-      // Lưu thông tin token
-      sharedPreferences.setString('accessToken', data['data']['accessToken']);
-      sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
+        // Lưu thông tin token
+        sharedPreferences.setString('accessToken', data['data']['accessToken']);
+        sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
 
-      // Lưu thông tin người dùng
-      sharedPreferences.setString('email', data['data']['email']);
-      sharedPreferences.setInt('accountId', data['data']['accountId']);
-      sharedPreferences.setString('userName', data['data']['fullName'] ?? '');
-      sharedPreferences.setString('profileImage', data['data']['image'] ?? '');
+        // Lưu thông tin người dùng
+        sharedPreferences.setString('email', data['data']['email']);
+        sharedPreferences.setInt('accountId', data['data']['accountId']);
+        sharedPreferences.setString('userName', data['data']['fullName'] ?? '');
+        sharedPreferences.setString('profileImage', data['data']['image'] ?? '');
 
-      return Right(data);
+        return Right(data);
     });
   }
 
