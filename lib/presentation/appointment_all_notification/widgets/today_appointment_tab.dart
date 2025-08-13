@@ -59,6 +59,18 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
     }
   }
 
+  // Phương thức dịch loài thú cưng từ tiếng Anh sang tiếng Việt
+  String _translatePetSpecies(String species) {
+    switch (species.toLowerCase()) {
+      case 'dog':
+        return 'Chó';
+      case 'cat':
+        return 'Mèo';
+      default:
+        return species; // Trả về nguyên bản nếu không tìm thấy bản dịch
+    }
+  }
+
   // Màu pastel dựa vào loài
   Color _getPastelColor(String species) {
     switch (species.toLowerCase()) {
@@ -246,7 +258,7 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
                               ),
                             ),
                             Text(
-                              '${appointment.petSpecies} · ${appointment.petGender}',
+                              '${_translatePetSpecies(appointment.petSpecies)} · ${appointment.petGender}',
                               style: const TextStyle(color: Colors.grey),
                             ),
                           ],
