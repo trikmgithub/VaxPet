@@ -148,10 +148,10 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
               isLoadingMore = true;
             }
 
-            // Gửi số lượng lịch hẹn đến notification bloc
+            // Gửi danh sách lịch hẹn đến notification bloc để kiểm tra status
             WidgetsBinding.instance.addPostFrameCallback((_) {
               final notificationBloc = context.read<NotificationBloc>();
-              notificationBloc.add(UpdateAppointmentCount(appointments.length));
+              notificationBloc.add(UpdateAppointmentCount(appointments));
             });
 
             return _buildAppointmentList(
@@ -161,10 +161,10 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
             );
           }
 
-          // Không có dữ liệu - gửi count 0
+          // Không có dữ liệu - gửi danh sách rỗng
           WidgetsBinding.instance.addPostFrameCallback((_) {
             final notificationBloc = context.read<NotificationBloc>();
-            notificationBloc.add(UpdateAppointmentCount(0));
+            notificationBloc.add(UpdateAppointmentCount([]));
           });
 
           return const Center(child: Text('Không có dữ liệu'));

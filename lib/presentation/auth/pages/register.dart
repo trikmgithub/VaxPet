@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaxpet/common/helper/navigation/app_navigation.dart';
+import 'package:vaxpet/presentation/auth/pages/signin.dart';
 import 'package:vaxpet/presentation/auth/pages/verify_email.dart';
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
@@ -429,7 +430,12 @@ class RegisterPage extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SigninPage(),
+              ),
+            );
           },
           child: Text(
             'Đăng nhập',

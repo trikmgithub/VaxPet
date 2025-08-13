@@ -43,16 +43,6 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<Either> verifyEmail(VerifyEmailReqParams params) async {
     var data = await sl<AuthService>().verifyEmail(params);
     return data.fold((error) => Left(error), (data) async {
-      final SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-
-      // Lưu thông tin token
-      sharedPreferences.setString('accessToken', data['data']['accessToken']);
-      sharedPreferences.setString('refreshToken', data['data']['refreshToken']);
-
-      // Lưu thông tin người dùng
-      sharedPreferences.setString('email', data['data']['email']);
-      sharedPreferences.setInt('accountId', data['data']['accountId']);
 
       return Right(data);
     });

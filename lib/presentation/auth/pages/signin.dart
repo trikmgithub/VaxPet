@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vaxpet/data/auth/models/signin_req_params.dart';
 import 'package:vaxpet/presentation/auth/pages/verify_otp.dart';
 import 'package:vaxpet/presentation/auth/pages/forget_password.dart';
+import 'package:vaxpet/presentation/auth/pages/register.dart';
 
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/helper/navigation/app_navigation.dart';
@@ -427,7 +428,12 @@ class SigninPage extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RegisterPage(),
+              ),
+            );
           },
           child: Text(
             'Đăng ký ngay',

@@ -1,7 +1,7 @@
 abstract class NotificationEvent {}
 
 class UpdateAppointmentCount extends NotificationEvent {
-  final int count;
+  final List<dynamic> appointments; // Thay đổi từ int count thành List appointments
 
-  UpdateAppointmentCount(this.count);
+  UpdateAppointmentCount(this.appointments);
 }
