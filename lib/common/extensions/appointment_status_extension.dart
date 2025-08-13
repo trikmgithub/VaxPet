@@ -10,15 +10,9 @@ extension AppointmentStatusExtension on int {
       case 3:
         return AppointmentStatusEnum.checkedIn;
       case 4:
-        return AppointmentStatusEnum.injected;
+        return AppointmentStatusEnum.processed;
       case 5:
-        return AppointmentStatusEnum.implanted;
-      case 6:
         return AppointmentStatusEnum.paid;
-      case 7:
-        return AppointmentStatusEnum.applied;
-      case 8:
-        return AppointmentStatusEnum.done;
       case 9:
         return AppointmentStatusEnum.completed;
       case 10:
@@ -39,16 +33,10 @@ extension AppointmentStatusExtension on int {
         return 'Đã xác nhận';
       case 'checkedIn':
         return 'Đã đến';
-      case 'injected':
-        return 'Đã tiêm';
-      case 'implanted':
-        return 'Đã cấy ghép';
-      case 'paid':
-        return 'Đã thanh toán';
-      case 'applied':
-        return 'Đã áp dụng';
-      case 'done':
-        return 'Hoàn thành';
+      case 'processed':
+        return 'Đang xử lý';
+      case 'Paid':
+        return 'Đã Thanh toán';
       case 'completed':
         return 'Hoàn tất';
       case 'cancelled':
