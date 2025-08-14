@@ -141,169 +141,6 @@ class SampleSchedulePetPage extends StatelessWidget {
     }
   }
 
-  // Check if vaccination is overdue, current, or upcoming
-  String _getVaccinationStatus(int ageInterval) {
-    if (petBirthday == null || petBirthday!.isEmpty) {
-      return 'unknown';
-    }
-
-    try {
-      DateTime birthDate;
-
-      // Handle both dd-mm-yyyy, yyyy-mm-dd, dd/mm/yyyy formats
-      if (petBirthday!.contains('-') || petBirthday!.contains('/')) {
-        // Split by either - or /
-        final parts = petBirthday!.contains('-')
-            ? petBirthday!.split('-')
-            : petBirthday!.split('/');
-
-        if (parts.length == 3) {
-          final part1 = int.tryParse(parts[0]);
-          final part2 = int.tryParse(parts[1]);
-          final part3 = int.tryParse(parts[2]);
-
-          if (part1 != null && part2 != null && part3 != null) {
-            // Determine format based on the values
-            if (part1 > 31 || (part1 > 12 && part3 <= 31)) {
-              // Format: yyyy-mm-dd or yyyy/mm/dd
-              final year = part1;
-              final month = part2;
-              final day = part3;
-
-              if (year >= 1900 && year <= DateTime.now().year + 1 &&
-                  month >= 1 && month <= 12 &&
-                  day >= 1 && day <= 31) {
-                birthDate = DateTime(year, month, day);
-              } else {
-                return 'unknown';
-              }
-            } else if (part3 > 31 || (part3 > 12 && part1 <= 31)) {
-              // Format: dd-mm-yyyy or dd/mm/yyyy
-              final day = part1;
-              final month = part2;
-              final year = part3;
-
-              if (year >= 1900 && year <= DateTime.now().year + 1 &&
-                  month >= 1 && month <= 12 &&
-                  day >= 1 && day <= 31) {
-                birthDate = DateTime(year, month, day);
-              } else {
-                return 'unknown';
-              }
-            } else {
-              // Ambiguous format, try dd-mm-yyyy or dd/mm/yyyy first
-              final day = part1;
-              final month = part2;
-              final year = part3;
-
-              if (year >= 1900 && year <= DateTime.now().year + 1 &&
-                  month >= 1 && month <= 12 &&
-                  day >= 1 && day <= 31) {
-                birthDate = DateTime(year, month, day);
-              } else {
-                // Try yyyy-mm-dd or yyyy/mm/dd if dd-mm-yyyy failed
-                final yearAlt = part1;
-                final monthAlt = part2;
-                final dayAlt = part3;
-
-                if (yearAlt >= 1900 && yearAlt <= DateTime.now().year + 1 &&
-                    monthAlt >= 1 && monthAlt <= 12 &&
-                    dayAlt >= 1 && dayAlt <= 31) {
-                  birthDate = DateTime(yearAlt, monthAlt, dayAlt);
-                } else {
-                  return 'unknown';
-                }
-              }
-            }
-          } else {
-            return 'unknown';
-          }
-        } else {
-          try {
-            birthDate = DateTime.parse(petBirthday!);
-          } catch (e) {
-            return 'unknown';
-          }
-        }
-      } else {
-        try {
-          birthDate = DateTime.parse(petBirthday!);
-        } catch (e) {
-          return 'unknown';
-        }
-      }
-
-      final now = DateTime.now();
-      final difference = now.difference(birthDate);
-
-      // Handle invalid birth dates
-      if (difference.isNegative) {
-        return 'unknown';
-      }
-
-      final currentAgeInWeeks = (difference.inDays / 7).floor();
-      final currentAgeInYears = (difference.inDays / 365.25).floor();
-
-      // If pet is 1 year or older, show annual reminder for appropriate vaccines
-      if (currentAgeInYears >= 1) {
-        // For vaccines that are typically given annually (like rabies and boosters)
-        // Usually vaccines at 35+ weeks (around 8-9 months) are annual boosters
-        if (ageInterval >= 35) {
-          return 'annual'; // Mỗi năm nên nhắc lại 1 lần
-        } else {
-          return 'completed'; // Early vaccines are completed
-        }
-      }
-
-      // For pets under 1 year, use the original logic
-      if (currentAgeInWeeks > ageInterval + 2) {
-        return 'overdue'; // Quá hạn (2 tuần grace period)
-      } else if (currentAgeInWeeks >= ageInterval - 1 && currentAgeInWeeks <= ageInterval + 2) {
-        return 'current'; // Đúng thời điểm
-      } else if (currentAgeInWeeks < ageInterval) {
-        return 'upcoming'; // Sắp tới
-      } else {
-        return 'completed'; // Đã hoàn thành
-      }
-    } catch (e) {
-      return 'unknown';
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'overdue':
-        return Colors.red.shade600;
-      case 'current':
-        return Colors.orange.shade600;
-      case 'upcoming':
-        return Colors.blue.shade600;
-      case 'completed':
-        return Colors.green.shade600;
-      case 'annual':
-        return Colors.purple.shade600;
-      default:
-        return Colors.grey.shade600;
-    }
-  }
-
-  String _getStatusText(String status) {
-    switch (status) {
-      case 'overdue':
-        return 'Quá hạn';
-      case 'current':
-        return 'Đúng thời điểm';
-      case 'upcoming':
-        return 'Sắp tới';
-      case 'completed':
-        return 'Hoàn thành';
-      case 'annual':
-        return 'Mỗi năm 1 lần';
-      default:
-        return '';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -768,10 +605,6 @@ class SampleSchedulePetPage extends StatelessWidget {
     bool isVerySmallScreen,
     bool isLastDose,
   ) {
-    final vaccinationStatus = _getVaccinationStatus(schedule.ageInterval);
-    final statusColor = _getStatusColor(vaccinationStatus);
-    final statusText = _getStatusText(vaccinationStatus);
-
     return Container(
       margin: EdgeInsets.only(
         bottom: isLastDose ? 0 : (isVerySmallScreen ? 8 : 12),
@@ -852,26 +685,6 @@ class SampleSchedulePetPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        if (statusText.isNotEmpty)
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isVerySmallScreen ? 6 : 8,
-                              vertical: isVerySmallScreen ? 2 : 4
-                            ),
-                            decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: statusColor.withOpacity(0.3), width: 1),
-                            ),
-                            child: Text(
-                              statusText,
-                              style: TextStyle(
-                                fontSize: isVerySmallScreen ? 8 : 10,
-                                fontWeight: FontWeight.w600,
-                                color: statusColor,
-                              ),
-                            ),
-                          ),
                       ],
                     ),
                   ],
