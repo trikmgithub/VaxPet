@@ -181,131 +181,137 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     final screenSize = MediaQuery.of(context).size;
     final isTablet = screenSize.width > 600;
 
-    return Scaffold(
-      appBar: BasicAppbar(
-        hideBack: hideBackButton ?? false,
-        title: const Text(
-          'Thông tin cá nhân',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+    return WillPopScope(
+      onWillPop: () async {
+        // Nếu hideBackButton = true, không cho phép quay lại
+        return !(hideBackButton ?? false);
+      },
+      child: Scaffold(
+        appBar: BasicAppbar(
+          hideBack: hideBackButton ?? false,
+          title: const Text(
+            'Thông tin cá nhân',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(color: Colors.grey[50]),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header với phần chọn ảnh - đã đổi sang màu nền trắng
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 24,
-                    horizontal: 20,
-                  ),
-                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.1),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Tiêu đề section với icon
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.photo_camera,
-                            size: 20,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Thêm ảnh cá nhân',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(color: Colors.grey[50]),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Header với phần chọn ảnh - đã đổi sang màu nền trắng
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 24,
+                      horizontal: 20,
+                    ),
+                    margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Tiêu đề section với icon
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.photo_camera,
+                              size: 20,
+                              color: AppColors.primary,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      _buildImagePicker(),
-                    ],
+                            const SizedBox(width: 8),
+                            Text(
+                              'Thêm ảnh cá nhân',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        _buildImagePicker(),
+                      ],
+                    ),
                   ),
-                ),
 
-                // Form thông tin
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isTablet ? screenSize.width * 0.1 : 20,
-                    vertical: 20,
+                  // Form thông tin
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isTablet ? screenSize.width * 0.1 : 20,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Section: Chi tiết thêm
+                        _buildSectionTitle(
+                          'Thông tin tài khoản',
+                          Icons.description,
+                        ),
+                        _buildCard([_buildEmailField()]),
+                        const SizedBox(height: 16),
+
+                        // Section: Thông tin cơ bản
+                        _buildSectionTitle('Thông tin cơ bản', Icons.info),
+                        _buildCard([
+                          _buildNameField(),
+                          const SizedBox(height: 16),
+                          _buildNickNameField(),
+                          const SizedBox(height: 16),
+                          _buildGenderField(),
+                          const SizedBox(height: 16),
+                          _buildDateOfBirthField(),
+                          const SizedBox(height: 16),
+                          _buildPhoneNumberField(),
+                        ]),
+                        const SizedBox(height: 16),
+
+                        // Section: Thông tin nơi ở
+                        _buildSectionTitle('Thông tin nơi ở', Icons.home),
+                        _buildCard([
+                          _buildCityField(),
+                          const SizedBox(height: 16),
+                          _buildDistrictField(),
+                          const SizedBox(height: 16),
+                          _buildWardField(),
+                          const SizedBox(height: 16),
+                          _buildHouseNameField(),
+                        ]),
+
+                        const SizedBox(height: 30),
+
+                        // Commitment checkbox
+                        _buildCommitmentCheckbox(),
+                        const SizedBox(height: 20),
+
+                        // Button submit
+                        _buildSubmitButton(),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section: Chi tiết thêm
-                      _buildSectionTitle(
-                        'Thông tin tài khoản',
-                        Icons.description,
-                      ),
-                      _buildCard([_buildEmailField()]),
-                      const SizedBox(height: 16),
-
-                      // Section: Thông tin cơ bản
-                      _buildSectionTitle('Thông tin cơ bản', Icons.info),
-                      _buildCard([
-                        _buildNameField(),
-                        const SizedBox(height: 16),
-                        _buildNickNameField(),
-                        const SizedBox(height: 16),
-                        _buildGenderField(),
-                        const SizedBox(height: 16),
-                        _buildDateOfBirthField(),
-                        const SizedBox(height: 16),
-                        _buildPhoneNumberField(),
-                      ]),
-                      const SizedBox(height: 16),
-
-                      // Section: Thông tin nơi ở
-                      _buildSectionTitle('Thông tin nơi ở', Icons.home),
-                      _buildCard([
-                        _buildCityField(),
-                        const SizedBox(height: 16),
-                        _buildDistrictField(),
-                        const SizedBox(height: 16),
-                        _buildWardField(),
-                        const SizedBox(height: 16),
-                        _buildHouseNameField(),
-                      ]),
-
-                      const SizedBox(height: 30),
-
-                      // Commitment checkbox
-                      _buildCommitmentCheckbox(),
-                      const SizedBox(height: 20),
-
-                      // Button submit
-                      _buildSubmitButton(),
-                      const SizedBox(height: 30),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

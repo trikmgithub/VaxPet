@@ -45,7 +45,7 @@ class _MainBottomNavigatorPageState extends State<MainBottomNavigatorPage> {
         result.fold((error) => debugPrint('Error getting customerId: $error'), (
           data,
         ) async {
-          if (data['data']['address'] == null &&
+          if (data['data']['address'] == null ||
               data['data']['address'] == '') {
             await sharedPreferences.setString(
               'address',
