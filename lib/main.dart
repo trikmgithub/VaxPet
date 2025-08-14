@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vaxpet/core/constant/enviroment.dart';
 import 'package:vaxpet/common/bloc/notification/notification_bloc.dart';
 import 'package:vaxpet/common/services/local_notification_service.dart';
+import 'package:vaxpet/core/network/connectivity_service.dart';
 import 'package:vaxpet/presentation/splash/bloc/splash_cubit.dart';
 import 'package:vaxpet/presentation/splash/pages/splash.dart';
 import 'package:vaxpet/service_locator.dart';
@@ -21,6 +22,9 @@ Future<void> main() async {
   // Khởi tạo Local Notification Service
   await LocalNotificationService.initialize();
   await LocalNotificationService.requestPermission();
+
+  // Khởi tạo Connectivity Service
+  await sl<ConnectivityService>().initialize();
 
   runApp(const MyApp());
 }

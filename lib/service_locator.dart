@@ -4,6 +4,7 @@ import 'package:vaxpet/data/pet/sources/pet.dart';
 import 'package:vaxpet/domain/pet/usecases/create_pet.dart';
 
 import 'core/network/dio_client.dart';
+import 'core/network/connectivity_service.dart';
 import 'data/address_vax_pet/repositories/address_vax_pet.dart';
 import 'data/address_vax_pet/sources/address_vax_pet.dart';
 import 'data/appointment/repositories/appointment.dart';
@@ -129,6 +130,7 @@ final sl = GetIt.instance;
 
 void setupServiceLocator() {
   sl.registerSingleton<DioClient>(DioClient());
+  sl.registerSingleton<ConnectivityService>(ConnectivityService());
 
   // Services
   sl.registerSingleton<AuthService>(AuthServiceImpl());
