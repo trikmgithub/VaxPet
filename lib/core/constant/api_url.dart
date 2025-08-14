@@ -136,7 +136,7 @@ class ApiUrl {
 
   // VACCINATION SCHEDULE ENDPOINTS
   // Get
-  static const getVaccineSchedule = '${apiV}vaccinationSchedule/get-vaccination-schedule-by-species';
+    static const getVaccineSchedule = '${apiV}vaccinationSchedule/get-vaccination-schedule-by-species';
 
   // HANDBOOK ENDPOINTS
   // Get

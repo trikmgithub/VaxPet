@@ -233,7 +233,7 @@ class _HomePageState extends State<HomePage>
                   // Chuyển tab đến Calendar Page (index 1) thay vì push trang mới
                   context.read<BottomNavBarBloc>().add(NavigateTo(index: 1));
                 },
-                tooltip: 'Thông báo',
+                tooltip: 'Lịch hẹn',
               );
             },
           ),

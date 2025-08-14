@@ -35,7 +35,7 @@ extension AppointmentStatusExtension on int {
         return 'Đã đến';
       case 'processed':
         return 'Đang xử lý';
-      case 'Paid':
+      case 'paid':
         return 'Đã Thanh toán';
       case 'completed':
         return 'Hoàn tất';
