@@ -755,14 +755,14 @@ class _PetRecordViewState extends State<_PetRecordView> {
 
                     // Vaccine info if completed
                     if (isCompleted &&
-                        dose.appointmentDetail?.vaccineBatch.vaccine !=
+                        dose.appointmentDetail?.vaccineBatch?.vaccine !=
                             null) ...[
                       const SizedBox(height: 8),
                       _buildInfoRow(
                         icon: Icons.medical_information,
                         label: 'Vắc xin',
                         value:
-                            dose.appointmentDetail!.vaccineBatch.vaccine.name,
+                            dose.appointmentDetail!.vaccineBatch!.vaccine.name,
                         iconColor: statusColor,
                       ),
                     ],

@@ -14,7 +14,7 @@ class VaccineDoseEntity {
   final int vaccineProfileId;
   final int petId;
   final int? appointmentDetailId;
-  final int vaccinationScheduleId;
+  final int? vaccinationScheduleId; // Make nullable
   final int diseaseId;
   final String preferedDate;
   final String? vaccinationDate;
@@ -31,7 +31,7 @@ class VaccineDoseEntity {
     required this.vaccineProfileId,
     required this.petId,
     this.appointmentDetailId,
-    required this.vaccinationScheduleId,
+    this.vaccinationScheduleId, // Remove required
     required this.diseaseId,
     required this.preferedDate,
     this.vaccinationDate,
@@ -50,31 +50,31 @@ class AppointmentDetailEntity {
   final String appointmentDetailCode;
   final int vetId;
   final int serviceType;
-  final int vaccineBatchId;
+  final int? vaccineBatchId; // Make nullable
   final String appointmentDate;
   final int appointmentStatus;
-  final String temperature;
-  final String heartRate;
-  final String generalCondition;
-  final String others;
-  final String notes;
+  final String? temperature; // Make nullable
+  final String? heartRate; // Make nullable
+  final String? generalCondition; // Make nullable
+  final String? others; // Make nullable
+  final String? notes; // Make nullable
   final VetEntity vet;
-  final VaccineBatchEntity vaccineBatch;
+  final VaccineBatchEntity? vaccineBatch; // Make nullable
 
   AppointmentDetailEntity({
     required this.appointmentDetailCode,
     required this.vetId,
     required this.serviceType,
-    required this.vaccineBatchId,
+    this.vaccineBatchId, // Remove required
     required this.appointmentDate,
     required this.appointmentStatus,
-    required this.temperature,
-    required this.heartRate,
-    required this.generalCondition,
-    required this.others,
-    required this.notes,
+    this.temperature, // Remove required
+    this.heartRate, // Remove required
+    this.generalCondition, // Remove required
+    this.others, // Remove required
+    this.notes, // Remove required
     required this.vet,
-    required this.vaccineBatch,
+    this.vaccineBatch, // Remove required
   });
 }
 

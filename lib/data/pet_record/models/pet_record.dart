@@ -35,7 +35,7 @@ class VaccineDoseModel {
   final int vaccineProfileId;
   final int petId;
   final int? appointmentDetailId;
-  final int vaccinationScheduleId;
+  final int? vaccinationScheduleId; // Make nullable
   final int diseaseId;
   final String preferedDate;
   final String? vaccinationDate;
@@ -52,7 +52,7 @@ class VaccineDoseModel {
     required this.vaccineProfileId,
     required this.petId,
     this.appointmentDetailId,
-    required this.vaccinationScheduleId,
+    this.vaccinationScheduleId, // Remove required
     required this.diseaseId,
     required this.preferedDate,
     this.vaccinationDate,
@@ -74,7 +74,9 @@ class VaccineDoseModel {
           json['appointmentDetailId'] != null
               ? (json['appointmentDetailId'] as num).toInt()
               : null,
-      vaccinationScheduleId: (json['vaccinationScheduleId'] as num).toInt(),
+      vaccinationScheduleId: json['vaccinationScheduleId'] != null
+          ? (json['vaccinationScheduleId'] as num).toInt()
+          : null,
       diseaseId: (json['diseaseId'] as num).toInt(),
       preferedDate: json['preferedDate'] as String,
       vaccinationDate: json['vaccinationDate'] as String?,
@@ -117,31 +119,31 @@ class AppointmentDetailModel {
   final String appointmentDetailCode;
   final int vetId;
   final int serviceType;
-  final int vaccineBatchId;
+  final int? vaccineBatchId; // Make nullable
   final String appointmentDate;
   final int appointmentStatus;
-  final String temperature;
-  final String heartRate;
-  final String generalCondition;
-  final String others;
-  final String notes;
+  final String? temperature; // Make nullable
+  final String? heartRate; // Make nullable
+  final String? generalCondition; // Make nullable
+  final String? others; // Make nullable
+  final String? notes; // Make nullable
   final VetModel vet;
-  final VaccineBatchModel vaccineBatch;
+  final VaccineBatchModel? vaccineBatch; // Make nullable
 
   AppointmentDetailModel({
     required this.appointmentDetailCode,
     required this.vetId,
     required this.serviceType,
-    required this.vaccineBatchId,
+    this.vaccineBatchId, // Remove required
     required this.appointmentDate,
     required this.appointmentStatus,
-    required this.temperature,
-    required this.heartRate,
-    required this.generalCondition,
-    required this.others,
-    required this.notes,
+    this.temperature, // Remove required
+    this.heartRate, // Remove required
+    this.generalCondition, // Remove required
+    this.others, // Remove required
+    this.notes, // Remove required
     required this.vet,
-    required this.vaccineBatch,
+    this.vaccineBatch, // Remove required
   });
 
   factory AppointmentDetailModel.fromJson(Map<String, dynamic> json) {
@@ -149,16 +151,20 @@ class AppointmentDetailModel {
       appointmentDetailCode: json['appointmentDetailCode'] as String,
       vetId: (json['vetId'] as num).toInt(),
       serviceType: (json['serviceType'] as num).toInt(),
-      vaccineBatchId: (json['vaccineBatchId'] as num).toInt(),
+      vaccineBatchId: json['vaccineBatchId'] != null
+          ? (json['vaccineBatchId'] as num).toInt()
+          : null,
       appointmentDate: json['appointmentDate'] as String,
       appointmentStatus: (json['appointmentStatus'] as num).toInt(),
-      temperature: json['temperature'] as String,
-      heartRate: json['heartRate'] as String,
-      generalCondition: json['generalCondition'] as String,
-      others: json['others'] as String,
-      notes: json['notes'] as String? ?? '',
+      temperature: json['temperature'] as String?,
+      heartRate: json['heartRate'] as String?,
+      generalCondition: json['generalCondition'] as String?,
+      others: json['others'] as String?,
+      notes: json['notes'] as String?,
       vet: VetModel.fromJson(json['vet']),
-      vaccineBatch: VaccineBatchModel.fromJson(json['vaccineBatch']),
+      vaccineBatch: json['vaccineBatch'] != null
+          ? VaccineBatchModel.fromJson(json['vaccineBatch'])
+          : null,
     );
   }
 
@@ -176,7 +182,7 @@ class AppointmentDetailModel {
       others: others,
       notes: notes,
       vet: vet.toEntity(),
-      vaccineBatch: vaccineBatch.toEntity(),
+      vaccineBatch: vaccineBatch?.toEntity(),
     );
   }
 }
