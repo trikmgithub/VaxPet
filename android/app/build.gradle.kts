@@ -38,6 +38,16 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            
+            // Disable code shrinking để tránh connectivity_plus bị remove
+            isMinifyEnabled = false
+            isShrinkResources = false
+            
+            // Nếu muốn enable minify, cần exclude connectivity_plus
+            // proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            isDebuggable = true
         }
     }
 }

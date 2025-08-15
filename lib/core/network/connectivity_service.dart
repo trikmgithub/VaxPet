@@ -15,21 +15,44 @@ class ConnectivityService {
   bool _hasShownNoConnectionDialog = false;
   FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
+  // Thêm callback để thông báo thay đổi connectivity cho UI
+  Function(bool)? onConnectivityChanged;
+
   /// Khởi tạo service kiểm tra kết nối
   Future<void> initialize() async {
-    // Khởi tạo local notifications
-    await _initializeLocalNotifications();
+    try {
+      print('Starting ConnectivityService initialization...');
 
-    // Kiểm tra kết nối ban đầu
-    await _checkInitialConnection();
+      // Khởi tạo local notifications trước
+      await _initializeLocalNotifications();
+      print('Local notifications initialized');
 
-    // Lắng nghe thay đổi kết nối
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
-      _onConnectivityChanged,
-    );
+      // Đảm bảo connectivity plugin được khởi tạo
+      await Future.delayed(const Duration(milliseconds: 500));
 
-    if (kDebugMode) {
-      print('ConnectivityService initialized');
+      // Kiểm tra kết nối ban đầu với retry
+      await _checkInitialConnectionWithRetry();
+
+      // Lắng nghe thay đổi kết nối với error handling tốt hơn
+      _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+        _onConnectivityChanged,
+        onError: (error) {
+          print('ConnectivityService stream error: $error');
+          // Thử khởi tạo lại sau lỗi
+          Future.delayed(const Duration(seconds: 2), () {
+            _reinitializeConnectivityListener();
+          });
+        },
+        cancelOnError: false,
+      );
+
+      print('ConnectivityService initialized successfully');
+    } catch (e) {
+      print('ConnectivityService initialization failed: $e');
+      // Thử khởi tạo lại sau 3 giây
+      Future.delayed(const Duration(seconds: 3), () {
+        initialize();
+      });
     }
   }
 
@@ -38,7 +61,7 @@ class ConnectivityService {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon'); // Đổi từ ic_launcher sang launcher_icon
 
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
@@ -46,36 +69,71 @@ class ConnectivityService {
     await _flutterLocalNotificationsPlugin?.initialize(initializationSettings);
   }
 
-  /// Kiểm tra kết nối ban đầu
-  Future<void> _checkInitialConnection() async {
-    final List<ConnectivityResult> connectivityResult =
-        await _connectivity.checkConnectivity();
-    _onConnectivityChanged(connectivityResult);
+  /// Kiểm tra kết nối ban đầu với retry
+  Future<void> _checkInitialConnectionWithRetry({int maxRetries = 3}) async {
+    for (int i = 0; i < maxRetries; i++) {
+      try {
+        final List<ConnectivityResult> connectivityResult =
+            await _connectivity.checkConnectivity().timeout(
+          const Duration(seconds: 10),
+        );
+        print('Initial connectivity check attempt ${i + 1}: $connectivityResult');
+        _onConnectivityChanged(connectivityResult);
+        return; // Thành công, thoát khỏi loop
+      } catch (e) {
+        print('Connectivity check attempt ${i + 1} failed: $e');
+        if (i < maxRetries - 1) {
+          await Future.delayed(Duration(seconds: (i + 1) * 2));
+        }
+      }
+    }
+    // Nếu tất cả attempts đều fail, assume no connection
+    print('All connectivity checks failed, assuming no connection');
+    _onConnectivityChanged([ConnectivityResult.none]);
+  }
+
+  /// Khởi tạo lại connectivity listener sau lỗi
+  Future<void> _reinitializeConnectivityListener() async {
+    try {
+      await _connectivitySubscription?.cancel();
+      _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+        _onConnectivityChanged,
+        onError: (error) {
+          print('ConnectivityService stream error (reinit): $error');
+        },
+        cancelOnError: false,
+      );
+      print('Connectivity listener reinitialized');
+    } catch (e) {
+      print('Failed to reinitialize connectivity listener: $e');
+    }
   }
 
   /// Xử lý khi trạng thái kết nối thay đổi
   void _onConnectivityChanged(List<ConnectivityResult> result) {
-    final bool isConnected = result.any((element) =>
-        element != ConnectivityResult.none);
+    try {
+      final bool isConnected = result.any((element) =>
+          element != ConnectivityResult.none);
 
-    if (kDebugMode) {
+      // Log connectivity changes cho cả debug và production
       print('Connectivity changed: $isConnected, Results: $result');
-    }
 
-    if (_isConnected != isConnected) {
-      _isConnected = isConnected;
+      if (_isConnected != isConnected) {
+        _isConnected = isConnected;
 
-      if (!isConnected) {
-        if (kDebugMode) {
+        if (!isConnected) {
           print('No connection detected - showing notification');
-        }
-        _showNoConnectionNotification();
-      } else {
-        if (kDebugMode) {
+          _showNoConnectionNotification();
+        } else {
           print('Connection restored');
+          _hasShownNoConnectionDialog = false;
         }
-        _hasShownNoConnectionDialog = false;
       }
+
+      // Gọi callback thông báo thay đổi connectivity cho UI
+      onConnectivityChanged?.call(isConnected);
+    } catch (e) {
+      print('Error in _onConnectivityChanged: $e');
     }
   }
 
@@ -92,6 +150,12 @@ class ConnectivityService {
   /// Hiển thị local notification
   Future<void> _showLocalNotification() async {
     try {
+      // Kiểm tra xem notifications plugin đã được khởi tạo chưa
+      if (_flutterLocalNotificationsPlugin == null) {
+        print('FlutterLocalNotificationsPlugin not initialized');
+        return;
+      }
+
       const AndroidNotificationDetails androidPlatformChannelSpecifics =
           AndroidNotificationDetails(
         'connectivity_channel',
@@ -99,7 +163,7 @@ class ConnectivityService {
         channelDescription: 'Thông báo về tình trạng kết nối mạng',
         importance: Importance.high,
         priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
+        icon: '@mipmap/launcher_icon', // Đổi từ ic_launcher sang launcher_icon
         enableVibration: true,
         playSound: true,
       );
@@ -114,13 +178,9 @@ class ConnectivityService {
         platformChannelSpecifics,
       );
 
-      if (kDebugMode) {
-        print('Local notification shown successfully');
-      }
+      print('Local notification shown successfully');
     } catch (e) {
-      if (kDebugMode) {
-        print('Error showing local notification: $e');
-      }
+      print('Error showing local notification: $e');
     }
   }
 
@@ -156,12 +216,20 @@ class ConnectivityService {
     );
   }
 
-  /// Kiểm tra xem có kết nối internet không
-  Future<bool> hasConnection() async {
-    final List<ConnectivityResult> connectivityResult =
-        await _connectivity.checkConnectivity();
-    return connectivityResult.any((element) =>
-        element != ConnectivityResult.none);
+  /// Kiểm tra xem có kết nối internet không với timeout
+  Future<bool> hasConnection({Duration timeout = const Duration(seconds: 5)}) async {
+    try {
+      final List<ConnectivityResult> connectivityResult =
+          await _connectivity.checkConnectivity().timeout(timeout);
+      final hasConnection = connectivityResult.any((element) =>
+          element != ConnectivityResult.none);
+
+      print('Connection check result: $hasConnection');
+      return hasConnection;
+    } catch (e) {
+      print('Error checking connection: $e');
+      return false;
+    }
   }
 
   /// Getter để lấy trạng thái kết nối hiện tại

@@ -19,12 +19,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
 
+  // Khởi tạo Connectivity Service
+  await sl<ConnectivityService>().initialize();
+
   // Khởi tạo Local Notification Service
   await LocalNotificationService.initialize();
   await LocalNotificationService.requestPermission();
-
-  // Khởi tạo Connectivity Service
-  await sl<ConnectivityService>().initialize();
 
   runApp(const MyApp());
 }
