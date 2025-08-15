@@ -280,7 +280,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          '${_convertSpeciesToVietnamese(widget.petSpecies)}${_calculateAge(widget.petBirthday)}',
+                          '${widget.petSpecies}${_calculateAge(widget.petBirthday)}',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],

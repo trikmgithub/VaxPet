@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -12,9 +13,13 @@ class ConnectivityService {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   bool _isConnected = true;
   bool _hasShownNoConnectionDialog = false;
+  FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
   /// Khởi tạo service kiểm tra kết nối
   Future<void> initialize() async {
+    // Khởi tạo local notifications
+    await _initializeLocalNotifications();
+
     // Kiểm tra kết nối ban đầu
     await _checkInitialConnection();
 
@@ -22,6 +27,23 @@ class ConnectivityService {
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
       _onConnectivityChanged,
     );
+
+    if (kDebugMode) {
+      print('ConnectivityService initialized');
+    }
+  }
+
+  /// Khởi tạo local notifications
+  Future<void> _initializeLocalNotifications() async {
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    await _flutterLocalNotificationsPlugin?.initialize(initializationSettings);
   }
 
   /// Kiểm tra kết nối ban đầu
@@ -36,12 +58,22 @@ class ConnectivityService {
     final bool isConnected = result.any((element) =>
         element != ConnectivityResult.none);
 
+    if (kDebugMode) {
+      print('Connectivity changed: $isConnected, Results: $result');
+    }
+
     if (_isConnected != isConnected) {
       _isConnected = isConnected;
 
       if (!isConnected) {
+        if (kDebugMode) {
+          print('No connection detected - showing notification');
+        }
         _showNoConnectionNotification();
       } else {
+        if (kDebugMode) {
+          print('Connection restored');
+        }
         _hasShownNoConnectionDialog = false;
       }
     }
@@ -59,28 +91,37 @@ class ConnectivityService {
 
   /// Hiển thị local notification
   Future<void> _showLocalNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'connectivity_channel',
-      'Kết nối mạng',
-      channelDescription: 'Thông báo về tình trạng kết nối mạng',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    );
+    try {
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails(
+        'connectivity_channel',
+        'Kết nối mạng',
+        channelDescription: 'Thông báo về tình trạng kết nối mạng',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        enableVibration: true,
+        playSound: true,
+      );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+      const NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+      await _flutterLocalNotificationsPlugin?.show(
+        0,
+        'Không có kết nối mạng',
+        'Vui lòng bật WiFi hoặc dữ liệu di động để tiếp tục sử dụng ứng dụng.',
+        platformChannelSpecifics,
+      );
 
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Không có kết nối mạng',
-      'Vui lòng bật WiFi hoặc dữ liệu di động để tiếp tục sử dụng ứng dụng.',
-      platformChannelSpecifics,
-    );
+      if (kDebugMode) {
+        print('Local notification shown successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error showing local notification: $e');
+      }
+    }
   }
 
   /// Hiển thị dialog thông báo không có kết nối
