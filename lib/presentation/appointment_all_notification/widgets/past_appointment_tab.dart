@@ -294,19 +294,21 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
     label = status.toAppointmentStatusString ?? 'Unknown Status';
 
     if (status == 1) {
-      color = Colors.blue;
-    } else if (status == 2) {
-      color = Colors.green;
-    } else if (status == 3) {
       color = Colors.orange;
-    } else if (status == 4 || status == 5) {
+    } else if (status == 2) {
+      color = Colors.blue;
+    } else if (status == 3) {
       color = Colors.purple;
-    } else if (status == 6 || status == 7) {
-      color = Colors.yellow;
-    } else if (status == 8 || status == 9) {
+    } else if (status == 4) {
+      color = Colors.pinkAccent;
+    } else if (status == 5) {
       color = Colors.teal;
-    } else if (status == 10 || status == 11) {
+    } else if (status == 9) {
+      color = Colors.green;
+    } else if (status == 10) {
       color = Colors.red;
+    } else if (status == 11) {
+      color = Colors.grey;
     } else {
       color = Colors.grey;
     }

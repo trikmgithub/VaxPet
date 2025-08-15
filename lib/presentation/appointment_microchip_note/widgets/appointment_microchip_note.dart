@@ -404,12 +404,12 @@ class _AppointmentMicrochipNoteState extends State<AppointmentMicrochipNote>
   String _getStatusName(int status) {
     final statusMap = {
       2: 'Đã xác nhận',
-      3: 'Đã check-in',
-      4: 'Đã cấy chip',
+      3: 'Đã đến',
+      4: 'Đã xử lý',
       5: 'Đã thanh toán',
-      9: 'Đã hoàn tất',
+      9: 'Đã hoàn thành',
       10: 'Đã hủy',
-      11: 'Bị bác bỏ',
+      11: 'Đã từ chối',
     };
     return statusMap[status] ?? 'Không xác định';
   }
@@ -428,23 +428,23 @@ class _AppointmentMicrochipNoteState extends State<AppointmentMicrochipNote>
     final statusMap = {
       2: {
         'name': 'Đã xác nhận',
-        'color': Colors.green,
+        'color': Colors.blue,
         'icon': Icons.check_circle,
       },
-      3: {'name': 'Đã check-in', 'color': Colors.blue, 'icon': Icons.login},
+      3: {'name': 'Đã đến', 'color': Colors.purple, 'icon': Icons.login},
       4: {
-        'name': 'Đã cấy chip',
-        'color': Colors.purple,
-        'icon': Icons.memory,
+        'name': 'Đã xử lý',
+        'color': Colors.pinkAccent,
+        'icon': Icons.hourglass_empty,
       },
-      5: {'name': 'Đã thanh toán', 'color': Colors.indigo, 'icon': Icons.payment},
+      5: {'name': 'Đã thanh toán', 'color': Colors.teal, 'icon': Icons.payment},
       9: {
-        'name': 'Đã hoàn tất',
-        'color': Colors.lightGreen,
-        'icon': Icons.verified,
+        'name': 'Đã hoàn thành',
+        'color': Colors.green,
+        'icon': Icons.check_circle_outline,
       },
       10: {'name': 'Đã hủy', 'color': Colors.red, 'icon': Icons.cancel},
-      11: {'name': 'Bị bác bỏ', 'color': Colors.grey, 'icon': Icons.block},
+      11: {'name': 'Đã từ chối', 'color': Colors.grey, 'icon': Icons.block},
     };
 
     // Sử dụng appointmentsByStatus từ state để đếm appointments
@@ -480,7 +480,7 @@ class _AppointmentMicrochipNoteState extends State<AppointmentMicrochipNote>
               ),
             ),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize  .min,
               children: [
                 // Header
                 Container(
@@ -832,23 +832,23 @@ class MicrochipAppointmentCard extends StatelessWidget {
       },
       2: {
         'name': 'Đã xác nhận',
-        'color': Colors.green,
+        'color': Colors.blue,
         'icon': Icons.check_circle,
       },
-      3: {'name': 'Đã check-in', 'color': Colors.blue, 'icon': Icons.login},
+      3: {'name': 'Đã đến', 'color': Colors.purple, 'icon': Icons.login},
       4: {
-        'name': 'Đã cấy chip',
-        'color': Colors.purple,
-        'icon': Icons.memory,
+        'name': 'Đã xử lý',
+        'color': Colors.pinkAccent,
+        'icon': Icons.hourglass_empty,
       },
-      5: {'name': 'Đã thanh toán', 'color': Colors.indigo, 'icon': Icons.payment},
+      5: {'name': 'Đã thanh toán', 'color': Colors.teal, 'icon': Icons.payment},
       9: {
-        'name': 'Đã hoàn tất',
-        'color': Colors.lightGreen,
-        'icon': Icons.verified,
+        'name': 'Đã hoàn thành',
+        'color': Colors.green,
+        'icon': Icons.check_circle_outline,
       },
       10: {'name': 'Đã hủy', 'color': Colors.red, 'icon': Icons.cancel},
-      11: {'name': 'Bị bác bỏ', 'color': Colors.grey, 'icon': Icons.block},
+      11: {'name': 'Đã từ chối', 'color': Colors.grey, 'icon': Icons.block},
     };
 
     return statusMap[status] ??

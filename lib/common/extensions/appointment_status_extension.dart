@@ -28,17 +28,17 @@ extension AppointmentStatusExtension on int {
     final appointmentStatus = toAppointmentStatus?.name;
     switch (appointmentStatus) {
       case 'processing':
-        return 'Đang xử lý';
+        return 'Chờ xác nhận';
       case 'confirmed':
         return 'Đã xác nhận';
       case 'checkedIn':
         return 'Đã đến';
       case 'processed':
-        return 'Đang xử lý';
+        return 'Đã xử lý';
       case 'paid':
-        return 'Đã Thanh toán';
+        return 'Đã thanh toán';
       case 'completed':
-        return 'Hoàn tất';
+        return 'Đã hoàn thành';
       case 'cancelled':
         return 'Đã hủy';
       case 'rejected':

@@ -47,6 +47,75 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
     }
   }
 
+  String _getAppointmentStatusText(int appointmentStatus) {
+    switch (appointmentStatus) {
+      case 1:
+        return 'Chờ xác nhận';
+      case 2:
+        return 'Đã xác nhận';
+      case 3:
+        return 'Đã đến';
+      case 4:
+        return 'Đã xử lý';
+      case 5:
+        return 'Đã thanh toán';
+      case 9:
+        return 'Đã hoàn thành';
+      case 10:
+        return 'Đã hủy';
+      case 11:
+        return 'Đã từ chối';
+      default:
+        return 'Không xác định';
+    }
+  }
+
+  Color _getAppointmentStatusColor(int appointmentStatus) {
+    switch (appointmentStatus) {
+      case 1:
+        return Colors.orange;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.purple;
+      case 4:
+        return Colors.pinkAccent;
+      case 5:
+        return Colors.teal;
+      case 9:
+        return Colors.green;
+      case 10:
+        return Colors.red;
+      case 11:
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getAppointmentStatusIcon(int appointmentStatus) {
+    switch (appointmentStatus) {
+      case 1:
+        return Icons.schedule;
+      case 2:
+        return Icons.check_circle;
+      case 3:
+        return Icons.login;
+      case 4:
+        return Icons.hourglass_empty;
+      case 5:
+        return Icons.payment;
+      case 9:
+        return Icons.check_circle_outline;
+      case 10:
+        return Icons.cancel;
+      case 11:
+        return Icons.block;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
   String _calculateAge(String? dateOfBirth) {
     if (dateOfBirth == null || dateOfBirth.isEmpty) return 'Chưa có';
     try {
@@ -857,17 +926,17 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
       case 2:
         return Colors.blue;
       case 3:
-        return Colors.indigo;
-      case 4:
         return Colors.purple;
+      case 4:
+        return Colors.pinkAccent;
       case 5:
-        return Colors.green;
+        return Colors.teal;
       case 9:
-        return Colors.lightGreen;
+        return Colors.green;
       case 10:
-        return Colors.amber;
-      case 11:
         return Colors.red;
+      case 11:
+        return Colors.grey;
       default:
         return Colors.grey;
     }
@@ -876,9 +945,9 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
   IconData _getStatusIcon(int status) {
     switch (status) {
       case 1:
-        return Icons.hourglass_empty;
+        return Icons.schedule;
       case 2:
-        return Icons.check_circle_outline;
+        return Icons.check_circle;
       case 3:
         return Icons.login;
       case 4:
@@ -899,13 +968,13 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
   String _getStatusText(int status) {
     switch (status) {
       case 1:
-        return 'Đang chờ xác nhận';
+        return 'Chờ xác nhận';
       case 2:
         return 'Đã xác nhận';
       case 3:
-        return 'Đã check-in';
+        return 'Đã đến';
       case 4:
-        return 'Đã khám';
+        return 'Đã xử lý';
       case 5:
         return 'Đã thanh toán';
       case 9:
@@ -913,7 +982,7 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
       case 10:
         return 'Đã hủy';
       case 11:
-        return 'Bị hủy';
+        return 'Đã từ chối';
       default:
         return 'Không xác định';
     }

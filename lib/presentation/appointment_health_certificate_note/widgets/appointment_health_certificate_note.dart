@@ -385,12 +385,12 @@ class _AppointmentHealthCertificateNoteState extends State<AppointmentHealthCert
   String _getStatusName(int status) {
     final statusMap = {
       2: 'Đã xác nhận',
-      3: 'Đã check-in',
-      4: 'Đã khám',
+      3: 'Đã đến',
+      4: 'Đã xử lý',
       5: 'Đã thanh toán',
       9: 'Đã hoàn thành',
       10: 'Đã hủy',
-      11: 'Bị hủy',
+      11: 'Đã từ chối',
     };
     return statusMap[status] ?? 'Không xác định';
   }
@@ -413,34 +413,34 @@ class _AppointmentHealthCertificateNoteState extends State<AppointmentHealthCert
         'icon': Icons.check_circle,
       },
       3: {
-        'name': 'Đã check-in',
-        'color': Colors.indigo,
+        'name': 'Đã đến',
+        'color': Colors.purple,
         'icon': Icons.login,
       },
       4: {
-        'name': 'Đã khám',
-        'color': Colors.purple,
-        'icon': Icons.medical_services,
+        'name': 'Đã xử lý',
+        'color': Colors.pinkAccent,
+        'icon': Icons.hourglass_empty,
       },
       5: {
         'name': 'Đã thanh toán',
-        'color': Colors.green,
-        'icon': Icons.verified,
+        'color': Colors.teal,
+        'icon': Icons.payment,
       },
       9: {
         'name': 'Đã hoàn thành',
-        'color': Colors.lightGreen,
-        'icon': Icons.done_all,
+        'color': Colors.green,
+        'icon': Icons.check_circle_outline,
       },
       10: {
         'name': 'Đã hủy',
         'color': Colors.red,
-        'icon': Icons.cancel_outlined,
+        'icon': Icons.cancel,
       },
       11: {
-        'name': 'Bị hủy',
-        'color': Colors.amber,
-        'icon': Icons.cancel,
+        'name': 'Đã từ chối',
+        'color': Colors.grey,
+        'icon': Icons.block,
       },
     };
 
@@ -812,34 +812,34 @@ class HealthCertificateAppointmentCard extends StatelessWidget {
         'icon': Icons.check_circle,
       },
       3: {
-        'name': 'Đã check-in',
-        'color': Colors.indigo,
+        'name': 'Đã đến',
+        'color': Colors.purple,
         'icon': Icons.login,
       },
       4: {
-        'name': 'Đã khám',
-        'color': Colors.purple,
-        'icon': Icons.medical_services,
+        'name': 'Đã xử lý',
+        'color': Colors.pinkAccent,
+        'icon': Icons.hourglass_empty,
       },
       5: {
         'name': 'Đã thanh toán',
-        'color': Colors.green,
-        'icon': Icons.verified,
+        'color': Colors.teal,
+        'icon': Icons.payment,
       },
       9: {
         'name': 'Đã hoàn thành',
-        'color': Colors.lightGreen,
-        'icon': Icons.payment,
+        'color': Colors.green,
+        'icon': Icons.check_circle_outline,
       },
       10: {
         'name': 'Đã hủy',
-        'color': Colors.amber,
-        'icon': Icons.done_all,
-      },
-      11: {
-        'name': 'Bị hủy',
         'color': Colors.red,
         'icon': Icons.cancel,
+      },
+      11: {
+        'name': 'Đã từ chối',
+        'color': Colors.grey,
+        'icon': Icons.block,
       },
     };
 

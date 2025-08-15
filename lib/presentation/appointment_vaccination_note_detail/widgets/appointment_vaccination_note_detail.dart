@@ -48,6 +48,75 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     }
   }
 
+  String _getAppointmentStatusText(int appointmentStatus) {
+    switch (appointmentStatus) {
+      case 1:
+        return 'Chờ xác nhận';
+      case 2:
+        return 'Đã xác nhận';
+      case 3:
+        return 'Đã đến';
+      case 4:
+        return 'Đã xử lý';
+      case 5:
+        return 'Đã thanh toán';
+      case 9:
+        return 'Đã hoàn thành';
+      case 10:
+        return 'Đã hủy';
+      case 11:
+        return 'Đã từ chối';
+      default:
+        return 'Không xác định';
+    }
+  }
+
+  Color _getAppointmentStatusColor(int appointmentStatus) {
+    switch (appointmentStatus) {
+      case 1:
+        return Colors.orange;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.purple;
+      case 4:
+        return Colors.pinkAccent;
+      case 5:
+        return Colors.teal;
+      case 9:
+        return Colors.green;
+      case 10:
+        return Colors.red;
+      case 11:
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getAppointmentStatusIcon(int appointmentStatus) {
+    switch (appointmentStatus) {
+      case 1:
+        return Icons.schedule;
+      case 2:
+        return Icons.check_circle;
+      case 3:
+        return Icons.login;
+      case 4:
+        return Icons.hourglass_empty;
+      case 5:
+        return Icons.payment;
+      case 9:
+        return Icons.check_circle_outline;
+      case 10:
+        return Icons.cancel;
+      case 11:
+        return Icons.block;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<
@@ -316,11 +385,11 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               vertical: 8.0,
             ),
             decoration: BoxDecoration(
-              color: appointmentStatus == 1 ? Colors.orange : Colors.green,
+              color: _getAppointmentStatusColor(appointmentStatus),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: (appointmentStatus == 1 ? Colors.orange : Colors.green)
+                  color: _getAppointmentStatusColor(appointmentStatus)
                       .withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
@@ -331,13 +400,13 @@ class AppointmentVaccinationDetail extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  appointmentStatus == 1 ? Icons.schedule : Icons.check_circle,
+                  _getAppointmentStatusIcon(appointmentStatus),
                   color: Colors.white,
                   size: 18,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  appointmentStatus == 1 ? 'Đang chờ xác nhận' : 'Đã xác nhận',
+                  _getAppointmentStatusText(appointmentStatus),
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
