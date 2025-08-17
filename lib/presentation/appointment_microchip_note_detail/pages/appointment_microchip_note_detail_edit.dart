@@ -30,6 +30,7 @@ class _AppointmentMicrochipNoteDetailEditPageState
   TimeOfDay? _selectedTime;
   String? _originalAddress;
   String? _userAddress;
+  bool _isEditingAddress = false; // Add this as class-level state variable
 
   @override
   void initState() {
@@ -380,7 +381,6 @@ class _AppointmentMicrochipNoteDetailEditPageState
 
   // Stylized address field exactly like in vaccination home
   Widget _buildAddressField() {
-    bool _isEditingAddress = false;
 
     // Set address to controller if available and controller is empty
     if (_userAddress != null &&
@@ -600,7 +600,7 @@ class _AppointmentMicrochipNoteDetailEditPageState
                         // Nút đổi địa chỉ
                         GestureDetector(
                           onTap: () {
-                            setAddressState(() {
+                            setState(() {
                               _isEditingAddress = true;
                             });
                           },
@@ -654,7 +654,7 @@ class _AppointmentMicrochipNoteDetailEditPageState
                   children: [
                     TextButton(
                       onPressed: () {
-                        setAddressState(() {
+                        setState(() {
                           // Khôi phục giá trị ban đầu
                           _addressController.text = _originalAddress ?? '';
                           _isEditingAddress = false;
@@ -676,7 +676,7 @@ class _AppointmentMicrochipNoteDetailEditPageState
                           return;
                         }
 
-                        setAddressState(() {
+                        setState(() {
                           _isEditingAddress = false;
                         });
 
