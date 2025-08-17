@@ -61,6 +61,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
   @override
   void initState() {
     super.initState();
+    _initializeCustomerId();
     _initializeHideBackButton();
     _nameFocusNode = FocusNode();
     _userNameFocusNode = FocusNode();
@@ -101,6 +102,15 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     _houseNameController = TextEditingController(
       text: widget.customerProfile?.address?.split(', ').first ?? '',
     );
+  }
+
+  Future<void> _initializeCustomerId() async {
+    if (widget.customerId != null) {
+      customerId = widget.customerId;
+    } else {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      customerId = prefs.getInt('customerId');
+    }
   }
 
   Future<void> _initializeHideBackButton() async {
@@ -828,7 +838,7 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
                 try {
                   final result = await sl<PutCustomerProfileUseCase>().call(
                     params: CustomerProfileModel(
-                      customerId: widget.customerId,
+                      customerId: customerId,
                       fullName: _nameController.text.trim(),
                       userName: _userNameController.text.trim(),
                       image:
