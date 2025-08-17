@@ -49,6 +49,20 @@ class _AppointmentVaccinationHomePageState
 
   String get petSpecies => widget.petSpecies;
 
+  // Helper method to translate pet species to Vietnamese
+  String _getVietnamesePetSpecies(String species) {
+    switch (species.toLowerCase()) {
+      case 'dog':
+      case 'chó':
+        return 'Chó';
+      case 'cat':
+      case 'mèo':
+        return 'Mèo';
+      default:
+        return species; // Return original if no translation found
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -208,7 +222,7 @@ class _AppointmentVaccinationHomePageState
                                   ),
                                   SizedBox(height: 4),
                                   Text(
-                                    widget.petSpecies,
+                                    _getVietnamesePetSpecies(widget.petSpecies),
                                     style: TextStyle(
                                       color: Colors.grey[600],
                                       fontSize: 14,

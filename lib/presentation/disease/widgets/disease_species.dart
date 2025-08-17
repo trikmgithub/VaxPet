@@ -25,6 +25,20 @@ class _DiseaseSpeciesState extends State<DiseaseSpecies> {
 
   late DiseaseSpeciesCubit _cubit;
 
+  // Helper method to translate pet species to Vietnamese
+  String _getVietnamesePetSpecies(String species) {
+    switch (species.toLowerCase()) {
+      case 'dog':
+      case 'chó':
+        return 'Chó';
+      case 'cat':
+      case 'mèo':
+        return 'Mèo';
+      default:
+        return species; // Return original if no translation found
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,9 +56,22 @@ class _DiseaseSpeciesState extends State<DiseaseSpecies> {
   }
 
   void _loadDiseases() {
-    _cubit.getDiseaseBySpecies(
-      widget.species.toLowerCase() == 'chó' ? 'dog' : 'cat',
-    );
+    String speciesParam;
+    switch (widget.species.toLowerCase()) {
+      case 'chó':
+      case 'dog':
+        speciesParam = 'dog';
+        break;
+      case 'mèo':
+      case 'cat':
+        speciesParam = 'cat';
+        break;
+      default:
+        speciesParam = 'cat'; // Default fallback
+        break;
+    }
+
+    _cubit.getDiseaseBySpecies(speciesParam);
   }
 
   @override
@@ -66,7 +93,7 @@ class _DiseaseSpeciesState extends State<DiseaseSpecies> {
                     Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
                     const SizedBox(height: 16),
                     Text(
-                      'Không tìm thấy thông tin bệnh cho loài ${widget.species}',
+                      'Không tìm thấy thông tin bệnh cho loài ${_getVietnamesePetSpecies(widget.species)}',
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
