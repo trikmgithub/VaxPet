@@ -15,6 +15,7 @@ class PetParams {
   final String? color;
   final String? nationality;
   final bool? isSterilized;
+  final List<dynamic>? microchipItems;
 
   PetParams({
     required this.petId,
@@ -33,6 +34,7 @@ class PetParams {
     required this.color,
     required this.nationality,
     required this.isSterilized,
+    this.microchipItems,
   });
 
   factory PetParams.fromJson(Map<String, dynamic> json) {
@@ -53,6 +55,9 @@ class PetParams {
       color: json["color"],
       nationality: json["nationality"],
       isSterilized: json["isSterilized"],
+      microchipItems: json["microchipItems"] != null
+          ? List<dynamic>.from(json["microchipItems"])
+          : null,
     );
   }
 }

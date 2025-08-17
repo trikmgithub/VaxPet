@@ -20,6 +20,7 @@ class PetsMapper {
       color: pet.color,
       nationality: pet.nationality,
       isSterilized: pet.isSterilized,
+      microchipItems: pet.microchipItems,
     );
   }
 }

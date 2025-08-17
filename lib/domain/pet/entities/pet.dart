@@ -15,6 +15,7 @@ class PetEntity {
   final String? color;
   final String? nationality;
   final bool? isSterilized;
+  final List<dynamic>? microchipItems;
 
   PetEntity({
     this.petId,
@@ -33,5 +34,6 @@ class PetEntity {
     this.color,
     this.nationality,
     this.isSterilized,
+    this.microchipItems,
   });
 }

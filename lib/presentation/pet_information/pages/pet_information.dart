@@ -302,6 +302,10 @@ class PetInformationPage extends StatelessWidget {
                   _buildMedicalInfoCard(context, pet, isTablet),
                   const SizedBox(height: 32),
 
+                  // Microchip Information Card
+                  _buildMicrochipInfoCard(context, pet, isTablet),
+                  const SizedBox(height: 32),
+
                   // Edit Button at bottom
                   _buildEditButton(context, isTablet),
                   const SizedBox(height: 52),
@@ -536,6 +540,133 @@ class PetInformationPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildMicrochipInfoCard(BuildContext context, pet, bool isTablet) {
+    final microchipItems = pet.microchipItems as List<dynamic>?;
+
+    if (microchipItems != null && microchipItems.isNotEmpty) {
+      List<Widget> chipWidgets = [];
+
+      for (int i = 0; i < microchipItems.length; i++) {
+        final item = microchipItems[i];
+        if (item is Map<String, dynamic>) {
+          chipWidgets.add(
+            Column(
+              children: [
+                _buildInfoRow(
+                  'Tên Microchip:',
+                  item['name']?.toString() ?? 'N/A',
+                  Icons.memory,
+                  valueColor: Colors.blue[600],
+                ),
+                const SizedBox(height: 8),
+                _buildInfoRow(
+                  'Mô tả:',
+                  item['description']?.toString() ?? 'N/A',
+                  Icons.description,
+                  valueColor: Colors.grey[700],
+                ),
+                const SizedBox(height: 8),
+                _buildInfoRow(
+                  'Ngày cấy:',
+                  _formatInstallationDate(item['installationDate']?.toString()),
+                  Icons.calendar_today,
+                  valueColor: Colors.green[600],
+                ),
+                const SizedBox(height: 8),
+                _buildInfoRow(
+                  'Trạng thái:',
+                  _getStatusInVietnamese(item['status']?.toString()),
+                  item['status']?.toString() == 'Active' ? Icons.check_circle : Icons.cancel,
+                  valueColor: item['status']?.toString() == 'Active' ? Colors.green[600] : Colors.orange[600],
+                ),
+                if (i < microchipItems.length - 1)
+                  const Divider(height: 24),
+              ],
+            ),
+          );
+        }
+      }
+
+      return _buildInfoCard(
+        context: context,
+        title: 'Thông tin Microchip',
+        icon: Icons.memory,
+        isTablet: isTablet,
+        children: chipWidgets,
+      );
+    } else {
+      // Display message when no microchip items exist
+      return _buildInfoCard(
+        context: context,
+        title: 'Thông tin Microchip',
+        icon: Icons.memory,
+        isTablet: isTablet,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Colors.grey[600],
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Thú cưng chưa được cấy microchip',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  // Helper method to format installation date
+  String _formatInstallationDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) {
+      return 'N/A';
+    }
+
+    try {
+      DateTime dateTime = DateTime.parse(dateString);
+      return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}';
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  // Helper method to convert status to Vietnamese
+  String _getStatusInVietnamese(String? status) {
+    if (status == null || status.isEmpty) {
+      return 'N/A';
+    }
+
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'Hoạt động';
+      case 'inactive':
+        return 'Không hoạt động';
+      case 'expired':
+        return 'Hết hạn';
+      default:
+        return status;
+    }
   }
 
   Widget _buildInfoCard({
