@@ -191,11 +191,8 @@ class _CustomerProfileEditPageState extends State<CustomerProfileEditPage> {
     final screenSize = MediaQuery.of(context).size;
     final isTablet = screenSize.width > 600;
 
-    return WillPopScope(
-      onWillPop: () async {
-        // Nếu hideBackButton = true, không cho phép quay lại
-        return !(hideBackButton ?? false);
-      },
+    return PopScope(
+      canPop: !(hideBackButton ?? false),
       child: Scaffold(
         appBar: BasicAppbar(
           hideBack: hideBackButton ?? false,
