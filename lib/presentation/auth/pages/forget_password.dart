@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../common/helper/message/display_message.dart';
 import '../../../common/widgets/app_bar/app_bar.dart';
-import '../../../common/widgets/reactive_button/reactive_button.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../bloc/forgot_pass_otp_cubit.dart';
 import '../bloc/forgot_pass_otp_state.dart';
@@ -39,6 +38,11 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
   final ValueNotifier<bool> _isConfirmPasswordHidden = ValueNotifier<bool>(true);
 
   bool _isOtpSent = false;
+
+  // Password validation states
+  bool get hasMinLength => _newPasswordController.text.length >= 8;
+  bool get hasUpperCase => _newPasswordController.text.contains(RegExp(r'[A-Z]'));
+  bool get hasNumber => _newPasswordController.text.contains(RegExp(r'[0-9]'));
 
   @override
   Widget build(BuildContext context) {
@@ -321,62 +325,109 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
   }
 
   Widget _buildNewPasswordField(Size screenSize) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _isNewPasswordHidden,
+            builder: (context, isHidden, _) {
+              return TextField(
+                controller: _newPasswordController,
+                obscureText: isHidden,
+                style: TextStyle(fontSize: screenSize.width * 0.04),
+                onChanged: (value) {
+                  setState(() {}); // Trigger rebuild to update password requirements
+                },
+                decoration: InputDecoration(
+                  hintText: 'Nhập mật khẩu mới',
+                  hintStyle: TextStyle(
+                    color: AppColors.textGray,
+                    fontSize: screenSize.width * 0.04,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.lock_outlined,
+                    color: AppColors.primary,
+                    size: screenSize.width * 0.06,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isHidden ? Icons.visibility_off : Icons.visibility,
+                      color: AppColors.textGray,
+                      size: screenSize.width * 0.06,
+                    ),
+                    onPressed: () {
+                      _isNewPasswordHidden.value = !_isNewPasswordHidden.value;
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: screenSize.width * 0.04,
+                    vertical: screenSize.height * 0.02,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        SizedBox(height: screenSize.width * 0.02),
+        _buildRequirement(
+          'Ít nhất 8 ký tự',
+          hasMinLength,
+          screenSize,
+        ),
+        _buildRequirement(
+          'Ít nhất một chữ cái viết hoa',
+          hasUpperCase,
+          screenSize,
+        ),
+        _buildRequirement(
+          'Ít nhất một chữ số',
+          hasNumber,
+          screenSize,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRequirement(String text, bool isValid, Size screenSize) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(
+            isValid ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: isValid ? Colors.green : AppColors.textGray,
+            size: screenSize.width * 0.04,
+          ),
+          SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(
+              color: isValid ? Colors.green : AppColors.textGray,
+              fontSize: screenSize.width * 0.035,
+            ),
           ),
         ],
-      ),
-      child: ValueListenableBuilder<bool>(
-        valueListenable: _isNewPasswordHidden,
-        builder: (context, isHidden, _) {
-          return TextField(
-            controller: _newPasswordController,
-            obscureText: isHidden,
-            style: TextStyle(fontSize: screenSize.width * 0.04),
-            decoration: InputDecoration(
-              hintText: 'Nhập mật khẩu mới',
-              hintStyle: TextStyle(
-                color: AppColors.textGray,
-                fontSize: screenSize.width * 0.04,
-              ),
-              prefixIcon: Icon(
-                Icons.lock_outlined,
-                color: AppColors.primary,
-                size: screenSize.width * 0.06,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  isHidden ? Icons.visibility_off : Icons.visibility,
-                  color: AppColors.textGray,
-                  size: screenSize.width * 0.06,
-                ),
-                onPressed: () {
-                  _isNewPasswordHidden.value = !_isNewPasswordHidden.value;
-                },
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: screenSize.width * 0.04,
-                vertical: screenSize.height * 0.02,
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -445,6 +496,7 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
   Widget _buildSubmitButton(BuildContext context, Size screenSize) {
     return BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
       builder: (context, state) {
+        final isLoading = state is ForgotPasswordLoading;
         return Container(
           width: double.infinity,
           height: screenSize.height * 0.065,
@@ -458,18 +510,31 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
               ),
             ],
           ),
-          child: ReactiveButton(
-            title: 'Đổi mật khẩu',
-            activeColor: AppColors.primary,
-            onPressed: () async {
-              return await _handleSubmit(context);
-            },
-            onSuccess: () {
-              // Success will be handled by BlocListener
-            },
-            onFailure: (error) {
-              // Error will be handled by BlocListener
-            },
+          child: ElevatedButton(
+            onPressed: isLoading ? null : () => _handleSubmit(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: isLoading
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text(
+                    'Đổi mật khẩu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenSize.width * 0.045,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
           ),
         );
       },
@@ -492,43 +557,51 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
     context.read<ForgotPassOtpCubit>().sendOtp(_emailController.text);
   }
 
-  Future<bool> _handleSubmit(BuildContext context) async {
-    // Kiểm tra email
-    if (_emailController.text.isEmpty) {
-      throw 'Vui lòng nhập email';
+  void _handleSubmit(BuildContext context) {
+    try {
+      // Kiểm tra email
+      if (_emailController.text.isEmpty) {
+        DisplayMessage.errorMessage('Vui lòng nhập email', context);
+        return;
+      }
+
+      // Kiểm tra OTP
+      if (_otpController.text.isEmpty) {
+        DisplayMessage.errorMessage('Vui lòng nhập mã OTP', context);
+        return;
+      }
+
+      // Kiểm tra mật khẩu mới
+      if (_newPasswordController.text.isEmpty) {
+        DisplayMessage.errorMessage('Vui lòng nhập mật khẩu mới', context);
+        return;
+      }
+
+      if (_newPasswordController.text.length < 8) {
+        DisplayMessage.errorMessage('Mật khẩu phải có ít nhất 8 ký tự', context);
+        return;
+      }
+
+      // Kiểm tra xác nhận mật khẩu
+      if (_confirmPasswordController.text.isEmpty) {
+        DisplayMessage.errorMessage('Vui lòng xác nhận mật khẩu', context);
+        return;
+      }
+
+      if (_newPasswordController.text != _confirmPasswordController.text) {
+        DisplayMessage.errorMessage('Mật khẩu xác nhận không khớp', context);
+        return;
+      }
+
+      // Gọi cubit để reset password
+      context.read<ForgotPasswordCubit>().resetPassword(
+        email: _emailController.text,
+        otp: _otpController.text,
+        newPassword: _newPasswordController.text,
+      );
+    } catch (e) {
+      DisplayMessage.errorMessage('Có lỗi xảy ra: ${e.toString()}', context);
     }
-
-    // Kiểm tra OTP
-    if (_otpController.text.isEmpty) {
-      throw 'Vui lòng nhập mã OTP';
-    }
-
-    // Kiểm tra mật khẩu mới
-    if (_newPasswordController.text.isEmpty) {
-      throw 'Vui lòng nhập mật khẩu mới';
-    }
-
-    if (_newPasswordController.text.length < 6) {
-      throw 'Mật khẩu phải có ít nhất 6 ký tự';
-    }
-
-    // Kiểm tra xác nhận mật khẩu
-    if (_confirmPasswordController.text.isEmpty) {
-      throw 'Vui lòng xác nhận mật khẩu';
-    }
-
-    if (_newPasswordController.text != _confirmPasswordController.text) {
-      throw 'Mật khẩu xác nhận không khớp';
-    }
-
-    // Gọi cubit để reset password
-    context.read<ForgotPasswordCubit>().resetPassword(
-      email: _emailController.text,
-      otp: _otpController.text,
-      newPassword: _newPasswordController.text,
-    );
-
-    return true;
   }
 
   @override

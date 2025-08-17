@@ -67,15 +67,7 @@ class PetServiceImpl extends PetService {
 
       return Right(response.data);
     } on DioException catch (e) {
-      // Debug log for server error
-      if (e.response != null) {
-        debugPrint(
-          'CreatePet failed [${e.response?.statusCode}]: ${e.response?.data}',
-        );
-      } else {
-        debugPrint('CreatePet DioException: $e');
-      }
-      return Left(e);
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left(Exception('An unexpected error occurred'));
     }
