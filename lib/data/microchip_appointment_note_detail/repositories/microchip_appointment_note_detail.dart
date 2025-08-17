@@ -33,4 +33,17 @@ class MicrochipAppointmentNoteDetailRepositoryImpl
       return Right(data);
     });
   }
+
+  @override
+  Future<Either> getAppointmentDetailForMicrochipById(int appointmentId) async {
+    var returnedData = await sl<MicrochipAppointmentNoteDetailService>()
+        .getAppointmentDetailForMicrochipById(appointmentId);
+
+    return returnedData.fold(
+            (error) => Left(Exception(error.toString())),
+            (data) {
+          var appointmentDetail = data;
+          return Right(appointmentDetail);
+        });
+  }
 }

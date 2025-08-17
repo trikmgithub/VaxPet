@@ -9,6 +9,7 @@ import '../bloc/appointment_health_certificate_note_cancel_cubit.dart';
 import '../bloc/appointment_health_certificate_note_cancel_state.dart';
 import '../bloc/appointment_health_certificate_note_detail_edit_cubit.dart';
 import '../pages/appointment_health_certificate_note_detail_edit.dart';
+import 'appointment_reject_reason.dart';
 
 class AppointmentHealthCertificateDetail extends StatelessWidget {
   const AppointmentHealthCertificateDetail({super.key});
@@ -383,6 +384,12 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
               appointment['note'],
               isTablet
             ),
+
+            // Show Reason button for cancelled health certificate appointments (status 10)
+            if (appointmentStatus == 10) ...[
+              const SizedBox(height: 20),
+              _buildReasonButton(context, appointment, isTablet),
+            ],
 
             const SizedBox(height: 32),
 
@@ -986,5 +993,46 @@ class AppointmentHealthCertificateDetail extends StatelessWidget {
       default:
         return 'Không xác định';
     }
+  }
+
+  Widget _buildReasonButton(
+    BuildContext context,
+    Map<String, dynamic> appointment,
+    bool isTablet,
+  ) {
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: () {
+          final appointmentId = appointment['appointmentId'];
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => AppointmentRejectReasonPage(
+                appointmentId: appointmentId,
+              ),
+            ),
+          );
+        },
+        icon: Icon(Icons.info_outline, size: isTablet ? 24 : 20),
+        label: Text(
+          'Xem lý do hủy',
+          style: TextStyle(
+            fontSize: isTablet ? 18 : 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(
+            vertical: isTablet ? 16.0 : 14.0,
+            horizontal: isTablet ? 24.0 : 20.0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        ),
+      ),
+    );
   }
 }

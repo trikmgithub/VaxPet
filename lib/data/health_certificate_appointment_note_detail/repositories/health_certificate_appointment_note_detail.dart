@@ -33,4 +33,18 @@ class HealthCertificateAppointmentNoteDetailRepositoryImpl
       return Right(data);
     });
   }
+
+  @override
+  Future<Either> getHealthCertificateAppointmentNoteMoreDetail(int appointmentId) async {
+    var returnedData = await sl<HealthCertificateAppointmentNoteDetailService>()
+        .getHealthCertificateAppointmentNoteMoreDetail(appointmentId);
+
+    return returnedData.fold(
+            (error) => Left(Exception(error.toString())),
+            (data) {
+          var appointmentDetail = data;
+          return Right(appointmentDetail);
+        }
+    );
+  }
 }

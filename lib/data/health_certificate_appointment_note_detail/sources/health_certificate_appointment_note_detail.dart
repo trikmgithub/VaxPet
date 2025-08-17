@@ -8,6 +8,7 @@ import '../models/put_health_certificate_appointment_note.dart';
 
 abstract class HealthCertificateAppointmentNoteDetailService {
   Future<Either> getHealthCertificateAppointmentNoteDetail(int appointmentId);
+  Future<Either> getHealthCertificateAppointmentNoteMoreDetail(int appointmentId);
   Future<Either> putHealthCertificateAppointmentNoteDetail(PutHealthCertificateAppointmentModel appointmentUpdate);
 }
 
@@ -41,6 +42,21 @@ class HealthCertificateAppointmentNoteDetailServiceImpl
         url,
         data: jsonBody, // Gửi JSON body
         options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      return Right(response.data);
+    } on DioException catch (e) {
+      return Left('Lỗi: ${e.response?.data['message']}');
+    } catch (e) {
+      return Left('Lỗi không xác định: $e');
+    }
+  }
+
+  @override
+  Future<Either> getHealthCertificateAppointmentNoteMoreDetail(int appointmentId) async {
+    try {
+      var response = await sl<DioClient>().get(
+        '${ApiUrl.getAppointmentDetailForHealthCertificateById}/$appointmentId',
       );
 
       return Right(response.data);

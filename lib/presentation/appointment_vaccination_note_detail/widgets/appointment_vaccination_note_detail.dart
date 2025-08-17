@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:vaxpet/common/extensions/service_type_extension.dart';
 import 'package:vaxpet/core/configs/theme/app_colors.dart';
-import 'package:vaxpet/common/helper/message/display_message.dart';
 import '../bloc/appointment_vaccination_note_detail_cubit.dart';
 import '../bloc/appointment_vaccination_note_detail_state.dart';
 import '../bloc/appointment_vaccination_note_detail_edit_cubit.dart';
 import '../bloc/appointment_vaccination_note_cancel_cubit.dart';
 import '../bloc/appointment_vaccination_note_cancel_state.dart';
 import '../pages/appointment_vaccination_note_detail_edit.dart';
+import 'appointment_reject_reason.dart';
 
 class AppointmentVaccinationDetail extends StatelessWidget {
   const AppointmentVaccinationDetail({super.key});
@@ -335,6 +335,12 @@ class AppointmentVaccinationDetail extends StatelessWidget {
 
             // Additional Information Card
             _buildAdditionalInfoCard(context, createdAt, isTablet),
+
+            // Show Reason button for cancelled appointments (status 10)
+            if (appointmentStatus == 10) ...[
+              const SizedBox(height: 20),
+              _buildReasonButton(context, data, isTablet),
+            ],
 
             const SizedBox(height: 32),
 
@@ -952,5 +958,42 @@ class AppointmentVaccinationDetail extends StatelessWidget {
     Future.delayed(const Duration(seconds: 3), () {
       overlayEntry?.remove();
     });
+  }
+
+  Widget _buildReasonButton(BuildContext context, dynamic data, bool isTablet) {
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: () {
+          final appointmentId = data['appointment']['appointmentId'];
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => AppointmentRejectReasonPage(
+                appointmentId: appointmentId,
+              ),
+            ),
+          );
+        },
+        icon: Icon(Icons.info, size: isTablet ? 24 : 20),
+        label: Text(
+          'Xem lý do',
+          style: TextStyle(
+            fontSize: isTablet ? 18 : 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(
+            vertical: isTablet ? 16.0 : 14.0,
+            horizontal: isTablet ? 24.0 : 20.0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        ),
+      ),
+    );
   }
 }

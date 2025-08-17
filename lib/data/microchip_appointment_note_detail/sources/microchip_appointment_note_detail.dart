@@ -8,6 +8,7 @@ import '../models/put_microchip_appointment_note.dart';
 
 abstract class MicrochipAppointmentNoteDetailService {
   Future<Either> getMicrochipAppointmentNoteDetail(int appointmentId);
+  Future<Either> getAppointmentDetailForMicrochipById(int appointmentId);
   Future<Either> putMicrochipAppointmentNoteDetail(PutMicrochipAppointmentModel appointmentUpdate);
 }
 
@@ -46,6 +47,20 @@ class MicrochipAppointmentNoteDetailServiceImpl
       return Right(response.data);
     } on DioException catch (e) {
       return Left('Lỗi : ${e.response?.data['message']}');
+    } catch (e) {
+      return Left('Lỗi không xác định: $e');
+    }
+  }
+
+  @override
+  Future<Either> getAppointmentDetailForMicrochipById(int appointmentId) async {
+    try {
+      var response = await sl<DioClient>().get(
+        '${ApiUrl.getAppointmentDetailForMicrochipById}/$appointmentId',
+      );
+      return Right(response.data);
+    } on DioException catch (e) {
+      return Left('Lỗi mạng: ${e.message}');
     } catch (e) {
       return Left('Lỗi không xác định: $e');
     }

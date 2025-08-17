@@ -59,6 +59,8 @@ class ApiUrl {
       '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-pet-id-and-status';
   static const getAppointmentForVaccinationById =
       '${apiV}AppointmentForVaccination/get-appointment-vaccination-by-id';
+  static const getAppointmentDetailForVaccinationById =
+      '${apiV}AppointmentForVaccination/get-appointment-detail-vaccination-by-appointment-id';
   //Post
   static const postAppointmentForVaccination =
       '${apiV}AppointmentForVaccination/create-appointment-vaccination';
@@ -72,6 +74,8 @@ class ApiUrl {
       '${apiV}AppointmentForMicrochip/get-appointment-microchip-by-pet-id-and-status';
   static const getAppointmentForMicrochipById =
       '${apiV}AppointmentForMicrochip/get-appointment-microchip-by-appointment-id';
+  static const getAppointmentDetailForMicrochipById =
+      '${apiV}AppointmentForMicrochip/get-appoinment-microchip-by-appointment-detail';
   //Post
   static const postAppointmentForMicrochip =
       '${apiV}AppointmentForMicrochip/create-appointment-microchip';
@@ -103,6 +107,8 @@ class ApiUrl {
       '${apiV}AppointmentForHealthCondition/get-appointment-detail-healthCondition-by-pet-and-status';
   static const getAppointmentForHealthCertificateById =
       '${apiV}AppointmentForHealthCondition/get-appointment-detail-healthCondition-by';
+  static const getAppointmentDetailForHealthCertificateById =
+      '${apiV}/AppointmentForHealthCondition/Get-Appointment-Detail-HealthCondition-By';
   //Put
   static const updateAppointmentForHealthCertificate =
       '${apiV}AppointmentForHealthCondition/update-appointment-for-customer';

@@ -88,6 +88,7 @@ import 'domain/health_certificate_appointment_note/repositories/health_certifica
 import 'domain/health_certificate_appointment_note/usecases/get_health_certificate_appointment_note.dart';
 import 'domain/health_certificate_appointment_note_detail/repositories/health_certificate_appointment_note_detail.dart';
 import 'domain/health_certificate_appointment_note_detail/usecases/get_health_certificate_appointment_note_detail.dart';
+import 'domain/health_certificate_appointment_note_detail/usecases/get_health_certificate_appointment_note_more_detail.dart';
 import 'domain/health_certificate_appointment_note_detail/usecases/put_health_certificate_appointment_note.dart';
 import 'domain/helps/repositories/helps.dart';
 import 'domain/helps/usecases/get_faq.dart';
@@ -98,6 +99,7 @@ import 'domain/membership/usecases/get_membership_status.dart';
 import 'domain/microchip_appointment_note/repositories/microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note/usecases/get_microchip_appointment_note.dart';
 import 'domain/microchip_appointment_note_detail/repositories/microchip_appointment_note_detail.dart';
+import 'domain/microchip_appointment_note_detail/usecases/get_appointment_detail_microchip.dart';
 import 'domain/microchip_appointment_note_detail/usecases/get_microchip_appointment_note_detail.dart';
 import 'domain/microchip_appointment_note_detail/usecases/put_microchip_appointment_note.dart';
 import 'domain/pet/repositories/pet.dart';
@@ -120,6 +122,7 @@ import 'domain/tips_pet/usecases/get_all_handbooks.dart';
 import 'domain/vaccine_appointment_note/repositories/vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note/usecases/get_vaccine_appointment_note.dart';
 import 'domain/vaccine_appointment_note_detail/repositories/vaccine_appointment_note_detail.dart';
+import 'domain/vaccine_appointment_note_detail/usecases/get_appointment_detail_for_vaccination.dart';
 import 'domain/vaccine_appointment_note_detail/usecases/get_vaccine_appointment_note_detail.dart';
 import 'domain/voucher/repositories/voucher.dart';
 import 'domain/voucher/usecases/get_all_vouchers.dart';
@@ -340,4 +343,14 @@ void setupServiceLocator() {
   sl.registerSingleton<ForgotPasswordUseCase>(
     ForgotPasswordUseCase(),
   );
+  sl.registerSingleton<GetAppointmentDetailForVaccinationUseCase>(
+    GetAppointmentDetailForVaccinationUseCase(),
+  );
+  sl.registerSingleton<GetAppointmentDetailMicrochipUseCase>(
+    GetAppointmentDetailMicrochipUseCase(),
+  );
+  sl.registerSingleton<GetHealthCertificateAppointmentNoteMoreDetailUseCase>(
+    GetHealthCertificateAppointmentNoteMoreDetailUseCase(),
+  );
+
 }
