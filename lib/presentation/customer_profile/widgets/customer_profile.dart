@@ -23,6 +23,20 @@ class _CustomerProfileState extends State<CustomerProfile> {
     _customerProfile = widget.customerProfile;
   }
 
+  // Helper method to convert gender to Vietnamese
+  String _getGenderDisplayText(String? gender) {
+    if (gender == null) return '';
+    final trimmedGender = gender.trim().toLowerCase();
+    switch (trimmedGender) {
+      case 'male':
+        return 'Nam';
+      case 'female':
+        return 'Nữ';
+      default:
+        return gender.trim();
+    }
+  }
+
   Future<void> _refreshProfile() async {
     // Simulate refresh delay
     await Future.delayed(const Duration(milliseconds: 500));
@@ -290,7 +304,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
   Widget _buildGenderField() {
     return TextFormField(
       readOnly: true,
-      initialValue: _customerProfile.gender?.trim(),
+      initialValue: _getGenderDisplayText(_customerProfile.gender),
       decoration: InputDecoration(
         labelText: 'Giới tính',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
