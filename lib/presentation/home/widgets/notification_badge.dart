@@ -103,7 +103,7 @@ class _NotificationBadgeState extends State<NotificationBadge>
                       minHeight: 18,
                     ),
                     child: Text(
-                      widget.count > 99 ? '99+' : '${widget.count}',
+                      '>',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 9,
