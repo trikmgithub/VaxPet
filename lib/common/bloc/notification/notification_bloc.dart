@@ -15,20 +15,20 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     UpdateAppointmentCount event,
     Emitter<NotificationState> emit,
   ) async {
-    // Lọc chỉ những appointment có status == 1
+    // Lọc chỉ những appointment có status == 2
     final validAppointments = event.appointments.where((appointment) {
-      // Kiểm tra appointmentStatus == 1 (status đã được confirm hoặc active)
+      // Kiểm tra appointmentStatus == 2 (status đã được confirm hoặc active)
       if (appointment is TodayAppointmentEntity) {
-        return appointment.appointmentStatus == 1;
+        return appointment.appointmentStatus == 2;
       }
       // Fallback cho trường hợp Map (nếu có)
-      return appointment['appointmentStatus'] == 1;
+      return appointment['appointmentStatus'] == 2;
     }).toList();
 
     final validCount = validAppointments.length;
 
-    // Chỉ gửi thông báo khi có appointment với status == 1 và số lượng tăng lên
-    if (validCount > 0 && validCount > _previousCount) {
+    // Thông báo khi có appointment với status == 2
+    if (validCount > 0) {
       await LocalNotificationService.showAppointmentNotification(validCount);
     }
 

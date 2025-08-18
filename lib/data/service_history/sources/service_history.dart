@@ -20,7 +20,7 @@ class ServiceHistoryServiceImpl extends ServiceHistoryService {
 
       return Right(response.data);
     } on DioException catch (e) {
-      return Left(e);
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left(Exception('An unexpected error occurred'));
     }

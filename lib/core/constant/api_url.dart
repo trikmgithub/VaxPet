@@ -138,7 +138,7 @@ class ApiUrl {
 
   // SERVICE HISTORIES ENDPOINTS
   // Get
-  static const getServiceHistories = '${apiV}serviceHistories/get-service-history-by';
+  static const getServiceHistories = '${apiV}serviceHistories/get-service-history-by-customer';
 
   // VACCINATION SCHEDULE ENDPOINTS
   // Get

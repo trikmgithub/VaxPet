@@ -107,22 +107,14 @@ class LocalNotificationService {
   static Future<void> showAppointmentNotification(int appointmentCount) async {
     if (appointmentCount <= 0) return;
 
-    String title;
-    String body;
-
-    if (appointmentCount == 1) {
-      title = '🐾 Bạn có 1 lịch hẹn hôm nay!';
-      body = 'Đừng quên đưa thú cưng đi khám nhé!';
-    } else {
-      title = '🐾 Bạn có $appointmentCount lịch hẹn hôm nay!';
-      body = 'Kiểm tra chi tiết các lịch hẹn của bạn.';
-    }
+    const String title = '🐾 Bạn có lịch hẹn hôm nay!';
+    const String body = 'Đừng quên đưa thú cưng đi khám nhé!';
 
     await showInstantNotification(
       id: 1001, // ID cố định cho appointment notifications
       title: title,
       body: body,
-      payload: 'appointment_$appointmentCount',
+      payload: 'appointment_notification',
     );
   }
 
