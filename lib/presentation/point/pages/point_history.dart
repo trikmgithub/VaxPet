@@ -198,6 +198,23 @@ class PointHistoryPage extends StatelessWidget {
     String title = 'Giao dịch điểm';
     if (transaction.payment != null) {
       title = transaction.payment!.serviceName;
+      switch (transaction.payment!.serviceName.toLowerCase()) {
+        case 'Tiêm phòng':
+        case 'tiêm phòng':
+          title = 'Vắc xin';
+          break;
+        case 'Gắn Microchip':
+        case 'gắn Microchip':
+        case 'gắn microchip':
+          title = 'Cấy microchip';
+          break;
+        case 'khám tổng quát':
+        case 'Khám tổng quát':
+          title = 'Chứng nhận sức khỏe';
+          break;
+        default:
+          title = transaction.payment!.serviceName;
+      }
     } else if (transaction.voucher != null) {
       title = 'Đổi voucher';
     }
