@@ -19,6 +19,20 @@ class SampleSchedulePetPage extends StatelessWidget {
     required this.petSpecies
   });
 
+  // Phương thức dịch loài thú cưng từ tiếng Anh sang tiếng Việt
+  String _translatePetSpecies(String species) {
+    switch (species.toLowerCase()) {
+      case 'dog':
+      case 'chó':
+        return 'Chó';
+      case 'cat':
+      case 'mèo':
+        return 'Mèo';
+      default:
+        return species; // Trả về nguyên bản nếu không tìm thấy bản dịch
+    }
+  }
+
   // Calculate pet's age in weeks or years
   String _calculatePetAge() {
     if (petBirthday == null || petBirthday!.isEmpty) {
@@ -456,7 +470,7 @@ class SampleSchedulePetPage extends StatelessWidget {
                           SizedBox(width: isVerySmallScreen ? 8 : 12),
                           Expanded(
                             child: Text(
-                              'Lịch tiêm ${speciesSchedule.species}',
+                              'Lịch tiêm ${_translatePetSpecies(speciesSchedule.species)}',
                               style: TextStyle(
                                 fontSize: isVerySmallScreen ? 14 : (isSmallScreen ? 16 : 18),
                                 fontWeight: FontWeight.bold,
