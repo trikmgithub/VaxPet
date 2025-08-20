@@ -311,27 +311,6 @@ class _AllVoucherState extends State<AllVoucher> {
                     ],
                   ),
                 ),
-                // Status Badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isActive
-                        ? Colors.green.withValues(alpha: 0.1)
-                        : Colors.red.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    isActive ? 'Còn hạn' : 'Hết hạn',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: isActive ? Colors.green : Colors.red,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -462,17 +441,6 @@ class _AllVoucherState extends State<AllVoucher> {
                       (Match m) => '${m[1]},',
                     )} điểm?'),
                     const SizedBox(height: 8),
-                    Text(
-                      'Điểm hiện tại: ${_currentPoints?.toString().replaceAllMapped(
-                        RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-                        (Match m) => '${m[1]},',
-                      ) ?? '0'} điểm',
-                      style: TextStyle(
-                        color: hasEnoughPoints ? Colors.grey[600] : Colors.red,
-                        fontSize: 14,
-                        fontWeight: hasEnoughPoints ? FontWeight.normal : FontWeight.bold,
-                      ),
-                    ),
                     if (!hasEnoughPoints) ...[
                       const SizedBox(height: 4),
                       Text(

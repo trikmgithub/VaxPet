@@ -284,6 +284,20 @@ class PreferentialPage extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(height: 8),
+
+            Text(
+              'Điểm có thể đổi voucher: ${customerInfo.redeemablePoints.toString().replaceAllMapped(
+                RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                (Match m) => '${m[1]},',
+              )} điểm',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textGray,
+              ),
+            ),
+
             const SizedBox(height: 16),
 
             // 3 Button chính

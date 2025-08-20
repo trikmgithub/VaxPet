@@ -10,7 +10,7 @@ class VoucherRepositoryImpl extends VoucherRepository {
     var returnedData = await sl<VoucherService>().getAllVouchers(params);
 
     return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
+      (error) => Left(error.toString()),
       (data) {
         var allVouchers = data;
         return Right(allVouchers);
@@ -23,7 +23,7 @@ class VoucherRepositoryImpl extends VoucherRepository {
     var returnedData = await sl<VoucherService>().getCustomerVoucher(customerId);
 
     return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
+      (error) => Left(error.toString()),
       (data) {
         var customerVoucher = data;
         return Right(customerVoucher);
@@ -36,7 +36,7 @@ class VoucherRepositoryImpl extends VoucherRepository {
     var returnedData = await sl<VoucherService>().postVoucher(customerId, voucherId);
 
     return returnedData.fold(
-      (error) => Left(Exception(error.toString())),
+      (error) => Left(error.toString()),
       (data) {
         return Right(data);
       },
