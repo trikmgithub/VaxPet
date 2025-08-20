@@ -11,7 +11,6 @@ class PetRecordPage extends StatelessWidget {
   final String? petName;
   final String? petImage;
   final String? petSpecies;
-  final String? petBirthday;
 
   const PetRecordPage({
     super.key,
@@ -19,7 +18,6 @@ class PetRecordPage extends StatelessWidget {
     this.petName,
     this.petImage,
     this.petSpecies,
-    this.petBirthday,
   });
 
   @override
@@ -31,7 +29,6 @@ class PetRecordPage extends StatelessWidget {
         petName: petName,
         petImage: petImage,
         petSpecies: petSpecies,
-        petBirthday: petBirthday,
       ),
     );
   }
@@ -42,14 +39,12 @@ class _PetRecordView extends StatefulWidget {
   final String? petName;
   final String? petImage;
   final String? petSpecies;
-  final String? petBirthday;
 
   const _PetRecordView({
     required this.petId,
     this.petName,
     this.petImage,
     this.petSpecies,
-    this.petBirthday,
   });
 
   @override
@@ -62,92 +57,16 @@ class _PetRecordViewState extends State<_PetRecordView> {
     if (species == null || species.isEmpty || species == 'N/A') {
       return 'N/A';
     }
-    return species.toLowerCase() == 'dog' ? 'Chó' : 'Mèo';
-  }
 
-  // Phương thức format ngày sinh về dd/mm/yyyy
-  String _formatBirthday(String? birthday) {
-    if (birthday == null || birthday.isEmpty || birthday == 'N/A') {
-      return 'N/A';
-    }
-
-    try {
-      DateTime? birthDate;
-
-      // Format: yyyy-MM-dd hoặc yyyy-MM-ddTHH:mm:ss
-      if (birthday.contains('-') && birthday.length >= 10) {
-        birthDate = DateTime.tryParse(birthday.substring(0, 10));
-      }
-      // Format: dd/MM/yyyy (already correct format)
-      else if (birthday.contains('/')) {
-        final parts = birthday.split('/');
-        if (parts.length == 3 && parts[0].length <= 2) {
-          return birthday; // Already in dd/MM/yyyy format
-        }
-      }
-
-      if (birthDate != null) {
-        return '${birthDate.day.toString().padLeft(2, '0')}/${birthDate.month.toString().padLeft(2, '0')}/${birthDate.year}';
-      }
-
-      return birthday;
-    } catch (e) {
-      return 'N/A';
-    }
-  }
-
-  // Phương thức tính tuổi từ ngày sinh
-  String _calculateAge(String? birthday) {
-    if (birthday == null || birthday.isEmpty || birthday == 'N/A') {
-      return '';
-    }
-
-    try {
-      DateTime? birthDate;
-
-      // Format: yyyy-MM-dd
-      if (birthday.contains('-') && birthday.length >= 10) {
-        birthDate = DateTime.tryParse(birthday.substring(0, 10));
-      }
-      // Format: dd/MM/yyyy
-      else if (birthday.contains('/')) {
-        final parts = birthday.split('/');
-        if (parts.length == 3) {
-          final day = int.tryParse(parts[0]);
-          final month = int.tryParse(parts[1]);
-          final year = int.tryParse(parts[2]);
-          if (day != null && month != null && year != null) {
-            birthDate = DateTime(year, month, day);
-          }
-        }
-      }
-
-      if (birthDate == null) {
-        return '';
-      }
-
-      final now = DateTime.now();
-      final difference = now.difference(birthDate);
-      final totalDays = difference.inDays;
-
-      if (totalDays < 7) {
-        return ' • $totalDays ngày tuổi';
-      } else if (totalDays < 365) {
-        final weeks = (totalDays / 7).floor();
-        return ' • 0 tuổi ($weeks tuần)';
-      } else {
-        final years = (totalDays / 365).floor();
-        final remainingDays = totalDays % 365;
-        final remainingWeeks = (remainingDays / 7).floor();
-
-        if (remainingWeeks > 0) {
-          return ' • $years năm $remainingWeeks tuần tuổi';
-        } else {
-          return ' • $years năm tuổi';
-        }
-      }
-    } catch (e) {
-      return '';
+    switch (species.toLowerCase()) {
+      case 'dog':
+      case 'chó':
+        return 'Chó';
+      case 'cat':
+      case 'mèo':
+        return 'Mèo';
+      default:
+        return species; // Trả về nguyên bản nếu không tìm thấy bản dịch
     }
   }
 
@@ -280,7 +199,7 @@ class _PetRecordViewState extends State<_PetRecordView> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          '${widget.petSpecies}${_calculateAge(widget.petBirthday)}',
+                          _convertSpeciesToVietnamese(widget.petSpecies),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
@@ -290,27 +209,6 @@ class _PetRecordViewState extends State<_PetRecordView> {
                       ),
                     ],
                   ),
-
-                  // Birthday if available
-                  if (widget.petBirthday != null &&
-                      _formatBirthday(widget.petBirthday) != 'N/A') ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.cake, size: 18, color: AppColors.primary),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Sinh nhật: ${_formatBirthday(widget.petBirthday)}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-
                   const SizedBox(height: 8),
                 ],
               ),
