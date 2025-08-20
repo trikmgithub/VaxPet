@@ -71,6 +71,19 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
     }
   }
 
+  String _translatePetGender(String gender) {
+    switch (gender.toLowerCase()) {
+      case 'đực':
+      case 'male':
+        return 'Đực';
+      case 'cái':
+      case 'female':
+        return 'Cái';
+      default:
+        return gender;
+    }
+  }
+
   // Màu pastel dựa vào loài
   Color _getPastelColor(String species) {
     switch (species.toLowerCase()) {
@@ -258,7 +271,7 @@ class _TodayAppointmentTabState extends State<TodayAppointmentTab> {
                               ),
                             ),
                             Text(
-                              '${_translatePetSpecies(appointment.petSpecies)} · ${appointment.petGender}',
+                              '${_translatePetSpecies(appointment.petSpecies)} · ${_translatePetGender(appointment.petGender)}',
                               style: const TextStyle(color: Colors.grey),
                             ),
                           ],

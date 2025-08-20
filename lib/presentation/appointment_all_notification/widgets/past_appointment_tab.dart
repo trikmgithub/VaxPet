@@ -69,6 +69,20 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
     }
   }
 
+  // Phương thức dịch giới tính thú cưng từ tiếng Anh sang tiếng Việt
+  String _translatePetGender(String gender) {
+    switch (gender.toLowerCase()) {
+      case 'đực':
+      case 'male':
+        return 'Đực';
+      case 'cái':
+      case 'female':
+        return 'Cái';
+      default:
+        return gender; // Trả về nguyên bản nếu không tìm thấy bản dịch
+    }
+  }
+
   // Màu pastel dựa vào loài
   Color _getPastelColor(String species) {
     switch (species.toLowerCase()) {
@@ -244,7 +258,7 @@ class _PastAppointmentTabState extends State<PastAppointmentTab> {
                               ),
                             ),
                             Text(
-                              '${_translatePetSpecies(appointment.petSpecies)} · ${appointment.petGender}',
+                              '${_translatePetSpecies(appointment.petSpecies)} · ${_translatePetGender(appointment.petGender)}',
                               style: const TextStyle(color: Colors.grey),
                             ),
                           ],
