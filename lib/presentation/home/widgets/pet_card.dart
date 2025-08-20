@@ -9,73 +9,6 @@ import 'package:vaxpet/presentation/home/bloc/delete_pet_state.dart';
 import '../../pet/pages/pet_details.dart';
 import '../bloc/pets_state.dart';
 
-String calculateAge(String? dob) {
-  if (dob == null || dob.isEmpty) return 'Không rõ';
-  try {
-    DateTime birthDate;
-
-    // Kiểm tra định dạng mm/dd/yyyy
-    if (dob.contains('/')) {
-      final parts = dob.split('/');
-      if (parts.length == 3) {
-        final month = int.parse(parts[0]);
-        final day = int.parse(parts[1]);
-        final year = int.parse(parts[2]);
-        birthDate = DateTime(year, month, day);
-      } else {
-        return 'Không rõ';
-      }
-    } else {
-      // Fallback cho trường hợp khác
-      birthDate = DateTime.parse(dob);
-    }
-
-    final today = DateTime.now();
-
-    int age = today.year - birthDate.year;
-    if (today.month < birthDate.month ||
-        (today.month == birthDate.month && today.day < birthDate.day)) {
-      age--;
-    }
-
-    if (age < 1) {
-      final difference = today.difference(birthDate).inDays;
-      final weeks = (difference / 7).floor();
-      if (weeks == 0) {
-        return '$age tuổi ($difference ngày)';
-      } else {
-        return '$age tuổi ($weeks tuần)';
-      }
-    }
-
-    return '$age tuổi';
-  } catch (e) {
-    return 'Không rõ';
-  }
-}
-
-// Hàm format ngày từ mm/dd/yyyy sang dd/mm/yyyy
-String formatDateForDisplay(String? dateString) {
-  if (dateString == null || dateString.isEmpty) return '';
-
-  try {
-    // Kiểm tra định dạng mm/dd/yyyy
-    if (dateString.contains('/')) {
-      final parts = dateString.split('/');
-      if (parts.length == 3) {
-        final month = parts[0].padLeft(2, '0');
-        final day = parts[1].padLeft(2, '0');
-        final year = parts[2];
-        // Chuyển từ mm/dd/yyyy sang dd/mm/yyyy
-        return '$day/$month/$year';
-      }
-    }
-    return dateString; // Trả về nguyên bản nếu không parse được
-  } catch (e) {
-    return dateString; // Trả về nguyên bản nếu có lỗi
-  }
-}
-
 class Pets extends StatelessWidget {
   final int accountId;
   final bool isSmallScreen;
@@ -447,7 +380,7 @@ class PetCard extends StatelessWidget {
               petName: pet.name ?? "Chưa đặt tên",
               petImage: pet.image,
               petSpecies: pet.species ?? "Không rõ",
-              petBirthday: formatDateForDisplay(pet.dateOfBirth),
+              petBirthday: pet.dateOfBirth,
             ),
           );
         },
@@ -561,25 +494,7 @@ class PetCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.cake_rounded,
-                              size: 14.0,
-                              color: tagColor,
-                            ),
-                            const SizedBox(width: 4.0),
-                            Text(
-                              calculateAge(pet.dateOfBirth),
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                                fontSize: 14.0,
-                              ),
-                            ),
-                          ],
-                        ),
+
                         const SizedBox(height: 16.0),
                         Row(
                           children: [
@@ -597,7 +512,7 @@ class PetCard extends StatelessWidget {
                                           pet.species?.toLowerCase() == "dog"
                                               ? "Chó"
                                               : "Mèo",
-                                      petBirthday: formatDateForDisplay(pet.dateOfBirth),
+                                      petBirthday: pet.dateOfBirth,
                                     ),
                                   );
                                 },
