@@ -398,9 +398,6 @@ class _AllVoucherState extends State<AllVoucher> {
     final int points = voucher['pointsRequired'] ?? 0;
     final int voucherId = voucher['voucherId'] ?? voucher['id'] ?? 0;
 
-    // Check if user has enough points
-    final bool hasEnoughPoints = _currentPoints != null && _currentPoints! >= points;
-
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -441,17 +438,6 @@ class _AllVoucherState extends State<AllVoucher> {
                       (Match m) => '${m[1]},',
                     )} điểm?'),
                     const SizedBox(height: 8),
-                    if (!hasEnoughPoints) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Bạn không đủ điểm để đổi voucher này!',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
                 actions: [
@@ -460,7 +446,7 @@ class _AllVoucherState extends State<AllVoucher> {
                     child: const Text('Hủy'),
                   ),
                   ElevatedButton(
-                    onPressed: (state is PostVoucherLoading || !hasEnoughPoints || _customerId == null)
+                    onPressed: (state is PostVoucherLoading || _customerId == null)
                         ? null
                         : () {
                             context.read<PostVoucherCubit>().exchangeVoucher(
