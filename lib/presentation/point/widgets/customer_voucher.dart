@@ -139,21 +139,6 @@ class _CustomerVoucherState extends State<CustomerVoucher> {
     final voucher = customerVoucher['voucher'];
     final status = customerVoucher['status'];
 
-    // Determine status display with softer colors
-    String statusText = 'Đã đổi';
-    Color statusColor = Colors.blue[300]!;
-    IconData statusIcon = Icons.check_circle;
-
-    if (status == 3) {
-      statusText = 'Hết hạn';
-      statusColor = Colors.blueGrey[300]!;
-      statusIcon = Icons.cancel;
-    } else if (status == 1) {
-      statusText = 'Còn hiệu lực';
-      statusColor = Colors.green[300]!;
-      statusIcon = Icons.check_circle;
-    }
-
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 1,
@@ -163,13 +148,10 @@ class _CustomerVoucherState extends State<CustomerVoucher> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            colors: [
-              statusColor.withValues(alpha: 0.05),
-              Colors.grey[50]!,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.grey[200]!,
+            width: 1,
           ),
         ),
         child: Padding(
@@ -185,28 +167,23 @@ class _CustomerVoucherState extends State<CustomerVoucher> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.2),
+                      color: _getStatusColor(status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: statusColor.withValues(alpha: 0.3),
+                        color: _getStatusColor(status),
                         width: 1,
                       ),
                     ),
                     child: Text(
-                      statusText,
+                      _getStatusText(status),
                       style: TextStyle(
-                        color: statusColor.withValues(alpha: 0.9),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
+                        color: _getStatusColor(status),
                       ),
                     ),
                   ),
                   const Spacer(),
-                  Icon(
-                    statusIcon,
-                    color: statusColor.withValues(alpha: 0.7),
-                    size: 20,
-                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -330,6 +307,32 @@ class _CustomerVoucherState extends State<CustomerVoucher> {
       return '${date.day}/${date.month}/${date.year}';
     } catch (e) {
       return dateString;
+    }
+  }
+
+  Color _getStatusColor(int status) {
+    switch (status) {
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getStatusText(int status) {
+    switch (status) {
+      case 1:
+        return 'Có thể dùng';
+      case 2:
+        return 'Đã dùng';
+      case 3:
+        return 'Hết hạn';
+      default:
+        return 'Không xác định';
     }
   }
 }

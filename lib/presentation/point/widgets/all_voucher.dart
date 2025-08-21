@@ -397,6 +397,38 @@ class _AllVoucherState extends State<AllVoucher> {
     final String title = voucher['voucherName'] ?? 'Voucher';
     final int points = voucher['pointsRequired'] ?? 0;
     final int voucherId = voucher['voucherId'] ?? voucher['id'] ?? 0;
+    final String? expirationDate = voucher['expirationDate'];
+
+    // Kiểm tra ngày hết hạn
+    bool isExpired = false;
+    if (expirationDate != null) {
+      try {
+        final expDate = DateTime.parse(expirationDate);
+        final now = DateTime.now();
+        isExpired = expDate.isBefore(now);
+      } catch (e) {
+        // Nếu không parse được ngày, coi như chưa hết hạn
+        isExpired = false;
+      }
+    }
+
+    // Nếu voucher đã hết hạn, hiện thông báo
+    if (isExpired) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Voucher đã hết hạn'),
+          content: Text('Voucher "$title" đã hết hạn và không thể đổi.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Đóng'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     showDialog(
       context: context,
