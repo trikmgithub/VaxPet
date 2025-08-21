@@ -85,7 +85,6 @@ class AppointmentVaccinationChoicePage extends StatelessWidget {
                             petName: petName,
                             petId: petId,
                             petSpecies: petSpecies,
-                            petImage: petImage,
                           ),
                         );
                       },

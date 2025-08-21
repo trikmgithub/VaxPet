@@ -18,13 +18,11 @@ class AppointmentVaccinationHomePage extends StatefulWidget {
   final String petName;
   final int petId;
   final String petSpecies;
-  final String? petImage;
   const AppointmentVaccinationHomePage({
     super.key,
     required this.petName,
     required this.petId,
     required this.petSpecies,
-    this.petImage,
   });
 
   @override
@@ -145,68 +143,14 @@ class _AppointmentVaccinationHomePageState
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color:
-                                    widget.petImage != null
-                                        ? Colors.transparent
-                                        : Colors.blue[100],
-                                shape: BoxShape.circle,
-                              ),
-                              child:
-                                  widget.petImage != null
-                                      ? ClipOval(
-                                        child: Image.network(
-                                          widget.petImage!,
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (
-                                            context,
-                                            error,
-                                            stackTrace,
-                                          ) {
-                                            return Icon(
-                                              Icons.pets,
-                                              color:
-                                                  Theme.of(
-                                                    context,
-                                                  ).primaryColor,
-                                              size: 28,
-                                            );
-                                          },
-                                          loadingBuilder: (
-                                            context,
-                                            child,
-                                            loadingProgress,
-                                          ) {
-                                            if (loadingProgress == null) {
-                                              return child;
-                                            }
-                                            return Center(
-                                              child: CircularProgressIndicator(
-                                                value:
-                                                    loadingProgress
-                                                                .expectedTotalBytes !=
-                                                            null
-                                                        ? loadingProgress
-                                                                .cumulativeBytesLoaded /
-                                                            loadingProgress
-                                                                .expectedTotalBytes!
-                                                        : null,
-                                                strokeWidth: 2,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).primaryColor,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      )
-                                      : Icon(
-                                        Icons.pets,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 28,
-                                      ),
+                        color: Colors.blue[100],
+                          shape: BoxShape.circle,
+                        ),
+                          child: Icon(
+                            Icons.pets,
+                            color: Theme.of(context).primaryColor,
+                            size: 28,
+                          ),
                             ),
                             SizedBox(width: 16),
                             Expanded(
