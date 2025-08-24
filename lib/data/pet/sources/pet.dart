@@ -167,9 +167,8 @@ class PetServiceImpl extends PetService {
       return Right(response.data);
     } on DioException catch (e) {
       // Debug log for server error
-      return Left(e);
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
-      debugPrint('UpdatePet unexpected error: $e');
       return Left(Exception('An unexpected error occurred'));
     }
   }

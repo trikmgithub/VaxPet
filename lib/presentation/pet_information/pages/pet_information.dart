@@ -20,6 +20,22 @@ class PetInformationPage extends StatelessWidget {
     return species.toLowerCase() == 'dog' ? 'Chó' : 'Mèo';
   }
 
+  // Phương thức convert gender sang tiếng Việt
+  String _convertGenderToVietnamese(String? gender) {
+    if (gender == null || gender.isEmpty || gender == 'N/A') {
+      return 'N/A';
+    }
+
+    String lowerGender = gender.toLowerCase();
+    if (lowerGender == 'male' || lowerGender == 'đực') {
+      return 'Đực';
+    } else if (lowerGender == 'female' || lowerGender == 'cái') {
+      return 'Cái';
+    }
+    
+    return gender; // Return original if no match
+  }
+
   // Phương thức format ngày sinh về dd/mm/yyyy
   String _formatDateOfBirth(String? dateOfBirth) {
     if (dateOfBirth == null || dateOfBirth.isEmpty || dateOfBirth == 'N/A') {
@@ -29,15 +45,23 @@ class PetInformationPage extends StatelessWidget {
     try {
       DateTime? birthDate;
 
-      // Format: yyyy-MM-dd
-      if (dateOfBirth.contains('-') && dateOfBirth.length >= 10) {
-        birthDate = DateTime.tryParse(dateOfBirth.substring(0, 10));
-      }
-      // Format: dd/MM/yyyy (already correct format)
-      else if (dateOfBirth.contains('/')) {
+      if (dateOfBirth.contains('/')) {
         final parts = dateOfBirth.split('/');
-        if (parts.length == 3 && parts[0].length <= 2) {
-          return dateOfBirth; // Already in dd/MM/yyyy format
+        if (parts.length == 3) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+
+          if (month != null && day != null && year != null) {
+            // Check if it's already in dd/mm/yyyy format (day <= 12 and month > 12)
+            if (day <= 12 && month > 12) {
+              // Already in dd/mm/yyyy format
+              return dateOfBirth;
+            } else if (month <= 12 && day <= 31) {
+              // Convert from mm/dd/yyyy to dd/mm/yyyy
+              birthDate = DateTime(year, month, day);
+            }
+          }
         }
       }
 
@@ -58,33 +82,23 @@ class PetInformationPage extends StatelessWidget {
     }
 
     try {
-      // Thử parse nhiều format ngày khác nhau
       DateTime? birthDate;
 
       // Format: yyyy-MM-dd
       if (dateOfBirth.contains('-') && dateOfBirth.length >= 10) {
         birthDate = DateTime.tryParse(dateOfBirth.substring(0, 10));
       }
-      // Format: dd/MM/yyyy
+      // Format: mm/dd/yyyy (assume all dates with '/' are in mm/dd/yyyy format)
       else if (dateOfBirth.contains('/')) {
         final parts = dateOfBirth.split('/');
         if (parts.length == 3) {
-          final day = int.tryParse(parts[0]);
-          final month = int.tryParse(parts[1]);
-          final year = int.tryParse(parts[2]);
-          if (day != null && month != null && year != null) {
-            birthDate = DateTime(year, month, day);
-          }
-        }
-      }
-      // Format: dd-MM-yyyy
-      else if (dateOfBirth.contains('-')) {
-        final parts = dateOfBirth.split('-');
-        if (parts.length == 3) {
-          final day = int.tryParse(parts[0]);
-          final month = int.tryParse(parts[1]);
-          final year = int.tryParse(parts[2]);
-          if (day != null && month != null && year != null) {
+          final month = int.tryParse(parts[0]);  // First part is month
+          final day = int.tryParse(parts[1]);    // Second part is day
+          final year = int.tryParse(parts[2]);   // Third part is year
+
+          if (month != null && day != null && year != null &&
+              month >= 1 && month <= 12 &&
+              day >= 1 && day <= 31) {
             birthDate = DateTime(year, month, day);
           }
         }
@@ -104,14 +118,11 @@ class PetInformationPage extends StatelessWidget {
         final weeks = (days / 7).floor();
         return '0 tuổi ($weeks tuần)';
       } else {
-        final years = (days / 365).floor();
-        final remainingDays = days % 365;
-        final weeks = (remainingDays / 7).floor();
-        if (weeks > 0) {
-          return '$years tuổi ($weeks tuần)';
-        } else {
-          return '$years tuổi';
-        }
+        final years = (days / 365.25).floor(); // Use 365.25 for more accurate calculation
+        final remainingDays = days - (years * 365.25).floor();
+        final weeks = (remainingDays / 7).floor(); // Convert remaining days to weeks
+
+        return '$years tuổi ($weeks tuần)';
       }
     } catch (e) {
       return 'N/A';
@@ -477,7 +488,7 @@ class PetInformationPage extends StatelessWidget {
         _buildInfoRow('Giống:', pet.breed ?? 'N/A', Icons.label),
         _buildInfoRow(
           'Giới tính:',
-          pet.gender ?? 'N/A',
+          _convertGenderToVietnamese(pet.gender),
           pet.gender?.toLowerCase() == 'male' ||
                   pet.gender?.toLowerCase() == 'đực'
               ? Icons.male

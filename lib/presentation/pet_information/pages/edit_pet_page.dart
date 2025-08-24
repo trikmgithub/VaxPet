@@ -202,39 +202,54 @@ class _EditPetPageState extends State<EditPetPage> with TickerProviderStateMixin
 
     try {
       DateTime? birthDate;
+      // Format: mm/dd/yyyy (assume all dates with '/' are in mm/dd/yyyy format)
+       if (dateString.contains('/')) {
+        final parts = dateString.split('/');
+        if (parts.length == 3) {
+          final month = int.tryParse(parts[0]);  // First part is month
+          final day = int.tryParse(parts[1]);    // Second part is day
+          final year = int.tryParse(parts[2]);   // Third part is year
 
-      // Format: yyyy-MM-dd hoặc yyyy/MM/dd
-      if (dateString.contains('-') || dateString.contains('/')) {
-        // Thử parse theo format ISO hoặc các format khác
-        if (dateString.contains('-')) {
-          birthDate = DateTime.tryParse(dateString);
-        } else if (dateString.contains('/')) {
-          final parts = dateString.split('/');
-          if (parts.length == 3) {
-            // Kiểm tra xem là dd/MM/yyyy hay yyyy/MM/dd
-            if (parts[0].length == 4) {
-              // yyyy/MM/dd
-              final year = int.tryParse(parts[0]);
-              final month = int.tryParse(parts[1]);
-              final day = int.tryParse(parts[2]);
-              if (year != null && month != null && day != null) {
-                birthDate = DateTime(year, month, day);
-              }
-            } else {
-              // dd/MM/yyyy
-              final day = int.tryParse(parts[0]);
-              final month = int.tryParse(parts[1]);
-              final year = int.tryParse(parts[2]);
-              if (day != null && month != null && year != null) {
-                birthDate = DateTime(year, month, day);
-              }
-            }
+          if (month != null && day != null && year != null &&
+              month >= 1 && month <= 12 &&
+              day >= 1 && day <= 31) {
+            birthDate = DateTime(year, month, day);
           }
         }
       }
 
       if (birthDate != null) {
         return '${birthDate.day.toString().padLeft(2, '0')}/${birthDate.month.toString().padLeft(2, '0')}/${birthDate.year}';
+      }
+
+      return dateString; // Return original if can't parse
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  // Helper method to convert dd/mm/yyyy back to mm/dd/yyyy for backend
+  String _formatDateToMMDDYYYY(String? dateString) {
+    if (dateString == null || dateString.isEmpty || dateString == 'N/A') {
+      return '';
+    }
+
+    try {
+      // Parse dd/mm/yyyy format
+      if (dateString.contains('/')) {
+        final parts = dateString.split('/');
+        if (parts.length == 3) {
+          final day = int.tryParse(parts[0]);    // First part is day
+          final month = int.tryParse(parts[1]);  // Second part is month
+          final year = int.tryParse(parts[2]);   // Third part is year
+
+          if (day != null && month != null && year != null &&
+              day >= 1 && day <= 31 &&
+              month >= 1 && month <= 12) {
+            // Convert to mm/dd/yyyy format
+            return '${month.toString().padLeft(2, '0')}/${day.toString().padLeft(2, '0')}/$year';
+          }
+        }
       }
 
       return dateString; // Return original if can't parse
@@ -255,7 +270,7 @@ class _EditPetPageState extends State<EditPetPage> with TickerProviderStateMixin
       breed: _breedController.text.trim(),
       age: widget.pet.age, // Keep original age
       gender: _selectedGender,
-      dateOfBirth: _dateOfBirthController.text.trim(),
+      dateOfBirth: _formatDateToMMDDYYYY(_dateOfBirthController.text.trim()),
       placeToLive: _placeToLiveController.text.trim(),
       placeOfBirth: _placeOfBirthController.text.trim(),
       // Sử dụng ảnh mới nếu có chọn, nếu không giữ nguyên ảnh cũ
