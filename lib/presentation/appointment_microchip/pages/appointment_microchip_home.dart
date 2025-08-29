@@ -202,7 +202,7 @@ class _AppointmentMicrochipHomePageState
                       SizedBox(height: 20),
 
                       // Time selection
-                      _buildFormLabel('Giờ hẹn (8:00-12:00 hoặc 13:00-17:00):'),
+                      _buildFormLabel('Giờ hẹn (8:00-11:00 hoặc 13:00-16:00):'),
                       SizedBox(height: 8),
                       _buildTimeField(context),
                       SizedBox(height: 20),
@@ -476,7 +476,7 @@ class _AppointmentMicrochipHomePageState
               );
             } else {
               _showSnackBar(
-                'Vui lòng chọn giờ trong khoảng 8:00-12:00 hoặc 13:00-17:00',
+                'Vui lòng chọn giờ trong khoảng 8:00-11:00 hoặc 13:00-16:00',
                 isError: true,
               );
             }
@@ -591,9 +591,9 @@ class _AppointmentMicrochipHomePageState
   // Helper method to check if time is in allowed ranges
   bool _isTimeInAllowedRanges(TimeOfDay time) {
     final morningStart = const TimeOfDay(hour: 8, minute: 0);
-    final morningEnd = const TimeOfDay(hour: 12, minute: 0);
+    final morningEnd = const TimeOfDay(hour: 11, minute: 0);
     final afternoonStart = const TimeOfDay(hour: 13, minute: 0);
-    final afternoonEnd = const TimeOfDay(hour: 17, minute: 0);
+    final afternoonEnd = const TimeOfDay(hour: 16, minute: 0);
 
     // Convert to minutes for easier comparison
     final timeInMinutes = time.hour * 60 + time.minute;

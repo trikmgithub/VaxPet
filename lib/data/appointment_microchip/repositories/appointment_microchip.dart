@@ -14,11 +14,13 @@ class AppointmentMicrochipRepositoryImpl
   ) async {
     var returnedData = await sl<AppointmentMicrochipService>()
         .postAppointmentMicrochip(params);
-    return returnedData.fold((error) => Left(Exception(error.toString())), (
-      data,
-    ) {
-      return Right(data);
-    });
+    return returnedData.fold(
+      (error) => Left(error), (
+        data,
+      ) {
+        return Right(data);
+      }
+    );
   }
 
   @override

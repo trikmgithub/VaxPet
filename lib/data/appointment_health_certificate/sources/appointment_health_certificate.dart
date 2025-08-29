@@ -38,7 +38,7 @@ class AppointmentHealthCertificateServiceImpl
       );
       return Right(response.data);
     } on DioException catch (e) {
-      return Left('Lỗi kết nối mạng! ${e.message}');
+      return Left('Lỗi: ${e.response?.data['message']}');
     } catch (e) {
       return Left('Lỗi tại postAppointmentMicrochip: ${e.toString()}');
     }
