@@ -567,14 +567,14 @@ class PetInformationPage extends StatelessWidget {
               children: [
                 _buildInfoRow(
                   'Tên Microchip:',
-                  item['name']?.toString() ?? 'N/A',
+                  item['name']?.toString() ?? '',
                   Icons.memory,
                   valueColor: Colors.blue[600],
                 ),
                 const SizedBox(height: 8),
                 _buildInfoRow(
                   'Mô tả:',
-                  item['description']?.toString() ?? 'N/A',
+                  item['description']?.toString() ?? '',
                   Icons.description,
                   valueColor: Colors.grey[700],
                 ),

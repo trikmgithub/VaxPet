@@ -807,14 +807,17 @@ class _CreatePetPageState extends State<CreatePetPage> {
                     // Xử lý kết quả
                     result.fold(
                       (failure) {
-                        debugPrint('Error creating pet: $failure');
+                        // Hiển thị lỗi từ backend
+                        String errorMessage = failure.toString();
+                        if (errorMessage.startsWith('Lỗi: ')) {
+                          errorMessage = errorMessage.substring(5); // Bỏ prefix "Lỗi: "
+                        }
                         DisplayMessage.errorMessage(
-                          'Không thể tạo thú cưng: $failure',
+                          errorMessage,
                           context,
                         );
                       },
                       (success) {
-                        debugPrint('Pet created successfully');
                         DisplayMessage.successMessage(
                           'Đã tạo thú cưng thành công',
                           context,
@@ -826,11 +829,10 @@ class _CreatePetPageState extends State<CreatePetPage> {
                       },
                     );
                   } catch (e) {
-                    debugPrint('Exception during API call: $e');
                     // Kiểm tra mounted trước khi sử dụng context
                     if (mounted) {
                       DisplayMessage.errorMessage(
-                        'Lỗi khi gửi yêu cầu: $e',
+                        'Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.',
                         context,
                       );
                     }
