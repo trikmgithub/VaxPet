@@ -403,7 +403,7 @@ class _AllVoucherState extends State<AllVoucher> {
     bool isExpired = false;
     if (expirationDate != null) {
       try {
-        final expDate = DateTime.parse(expirationDate);
+        final expDate = DateTime.parse(expirationDate).add(Duration(days: 1));
         final now = DateTime.now();
         isExpired = expDate.isBefore(now);
       } catch (e) {
